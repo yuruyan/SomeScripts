@@ -11,41 +11,41 @@ if (!Helper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
-Logger logger = LogManager.GetCurrentClassLogger();
+Logger Logger = LogManager.GetCurrentClassLogger();
 //var specialCharacters = new string[] { "?", "*", ":", "\"", "<", ">", "\\", "/", "|" };
-var specialCharactersRegex = new Regex("[?*:\"<>\\/|]");
-const int defaultThreadCount = 4, maxThreadCount = 16, minThreadCount = 1;
-const bool defaultIgnoreError = false;
+var SpecialCharactersRegex = new Regex("[?*:\"<>\\/|]");
+const int DefaultThreadCount = 4, MaxThreadCount = 16, MinThreadCount = 1;
+const bool DefaultIgnoreError = false;
 
-var config = Helper.GetConfiguration(args);
-string rootDir = config["rootDir"];
-string saveDir = config["saveDir"];
-string threadArg = config["threads"];
-string ignoreErrorArg = config["ignoreError"]?.ToLowerInvariant() ?? defaultIgnoreError.ToString();
+var Config = Helper.GetConfiguration(args);
+string rootDir = Config["rootDir"];
+string saveDir = Config["saveDir"];
+string threadArg = Config["threads"];
+string ignoreErrorArg = Config["ignoreError"]?.ToLowerInvariant() ?? DefaultIgnoreError.ToString();
 
 // 解析参数
-int threadCount = string.IsNullOrEmpty(threadArg) ? defaultThreadCount : int.TryParse(threadArg, out int n) ? n : defaultThreadCount;
+int threadCount = string.IsNullOrEmpty(threadArg) ? DefaultThreadCount : int.TryParse(threadArg, out int n) ? n : DefaultThreadCount;
 bool ignoreError = !string.IsNullOrEmpty(ignoreErrorArg) && ignoreErrorArg switch {
     "true" => true,
     "false" => false,
-    _ => defaultIgnoreError
+    _ => DefaultIgnoreError
 };
 
 // 验证 threadCount
-if (threadCount < minThreadCount) {
-    threadCount = minThreadCount;
+if (threadCount < MinThreadCount) {
+    threadCount = MinThreadCount;
 }
-if (threadCount > maxThreadCount) {
-    threadCount = maxThreadCount;
+if (threadCount > MaxThreadCount) {
+    threadCount = MaxThreadCount;
 }
 
 // 判断路径是否存在
 if (!Directory.Exists(rootDir)) {
-    logger.Error($"{nameof(rootDir)} 不存在！");
+    Logger.Error($"{nameof(rootDir)} 不存在！");
     return;
 }
 if (!Directory.Exists(saveDir)) {
-    logger.Error($"{nameof(saveDir)} 不存在！");
+    Logger.Error($"{nameof(saveDir)} 不存在！");
     return;
 }
 // 检查 ffmpeg 是否存在
@@ -55,12 +55,12 @@ try {
         CreateNoWindow = true,
     }).WaitForExit();
 } catch {
-    logger.Error("FFmpeg 不存在！");
+    Logger.Error("FFmpeg 不存在！");
     return;
 }
 
 // 去除文件不合法字符
-var validateVideoName = (string name) => specialCharactersRegex.Replace(name, "");
+var validateVideoName = (string name) => SpecialCharactersRegex.Replace(name, "");
 // 线程列表
 var tasks = new Task[threadCount];
 // 源视频文件夹列表
@@ -87,13 +87,13 @@ for (int i = 0; i < threadCount; i++) {
                 string videoPath = Path.Combine(dir, folderName, "video.m4s");
                 // 输出文件
                 string outVideoPath = Path.Combine(saveDir, validateVideoName(videoName) + ".mp4");
-                logger.Debug($"starting {videoName}");
+                Logger.Debug($"starting {videoName}");
                 Process.Start(new ProcessStartInfo {
                     FileName = "ffmpeg",
                     Arguments = $"-i \"{videoPath}\" -i \"{audioPath}\" -vcodec copy -acodec copy -y \"{outVideoPath}\"",
                     CreateNoWindow = true,
                 }).WaitForExit();
-                logger.Debug($"finished {videoName}");
+                Logger.Debug($"finished {videoName}");
             } catch {
                 if (ignoreError) {
                     continue;
