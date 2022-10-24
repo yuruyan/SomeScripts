@@ -1,0 +1,11 @@
+﻿备份浏览器数据
+
+参数列表：
+    browser : 浏览器名称，默认为 Edge
+        选项：[Edge, Chrome]
+    savePath: 压缩文件保存路径
+    override: 如果 savePath 存在，是否覆盖，默认 true
+        选项：[true, false]
+
+示例：
+    browser=Edge savePath='D:/backup.zip'
