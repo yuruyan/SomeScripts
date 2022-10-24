@@ -1,4 +1,6 @@
-﻿namespace Shared;
+﻿using System.Text;
+
+namespace Shared;
 
 public static class Utils {
     /// <summary>
@@ -26,4 +28,17 @@ public static class Utils {
         }
     }
 
+    private const string NumberCharacter = "0123456789";
+    private const string UpperCaseCharacter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private const string LowerCaseCharacter = "abcdefghijklmnopqrstuvwxyz";
+    private const string LetterCharacter = $"{NumberCharacter}{UpperCaseCharacter}{LowerCaseCharacter}";
+
+    public static string GenerateRandomLetterString(uint length = 8) {
+        string dataSource = LetterCharacter;
+        var sb = new StringBuilder((int)length);
+        for (int j = 0; j < length; j++) {
+            sb.Append(dataSource[Random.Shared.Next(dataSource.Length)]);
+        }
+        return sb.ToString();
+    }
 }
