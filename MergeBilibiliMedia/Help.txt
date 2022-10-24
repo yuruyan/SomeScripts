@@ -1,0 +1,10 @@
+﻿合并手机下载的 Bilibili 音视频文件
+
+参数列表：
+	rootDir: 文件根目录
+	saveDir: 合并文件保存目录
+	threads[可选]: 并行合并数量，默认为 4
+	ignoreError[可选]: 忽略错误，默认为 false
+		选项: [true, false]
+示例：
+	rootDir='D:/temp/root' saveDir='D:/video'
