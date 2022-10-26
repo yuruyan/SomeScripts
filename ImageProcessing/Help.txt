@@ -1,0 +1,11 @@
+﻿图像处理
+
+高斯模糊（GaussianBlur）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        radius: 模糊值，默认 5
+            范围：[1.0, 100.0]
+
+    示例：
+        GaussianBlur sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' radius=3
