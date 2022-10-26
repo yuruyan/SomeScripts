@@ -13,6 +13,7 @@ internal static class Proxy {
         "puttext" => PutText,
         "flip" => Flip,
         "rotate" => Rotate,
+        "crop" => Crop,
         _ => throw new ArgumentException($"参数 {name} 错误"),
     };
 
@@ -115,4 +116,33 @@ internal static class Proxy {
         Service.Rotate(sourcePath, savePath, angle);
     }
 
+    /// <summary>
+    /// 图像裁剪
+    /// </summary>
+    /// <param name="config"></param>
+    private static void Crop(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string xArg = config["x"] ?? "0";
+        string yArg = config["y"] ?? "0";
+        string widthArg = config["width"] ?? throw new ArgumentException("参数 width 不能为空");
+        string heightArg = config["height"] ?? throw new ArgumentException("参数 height 不能为空");
+
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        // 参数验证
+        if (!int.TryParse(xArg, out var x)) {
+            throw new ArgumentException($"参数 {nameof(x)} 无效");
+        }
+        if (!int.TryParse(yArg, out var y)) {
+            throw new ArgumentException($"参数 {nameof(y)} 无效");
+        }
+        if (!int.TryParse(widthArg, out var width)) {
+            throw new ArgumentException($"参数 {nameof(width)} 无效");
+        }
+        if (!int.TryParse(heightArg, out var height)) {
+            throw new ArgumentException($"参数 {nameof(height)} 无效");
+        }
+
+        Service.Crop(sourcePath, savePath, new(x, y), new(width, height));
+    }
 }

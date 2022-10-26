@@ -119,4 +119,17 @@ public static class Service {
         Cv2.WarpAffine(src, dst, mat, new(src.Cols, src.Rows));
         dst.SaveImage(savePath);
     }
+
+    /// <summary>
+    /// 裁剪图像
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    /// <param name="upperLeft">左上角坐标</param>
+    /// <param name="size">裁剪后的图像大小</param>
+    public static void Crop(string sourcePath, string savePath, Point upperLeft, Size size) {
+        using var src = new Mat(sourcePath);
+        using var dst = src.Clone(new(upperLeft, size));
+        dst.SaveImage(savePath);
+    }
 }

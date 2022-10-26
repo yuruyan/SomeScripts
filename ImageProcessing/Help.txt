@@ -43,3 +43,15 @@
 
     示例：
         Rotate sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' angle=45
+
+图像裁剪（Crop）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        x: 从该点开始进行裁剪的 x 坐标，默认 0
+        y: 从该点开始进行裁剪的 y 坐标，默认 0
+        width: 裁剪后图像宽度
+        height: 裁剪后图像高度
+
+    示例：
+        Crop sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' x=100 y=50 width=300 height=200
