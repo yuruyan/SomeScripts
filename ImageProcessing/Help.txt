@@ -4,8 +4,22 @@
     参数列表：
         sourcePath: 源文件路径
         savePath: 保存路径
-        radius: 模糊值，默认 5
+        radius[可选]: 模糊值，默认 5
             范围：[1.0, 100.0]
 
     示例：
         GaussianBlur sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' radius=3
+
+图片添加文字（PutText）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        text: 要添加的文字
+        point[可选]: 文字左上角坐标（图片左上角为(0, 0)），默认为左上角
+            格式：(x坐标，y坐标)
+        fontScale[可选]: 字体放大倍数，默认为 1
+            范围：[0.1, 16.0]
+        color[可选]: 字体颜色，默认为黑色（#000000）
+
+    示例：
+        PutText sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' point='(50, 200)' color='#ff0000'

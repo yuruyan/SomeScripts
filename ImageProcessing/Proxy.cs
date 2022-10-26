@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NLog;
+using OpenCvSharp;
+using System.Text.RegularExpressions;
 
 namespace ImageProcessing;
 
@@ -8,6 +10,7 @@ internal static class Proxy {
 
     public static Action<IConfiguration> Parse(string name) => name.ToLowerInvariant() switch {
         "gaussianblur" => GaussianBlur,
+        "puttext" => PutText,
         _ => throw new ArgumentException($"参数 {name} 错误"),
     };
 
@@ -35,8 +38,6 @@ internal static class Proxy {
     /// 高斯模糊
     /// </summary>
     /// <param name="config"></param>
-    /// <exception cref="FileNotFoundException"></exception>
-    /// <exception cref="DirectoryNotFoundException"></exception>
     private static void GaussianBlur(IConfiguration config) {
         string sourcePath = config["sourcePath"];
         string savePath = config["savePath"];
@@ -50,4 +51,31 @@ internal static class Proxy {
         Service.GaussianBlur(sourcePath, savePath, radius);
     }
 
+    private static readonly Regex PointArgRegex = new(@" *\( *(\d+(?:\.\d+)?) *, *(\d+(?:\.\d+)?) *\) *");
+
+    /// <summary>
+    /// 图片添加文字
+    /// </summary>
+    /// <param name="config"></param>
+    private static void PutText(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string text = config["text"] ?? string.Empty;
+        string pointArg = config["point"] ?? $"(0,0)";
+        string fontScaleArg = config["fontScale"] ?? Service.DefaultPutTextFontScale.ToString();
+        string color = config["color"] ?? Service.DefaultPutTextFontColor.ToString();
+
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        // 检验 pointArg
+        if (PointArgRegex.Match(pointArg) is var pointArgMatch && !pointArgMatch.Success) {
+            throw new Exception("point 参数格式错误");
+        }
+        var point = new Point(
+            double.Parse(pointArgMatch.Groups[1].Value),
+            double.Parse(pointArgMatch.Groups[2].Value)
+        );
+        // 解析 fontScaleArg
+        double fontScale = double.Parse(fontScaleArg);
+        Service.PutText(sourcePath, savePath, text, point, fontScale, color);
+    }
 }
