@@ -22,9 +22,5 @@ public static class Helper {
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static IConfiguration GetConfiguration(string[] args) {
-        var builder = new ConfigurationBuilder();
-        builder.AddCommandLine(args);
-        return builder.Build();
-    }
+    public static IConfiguration GetConfiguration(string[] args) => new ConfigurationBuilder().AddCommandLine(args).Build();
 }
