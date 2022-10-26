@@ -12,5 +12,5 @@ Logger Logger = LogManager.GetCurrentClassLogger();
 try {
     Proxy.Parse(args[0])(Helper.GetConfiguration(args));
 } catch (Exception error) {
-    Logger.Error(error);
+    Logger.Error(error.Message);
 }

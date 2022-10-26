@@ -33,3 +33,13 @@
 
     示例：
         Flip sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'
+
+图像旋转（Rotate）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        angle: 旋转角度
+            范围：[0.0, 360.0]
+
+    示例：
+        Rotate sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' angle=45

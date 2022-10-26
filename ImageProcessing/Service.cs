@@ -18,6 +18,12 @@ public static class Service {
 
     internal const FlipMode DefaultFlipMode = FlipMode.Y;
 
+    #region Rotate
+    internal const double DefaultRotateAngle = 90;
+    internal const double MinRotateAngle = 0;
+    internal const double MaxRotateAngle = 360;
+    #endregion
+
     /// <summary>
     /// 高斯模糊
     /// </summary>
@@ -90,6 +96,27 @@ public static class Service {
         using var src = new Mat(sourcePath);
         using var dst = new Mat();
         Cv2.Flip(src, dst, flipMode);
+        dst.SaveImage(savePath);
+    }
+
+    /// <summary>
+    /// 旋转图像
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    /// <param name="angle"></param>
+    public static void Rotate(string sourcePath, string savePath, double angle = DefaultRotateAngle) {
+        if (angle < MinRotateAngle) {
+            angle = MinRotateAngle;
+        }
+        if (angle > MaxRotateAngle) {
+            angle = MaxRotateAngle;
+        }
+
+        using var src = new Mat(sourcePath);
+        using var dst = new Mat();
+        Mat mat = Cv2.GetRotationMatrix2D(new(src.Width >> 1, src.Height >> 1), angle, 1);
+        Cv2.WarpAffine(src, dst, mat, new(src.Cols, src.Rows));
         dst.SaveImage(savePath);
     }
 }

@@ -12,6 +12,7 @@ internal static class Proxy {
         "gaussianblur" => GaussianBlur,
         "puttext" => PutText,
         "flip" => Flip,
+        "rotate" => Rotate,
         _ => throw new ArgumentException($"参数 {name} 错误"),
     };
 
@@ -96,4 +97,22 @@ internal static class Proxy {
         }
         Service.Flip(sourcePath, savePath, flipMode);
     }
+
+    /// <summary>
+    /// 图像旋转
+    /// </summary>
+    /// <param name="config"></param>
+    private static void Rotate(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string angleArg = config["angle"] ?? Service.DefaultRotateAngle.ToString();
+
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        // 验证 angleArg
+        if (!double.TryParse(angleArg, out var angle)) {
+            throw new FormatException("参数 angle 无效");
+        }
+        Service.Rotate(sourcePath, savePath, angle);
+    }
+
 }
