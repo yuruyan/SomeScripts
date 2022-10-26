@@ -16,6 +16,8 @@ public static class Service {
     internal const string DefaultPutTextFontColor = "#000000";
     #endregion
 
+    internal const FlipMode DefaultFlipMode = FlipMode.Y;
+
     /// <summary>
     /// 高斯模糊
     /// </summary>
@@ -75,6 +77,19 @@ public static class Service {
             fontScale,
             Scalar.FromRgb(c.R, c.G, c.B)
         );
+        dst.SaveImage(savePath);
+    }
+
+    /// <summary>
+    /// 图像镜像
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    /// <param name="flipMode"></param>
+    public static void Flip(string sourcePath, string savePath, FlipMode flipMode = DefaultFlipMode) {
+        using var src = new Mat(sourcePath);
+        using var dst = new Mat();
+        Cv2.Flip(src, dst, flipMode);
         dst.SaveImage(savePath);
     }
 }

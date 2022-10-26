@@ -11,6 +11,7 @@ internal static class Proxy {
     public static Action<IConfiguration> Parse(string name) => name.ToLowerInvariant() switch {
         "gaussianblur" => GaussianBlur,
         "puttext" => PutText,
+        "flip" => Flip,
         _ => throw new ArgumentException($"参数 {name} 错误"),
     };
 
@@ -77,5 +78,22 @@ internal static class Proxy {
         // 解析 fontScaleArg
         double fontScale = double.Parse(fontScaleArg);
         Service.PutText(sourcePath, savePath, text, point, fontScale, color);
+    }
+
+    /// <summary>
+    /// 图像镜像
+    /// </summary>
+    /// <param name="config"></param>
+    private static void Flip(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string modeArg = (config["mode"] ?? Service.DefaultFlipMode.ToString()).ToUpperInvariant();
+
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        // 验证 modeArg 
+        if (!Enum.TryParse(modeArg, out FlipMode flipMode)) {
+            throw new ArgumentException("参数 mode 无效");
+        }
+        Service.Flip(sourcePath, savePath, flipMode);
     }
 }

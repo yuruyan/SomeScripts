@@ -23,3 +23,13 @@
 
     示例：
         PutText sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' point='(50, 200)' color='#ff0000'
+
+图像翻转（Flip）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        mode[可选]: 翻转模式，默认 Y
+            选项：[X, Y, XY]
+
+    示例：
+        Flip sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'
