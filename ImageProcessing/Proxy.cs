@@ -55,7 +55,7 @@ internal static class Proxy {
         Service.GaussianBlur(sourcePath, savePath, radius);
     }
 
-    private static readonly Regex PointArgRegex = new(@" *\( *(\d+(?:\.\d+)?) *, *(\d+(?:\.\d+)?) *\) *");
+    private static readonly Regex PutTextPointArgRegex = new(@" *\( *(\d+(?:\.\d+)?) *, *(\d+(?:\.\d+)?) *\) *");
 
     /// <summary>
     /// 图片添加文字
@@ -71,7 +71,7 @@ internal static class Proxy {
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 检验 pointArg
-        if (PointArgRegex.Match(pointArg) is var pointArgMatch && !pointArgMatch.Success) {
+        if (PutTextPointArgRegex.Match(pointArg) is var pointArgMatch && !pointArgMatch.Success) {
             throw new Exception("point 参数格式错误");
         }
         var point = new Point(
