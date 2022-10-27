@@ -132,4 +132,17 @@ public static class Service {
         using var dst = src.Clone(new(upperLeft, size));
         dst.SaveImage(savePath);
     }
+
+    /// <summary>
+    /// 缩放图像
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    /// <param name="getSize">获取目标大小，第1、2个参数分别为原图像的宽高</param>
+    public static void Resize(string sourcePath, string savePath, Func<int, int, Size> getSize) {
+        using var src = new Mat(sourcePath);
+        using var dst = new Mat();
+        Cv2.Resize(src, dst, getSize(src.Width, src.Height));
+        dst.SaveImage(savePath);
+    }
 }

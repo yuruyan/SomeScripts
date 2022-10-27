@@ -55,3 +55,16 @@
 
     示例：
         Crop sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' x=100 y=50 width=300 height=200
+
+图像缩放（Resize）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        width: 缩放后图像宽度，可设置为倍数缩放，如 '0.5*' 表示宽度缩放为原来的 50%
+        height: 缩放后图像高度，可设置为倍数缩放，如 '0.5*' 表示高度缩放为原来的 50%
+    
+    说明：
+        如果只指定 width 或 height，则为等比缩放
+
+    示例：
+        Resize sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' width=300 height='0.5*'

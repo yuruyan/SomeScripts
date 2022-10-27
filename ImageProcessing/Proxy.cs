@@ -14,6 +14,7 @@ internal static class Proxy {
         "flip" => Flip,
         "rotate" => Rotate,
         "crop" => Crop,
+        "resize" => Resize,
         _ => throw new ArgumentException($"参数 {name} 错误"),
     };
 
@@ -144,5 +145,67 @@ internal static class Proxy {
         }
 
         Service.Crop(sourcePath, savePath, new(x, y), new(width, height));
+    }
+
+    private static readonly Regex ResizeSizeArgRegex = new(@"^(\d+(?:\.\d+)?)\*?$");
+
+    /// <summary>
+    /// 图像缩放
+    /// </summary>
+    /// <param name="config"></param>
+    private static void Resize(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string? widthArg = config["width"]?.Trim();
+        string? heightArg = config["height"]?.Trim();
+
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        // 都为空
+        if (string.IsNullOrEmpty(widthArg) && string.IsNullOrEmpty(heightArg)) {
+            throw new ArgumentException("参数 width 和 height 未指定");
+        }
+
+        // 正则匹配
+        Match? widthMatch = widthArg == null ? null : ResizeSizeArgRegex.Match(widthArg);
+        Match? heightMatch = heightArg == null ? null : ResizeSizeArgRegex.Match(heightArg);
+        // 合法性判断
+        if (widthMatch != null && !widthMatch.Success) {
+            throw new FormatException("参数 width 不合法");
+        }
+        if (heightMatch != null && !heightMatch.Success) {
+            throw new FormatException("参数 height 不合法");
+        }
+
+        double? widthVal = widthMatch == null ? null : double.Parse(widthMatch.Groups[1].Value);
+        double? heightVal = heightMatch == null ? null : double.Parse(heightMatch.Groups[1].Value);
+        bool isWidthRatio = widthArg != null && widthArg.Contains('*');
+        bool isHeightRatio = heightArg != null && heightArg.Contains('*');
+        // 都指定
+        if (widthVal != null && heightVal != null) {
+            Service.Resize(sourcePath, savePath, (w, h) => {
+                double width = (double)(isWidthRatio ? w * widthVal : widthVal);
+                double height = (double)(isHeightRatio ? h * heightVal : heightVal);
+                return new(width, height);
+            });
+            return;
+        }
+        // 只指定 width
+        if (widthVal != null) {
+            Service.Resize(sourcePath, savePath, (w, h) => {
+                double width = (double)(isWidthRatio ? w * widthVal : widthVal);
+                double height = width * h / w;
+                return new(width, height);
+            });
+            return;
+        }
+        // 只指定 height
+        // 为了消除 heightVal waring
+        if (heightVal != null) {
+            Service.Resize(sourcePath, savePath, (w, h) => {
+                double height = (double)(isHeightRatio ? h * heightVal : heightVal);
+                double width = w * height / h;
+                return new(width, height);
+            });
+        }
     }
 }
