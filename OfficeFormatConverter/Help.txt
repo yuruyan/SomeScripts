@@ -1,0 +1,21 @@
+﻿Office 格式转换(Word, Excel, PowerPoint)
+
+参数列表：
+    sourcePath: office 文件路径
+    savePath: 保存路径
+
+提示：
+    Word 支持的格式转换：
+        doc ←→ docx ←→ txt
+        doc, docx -> pdf, html
+    
+    PowerPoint 支持的格式转换：
+        ppt ←→ pptx
+        ppt, pptx -> pdf, png, jpeg
+
+    Excel 支持的格式转换：
+        xls ←→ xlsx ←→ csv
+        xls, xlsx -> pdf, txt, html
+
+示例：
+    sourcePath='D:/word.doc' savePath='D:/word.docx'
