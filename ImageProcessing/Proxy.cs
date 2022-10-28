@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NLog;
 using OpenCvSharp;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace ImageProcessing;
@@ -8,15 +9,21 @@ namespace ImageProcessing;
 internal static class Proxy {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    public static Action<IConfiguration> Parse(string name) => name.ToLowerInvariant() switch {
-        "gaussianblur" => GaussianBlur,
-        "puttext" => PutText,
-        "flip" => Flip,
-        "rotate" => Rotate,
-        "crop" => Crop,
-        "resize" => Resize,
-        _ => throw new ArgumentException($"参数 {name} 错误"),
-    };
+    public static Action<IConfiguration> Parse(string name) {
+        var targetMethod = typeof(Proxy)
+            .GetMethods(BindingFlags.Default | BindingFlags.Static | BindingFlags.NonPublic)
+            .Where(info => info.ReturnType == typeof(void))
+            .Where(info => {
+                var paramInfos = info.GetParameters();
+                return paramInfos.Length == 1 && paramInfos[0].ParameterType == typeof(IConfiguration);
+            })
+            .FirstOrDefault(info => info.Name.ToLowerInvariant() == name.ToLowerInvariant());
+        // 参数错误
+        if (targetMethod == null) {
+            throw new ArgumentException($"参数 '{name}' 错误");
+        }
+        return targetMethod.CreateDelegate<Action<IConfiguration>>();
+    }
 
     /// <summary>
     /// 检查 sourcePath 和 savePath 是否合法
