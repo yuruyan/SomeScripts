@@ -1,0 +1,10 @@
+﻿提取 Word 图片
+
+参数列表：
+    sourcePath: word 文件路径
+    saveDir: 图片保存目录
+
+提示：确保 word 文件处于关闭状态
+
+示例：
+    sourcePath='D:/word.docx' saveDir='D:/images'
