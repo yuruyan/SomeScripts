@@ -8,7 +8,6 @@ if (!Helper.CheckArgs(args, Resource.Help)) {
 }
 
 Logger Logger = LogManager.GetCurrentClassLogger();
-
 try {
     Proxy.Parse(args[0])(Helper.GetConfiguration(args));
 } catch (Exception error) {
