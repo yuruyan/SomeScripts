@@ -1,4 +1,7 @@
-﻿namespace OfficeFormatConverter;
+﻿using NLog;
+using PpMediaTaskStatus = Microsoft.Office.Interop.PowerPoint.PpMediaTaskStatus;
+using PpSaveAsFileType = Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType;
+namespace OfficeFormatConverter;
 
 public static class Service {
     private const string Doc = ".doc";
@@ -9,10 +12,13 @@ public static class Service {
     private const string Ppt = ".ppt";
     private const string Pptx = ".pptx";
     private const string Png = ".png";
-    private const string Jpeg = ".jpeg";
+    private const string Jpg = ".jpg";
+    private const string Mp4 = ".mp4";
     private const string Xls = ".xls";
     private const string Xlsx = ".xlsx";
     private const string Csv = ".csv";
+
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// 选择匹配的转换器并转换
@@ -38,19 +44,25 @@ public static class Service {
             (Txt, Doc) => WordConvert,
             (Txt, Docx) => WordConvert,
             (Ppt, Pptx) => PowerPointConvert,
+            (Ppt, Mp4) => PowerPointConvert,
+            (Ppt, Ppt) => PowerPointConvert,
             (Ppt, Pdf) => PowerPointConvert,
             (Ppt, Png) => PowerPointConvert,
-            (Ppt, Jpeg) => PowerPointConvert,
+            (Ppt, Jpg) => PowerPointConvert,
             (Pptx, Ppt) => PowerPointConvert,
+            (Pptx, Mp4) => PowerPointConvert,
+            (Pptx, Pptx) => PowerPointConvert,
             (Pptx, Pdf) => PowerPointConvert,
             (Pptx, Png) => PowerPointConvert,
-            (Pptx, Jpeg) => PowerPointConvert,
+            (Pptx, Jpg) => PowerPointConvert,
             (Xls, Xlsx) => ExcelConvert,
+            (Xls, Xls) => ExcelConvert,
             (Xls, Csv) => ExcelConvert,
             (Xls, Pdf) => ExcelConvert,
             (Xls, Txt) => ExcelConvert,
             (Xls, Html) => ExcelConvert,
             (Xlsx, Xls) => ExcelConvert,
+            (Xlsx, Xlsx) => ExcelConvert,
             (Xlsx, Csv) => ExcelConvert,
             (Xlsx, Pdf) => ExcelConvert,
             (Xlsx, Txt) => ExcelConvert,
@@ -66,6 +78,7 @@ public static class Service {
     /// <param name="sourcePath"></param>
     /// <param name="savePath"></param>
     public static void WordConvert(string sourcePath, string savePath) {
+        ReplaceSlashWithBackSlash(ref sourcePath, ref savePath);
         if (CopyFileIfExtensionEqual(sourcePath, savePath)) {
             return;
         }
@@ -92,6 +105,16 @@ public static class Service {
             return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// 替换 '/' 为 '\\'
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    private static void ReplaceSlashWithBackSlash(ref string sourcePath, ref string savePath) {
+        sourcePath = sourcePath.Replace('/', '\\');
+        savePath = savePath.Replace('/', '\\');
     }
 
     /// <summary>
@@ -169,6 +192,7 @@ public static class Service {
     /// <param name="sourcePath"></param>
     /// <param name="savePath"></param>
     public static void ExcelConvert(string sourcePath, string savePath) {
+        ReplaceSlashWithBackSlash(ref sourcePath, ref savePath);
         if (CopyFileIfExtensionEqual(sourcePath, savePath)) {
             return;
         }
@@ -181,9 +205,78 @@ public static class Service {
     /// <param name="sourcePath"></param>
     /// <param name="savePath"></param>
     public static void PowerPointConvert(string sourcePath, string savePath) {
+        ReplaceSlashWithBackSlash(ref sourcePath, ref savePath);
         if (CopyFileIfExtensionEqual(sourcePath, savePath)) {
             return;
         }
 
+        string savePathExtension = Path.GetExtension(savePath).ToLowerInvariant();
+        var saveFormat = savePathExtension switch {
+            Pptx => PpSaveAsFileType.ppSaveAsDefault,
+            Ppt => PpSaveAsFileType.ppSaveAsPresentation,
+            Mp4 => PpSaveAsFileType.ppSaveAsMP4,
+            Pdf => PpSaveAsFileType.ppSaveAsPDF,
+            Png => PpSaveAsFileType.ppSaveAsPNG,
+            Jpg => PpSaveAsFileType.ppSaveAsJPG,
+            _ => throw new ArgumentException("没有匹配的格式转换模式")
+        };
+
+        var app = new Microsoft.Office.Interop.PowerPoint.Application();
+        var presentation = app.Presentations.Open(
+            sourcePath,
+            WithWindow: Microsoft.Office.Core.MsoTriState.msoFalse
+        );
+
+        try {
+            // 转换为视频
+            if (savePathExtension == Mp4) {
+                presentation.CreateVideo(savePath, VertResolution: 1080, Quality: 100);
+                Logger.Debug("开始导出视频");
+                while (
+                    presentation.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusInProgress
+                    || presentation.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusQueued
+                ) {
+                    Thread.Sleep(1000);
+                }
+                // 创建完成
+                if (presentation.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusFailed) {
+                    Logger.Error("导出视频失败");
+                } else {
+                    Logger.Error("导出视频完毕");
+                }
+            }
+            // 转换为图片
+            else if (savePathExtension == Png || savePathExtension == Jpg) {
+                // 图片保存目录
+                string saveDir = Path.Combine(
+                    Path.GetDirectoryName(savePath),
+                    Path.GetFileNameWithoutExtension(savePath)
+                );
+                Directory.CreateDirectory(saveDir);
+                int count = 0;
+                int slideDoubleWidth = (int)presentation.SlideMaster.Width << 2;
+                int slideDoubleHeight = (int)presentation.SlideMaster.Height << 2;
+                string format = savePathExtension == Png ? Png : Jpg;
+                // 开始导出
+                foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in presentation.Slides) {
+                    slide.Export(
+                        Path.Combine(saveDir, $"slide-{++count}{format}"),
+                        format,
+                        slideDoubleWidth,
+                        slideDoubleHeight
+                    );
+                    Logger.Debug($"导出第 {count} 张幻灯片成功");
+                }
+            }
+            // 其他格式
+            else {
+                presentation.SaveCopyAs(savePath, saveFormat);
+            }
+        } catch {
+            throw;
+        } finally {
+            presentation.Close();
+            app.Quit();
+        }
     }
 }
