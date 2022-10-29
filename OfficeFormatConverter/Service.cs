@@ -1,6 +1,11 @@
-﻿using NLog;
+﻿using CsvHelper;
+using NLog;
+using System.Data;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using PpMediaTaskStatus = Microsoft.Office.Interop.PowerPoint.PpMediaTaskStatus;
 using PpSaveAsFileType = Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType;
+using XlFileFormat = Microsoft.Office.Interop.Excel.XlFileFormat;
 namespace OfficeFormatConverter;
 
 public static class Service {
@@ -55,13 +60,15 @@ public static class Service {
             (Pptx, Pdf) => PowerPointConvert,
             (Pptx, Png) => PowerPointConvert,
             (Pptx, Jpg) => PowerPointConvert,
+            (Csv, Xlsx) => ExcelConvert,
+            //(Csv, Xls) => ExcelConvert,
             (Xls, Xlsx) => ExcelConvert,
-            (Xls, Xls) => ExcelConvert,
+            //(Xls, Xls) => ExcelConvert,
             (Xls, Csv) => ExcelConvert,
             (Xls, Pdf) => ExcelConvert,
             (Xls, Txt) => ExcelConvert,
             (Xls, Html) => ExcelConvert,
-            (Xlsx, Xls) => ExcelConvert,
+            //(Xlsx, Xls) => ExcelConvert,
             (Xlsx, Xlsx) => ExcelConvert,
             (Xlsx, Csv) => ExcelConvert,
             (Xlsx, Pdf) => ExcelConvert,
@@ -196,7 +203,71 @@ public static class Service {
         if (CopyFileIfExtensionEqual(sourcePath, savePath)) {
             return;
         }
+        string savePathExtension = Path.GetExtension(savePath).ToLowerInvariant();
+        var saveFormat = XlFileFormat.xlWorkbookDefault;
+        // pdf 特例
+        if (savePathExtension != Pdf) {
+            saveFormat = savePathExtension switch {
+                //Xls => XlFileFormat.xlExcel8,
+                Xlsx => XlFileFormat.xlWorkbookDefault,
+                Csv => XlFileFormat.xlCSV,
+                Txt => XlFileFormat.xlUnicodeText,
+                Html => XlFileFormat.xlHtml,
+                _ => throw new ArgumentException("文件格式类型错误")
+            };
+        }
+        var app = new Microsoft.Office.Interop.Excel.Application();
+        var workbooks = app.Workbooks;
+        var workbook = workbooks.Open(sourcePath);
 
+        try {
+            // 保存为 xls、xlsx、html 格式
+            if (savePathExtension == Xls || savePathExtension == Xlsx || savePathExtension == Html) {
+                if (savePathExtension == Xls) {
+                    workbook.AccuracyVersion = 1;
+                }
+                workbook.SaveAs2(
+                    savePath,
+                    saveFormat,
+                    ConflictResolution: Microsoft.Office.Interop.Excel.XlSaveConflictResolution.xlLocalSessionChanges
+                );
+            }
+            // 其他格式
+            else {
+                var worksheets = workbook.Worksheets;
+                var saveDir = Path.GetDirectoryName(savePath);
+                var saveFileName = Path.GetFileNameWithoutExtension(savePath);
+
+                // 导出全部 sheet
+                for (int i = 1; i <= worksheets.Count; i++) {
+                    var sheet = worksheets[i];
+                    // pdf 文件
+                    if (savePathExtension == Pdf) {
+                        sheet.ExportAsFixedFormat(
+                            Microsoft.Office.Interop.Excel.XlFixedFormatType.xlTypePDF,
+                            Path.Combine(saveDir, $"{saveFileName}-{sheet.Name}{savePathExtension}")
+                        );
+                    }
+                    // 其他文件
+                    else {
+                        string name = $"{saveFileName}-{sheet.Name}{savePathExtension}";
+                        sheet.SaveAs(Path.Combine(saveDir, name), saveFormat);
+                        Logger.Debug($"导出 {name} 成功");
+                    }
+                    Marshal.ReleaseComObject(sheet);
+                }
+                Marshal.ReleaseComObject(worksheets);
+            }
+        } catch {
+            throw;
+        } finally {
+            workbook.Close(false);
+            app.Quit();
+            // 加速 Excel 退出
+            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(workbooks);
+            Marshal.ReleaseComObject(app);
+        }
     }
 
     /// <summary>

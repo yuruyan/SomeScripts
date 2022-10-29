@@ -14,7 +14,7 @@
         ppt, pptx -> pdf, png, jpeg
 
     Excel 支持的格式转换：
-        xls ←→ xlsx ←→ csv
+        xls -> xlsx ←→ csv
         xls, xlsx -> pdf, txt, html
 
 示例：
