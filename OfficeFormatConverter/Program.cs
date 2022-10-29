@@ -31,50 +31,8 @@ if (Path.GetDirectoryName(savePath) is var saveDir && !Directory.Exists(saveDir)
     return;
 }
 
-string sourceFileExtension = Path.GetExtension(sourcePath).ToLowerInvariant();
-string saveFileExtension = Path.GetExtension(savePath).ToLowerInvariant();
-
-const string Doc = "doc";
-const string Docx = "docx";
-const string Txt = "txt";
-const string Pdf = "pdf";
-const string Html = "html";
-const string Ppt = "ppt";
-const string Pptx = "pptx";
-const string Png = "png";
-const string Jpeg = "jpeg";
-const string Xls = "xls";
-const string Xlsx = "xlsx";
-const string Csv = "csv";
-
-Action<string, string> method = (sourceFileExtension, saveFileExtension) switch {
-    (Doc, Docx) => Service.WordConvert,
-    (Doc, Txt) => Service.WordConvert,
-    (Doc, Pdf) => Service.WordConvert,
-    (Doc, Html) => Service.WordConvert,
-    (Docx, Doc) => Service.WordConvert,
-    (Docx, Txt) => Service.WordConvert,
-    (Docx, Pdf) => Service.WordConvert,
-    (Docx, Html) => Service.WordConvert,
-    (Txt, Doc) => Service.WordConvert,
-    (Txt, Docx) => Service.WordConvert,
-    (Ppt, Pptx) => Service.PowerPointConvert,
-    (Ppt, Pdf) => Service.PowerPointConvert,
-    (Ppt, Png) => Service.PowerPointConvert,
-    (Ppt, Jpeg) => Service.PowerPointConvert,
-    (Pptx, Ppt) => Service.PowerPointConvert,
-    (Pptx, Pdf) => Service.PowerPointConvert,
-    (Pptx, Png) => Service.PowerPointConvert,
-    (Pptx, Jpeg) => Service.PowerPointConvert,
-    (Xls, Xlsx) => Service.ExcelConvert,
-    (Xls, Csv) => Service.ExcelConvert,
-    (Xls, Pdf) => Service.ExcelConvert,
-    (Xls, Txt) => Service.ExcelConvert,
-    (Xls, Html) => Service.ExcelConvert,
-    (Xlsx, Xls) => Service.ExcelConvert,
-    (Xlsx, Csv) => Service.ExcelConvert,
-    (Xlsx, Pdf) => Service.ExcelConvert,
-    (Xlsx, Txt) => Service.ExcelConvert,
-    (Xlsx, Html) => Service.ExcelConvert,
-    _ => throw new ArgumentException("没有匹配的转换模式")
-};
+try {
+    Service.Convert(sourcePath, savePath);
+} catch (Exception error) {
+    Logger.Error(error);
+}
