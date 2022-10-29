@@ -26,10 +26,12 @@ public static class Service {
         string saveFileExtension = Path.GetExtension(savePath).ToLowerInvariant();
         Action<string, string> method = (sourceFileExtension, saveFileExtension) switch {
             (Doc, Docx) => WordConvert,
+            (Doc, Doc) => WordConvert,
             (Doc, Txt) => WordConvert,
             (Doc, Pdf) => WordConvert,
             (Doc, Html) => WordConvert,
             (Docx, Doc) => WordConvert,
+            (Docx, Docx) => WordConvert,
             (Docx, Txt) => WordConvert,
             (Docx, Pdf) => WordConvert,
             (Docx, Html) => WordConvert,
@@ -64,11 +66,32 @@ public static class Service {
     /// <param name="sourcePath"></param>
     /// <param name="savePath"></param>
     public static void WordConvert(string sourcePath, string savePath) {
+        if (CopyFileIfExtensionEqual(sourcePath, savePath)) {
+            return;
+        }
+
         if (Path.GetExtension(sourcePath).ToLowerInvariant() == ".txt") {
             CreateWordFromText(sourcePath, savePath);
         } else {
             WordFormatConvert(sourcePath, savePath);
         }
+    }
+
+    /// <summary>
+    /// 文件后缀相同则直接拷贝
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    /// <returns></returns>
+    private static bool CopyFileIfExtensionEqual(string sourcePath, string savePath) {
+        string srcExt = Path.GetExtension(sourcePath).ToLowerInvariant();
+        string saveExt = Path.GetExtension(savePath).ToLowerInvariant();
+        // 直接复制
+        if (srcExt == saveExt) {
+            File.Copy(sourcePath, savePath, true);
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -119,11 +142,27 @@ public static class Service {
         app.Quit();
     }
 
+    /// <summary>
+    /// Excel 转换
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
     public static void ExcelConvert(string sourcePath, string savePath) {
+        if (CopyFileIfExtensionEqual(sourcePath, savePath)) {
+            return;
+        }
 
     }
 
+    /// <summary>
+    /// PowerPoint 转换
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
     public static void PowerPointConvert(string sourcePath, string savePath) {
+        if (CopyFileIfExtensionEqual(sourcePath, savePath)) {
+            return;
+        }
 
     }
 }
