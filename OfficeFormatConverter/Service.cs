@@ -110,14 +110,19 @@ public static class Service {
         var docxFormat = Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatXMLDocument;
         var app = new Microsoft.Office.Interop.Word.Application();
         var document = app.Documents.Add();
-        document.Paragraphs.Add().Range.Text = File.ReadAllText(textPath);
-        // 另存为
-        document.SaveAs(
-            savePath,
-            ext == ".doc" ? docFormat : docxFormat
-        );
-        document.Close();
-        app.Quit();
+        try {
+            document.Paragraphs.Add().Range.Text = File.ReadAllText(textPath);
+            // 另存为
+            document.SaveAs(
+                savePath,
+                ext == ".doc" ? docFormat : docxFormat
+            );
+        } catch {
+            throw;
+        } finally {
+            document.Close();
+            app.Quit();
+        }
     }
 
     /// <summary>
@@ -126,20 +131,36 @@ public static class Service {
     /// <param name="wordPath"></param>
     /// <param name="savePath"></param>
     private static void WordFormatConvert(string wordPath, string savePath) {
-        var saveFormat = Path.GetExtension(savePath).ToLowerInvariant() switch {
+        string savePathExtension = Path.GetExtension(savePath).ToLowerInvariant();
+        var saveFormat = savePathExtension switch {
             Docx => Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatXMLDocument,
             Doc => Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatDocument97,
-            Txt => Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatText,
+            Txt => Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatUnicodeText,
             Pdf => Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatPDF,
             Html => Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatHTML,
             _ => throw new ArgumentException("没有匹配的格式转换模式")
         };
+
         var app = new Microsoft.Office.Interop.Word.Application();
         var document = app.Documents.Open(wordPath);
         // 另存为
-        document.SaveAs(savePath, saveFormat);
-        document.Close();
-        app.Quit();
+        try {
+            // 文本
+            if (savePathExtension == Txt) {
+                document.SaveAs(
+                    savePath,
+                    saveFormat,
+                    Encoding: Microsoft.Office.Core.MsoEncoding.msoEncodingUTF8
+                );
+            } else {
+                document.SaveAs(savePath, saveFormat);
+            }
+        } catch {
+            throw;
+        } finally {
+            document.Close();
+            app.Quit();
+        }
     }
 
     /// <summary>
