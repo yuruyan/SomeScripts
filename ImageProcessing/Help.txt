@@ -68,3 +68,13 @@
 
     示例：
         Resize sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' width=300 height='0.5*'
+
+图片转 Icon（ConvertToIcon）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        size[可选]: Icon 大小，默认 64 px
+            范围：[8, 256]
+
+    示例：
+        ConvertToIcon sourcePath='D:/temp/image.png' savePath='D:/temp/output.ico'

@@ -215,4 +215,20 @@ internal static class Proxy {
             });
         }
     }
+
+    /// <summary>
+    /// 转换图片为 icon
+    /// </summary>
+    /// <param name="config"></param>
+    private static void ConvertToIcon(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string sizeArg = config["size"] ?? Service.DefaultConvertToIconSize.ToString();
+
+        if (!int.TryParse(sizeArg, out int size)) {
+            throw new FormatException($"参数 {nameof(size)} 无效");
+        }
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        Service.ConvertToIcon(sourcePath, savePath, size);
+    }
 }
