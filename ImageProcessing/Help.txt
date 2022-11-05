@@ -17,9 +17,13 @@
         text: 要添加的文字
         point[可选]: 文字左上角坐标（图片左上角为(0, 0)），默认为左上角
             格式：(x坐标，y坐标)
-        fontScale[可选]: 字体放大倍数，默认为 1
-            范围：[0.1, 16.0]
+        fontSize[可选]: 字体大小，默认为 24
+            范围：[1, 1024]
         color[可选]: 字体颜色，默认为黑色（#000000）
+        fontFamily[可选]: 字体，默认为等线
+            Windows 字体目录：C:\Windows\Fonts
+        fontStyle[可选]: 字体样式，默认为 Regular
+            选项：[Regular, Bold, Italic, Underline, Strikeout]
 
     示例：
         PutText sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' point='(50, 200)' color='#ff0000'

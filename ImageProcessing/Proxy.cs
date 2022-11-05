@@ -73,8 +73,10 @@ internal static class Proxy {
         string savePath = config["savePath"];
         string text = config["text"] ?? string.Empty;
         string pointArg = config["point"] ?? $"(0,0)";
-        string fontScaleArg = config["fontScale"] ?? Service.DefaultPutTextFontScale.ToString();
-        string color = config["color"] ?? Service.DefaultPutTextFontColor.ToString();
+        string fontSizeArg = config["fontSize"] ?? Service.DefaultPutTextFontSize.ToString();
+        string color = config["color"] ?? Service.DefaultPutTextFontColor;
+        string fontStyleArg = config["fontStyle"] ?? Service.DefaultPutTextFontStyle.ToString();
+        string fontFamily = config["fontFamily"] ?? Service.DefaultPutTextFontFamily;
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 检验 pointArg
@@ -85,9 +87,13 @@ internal static class Proxy {
             double.Parse(pointArgMatch.Groups[1].Value),
             double.Parse(pointArgMatch.Groups[2].Value)
         );
-        // 解析 fontScaleArg
-        double fontScale = double.Parse(fontScaleArg);
-        Service.PutText(sourcePath, savePath, text, point, fontScale, color);
+        // 解析 fontSizeArg
+        double fontSize = double.Parse(fontSizeArg);
+        // 解析 fontStyleArg
+        if (!Enum.TryParse(fontStyleArg, out System.Drawing.FontStyle fontStyle)) {
+            fontStyle = Service.DefaultPutTextFontStyle;
+        }
+        Service.PutText(sourcePath, savePath, text, point, fontStyle, fontFamily, fontSize, color);
     }
 
     /// <summary>

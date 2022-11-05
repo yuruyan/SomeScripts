@@ -1,4 +1,7 @@
 ﻿using OpenCvSharp;
+using System.Drawing;
+using Point = OpenCvSharp.Point;
+using Size = OpenCvSharp.Size;
 
 namespace ImageProcessing;
 
@@ -10,10 +13,12 @@ public static class Service {
     #endregion
 
     #region PutText
-    internal const double DefaultPutTextFontScale = 1;
-    internal const double MinPutTextFontScale = 0.1;
-    internal const double MaxPutTextFontScale = 16;
+    internal const double DefaultPutTextFontSize = 24;
+    internal const double MinPutTextFontSize = 1;
+    internal const double MaxPutTextFontSize = 1024;
     internal const string DefaultPutTextFontColor = "#000000";
+    internal const FontStyle DefaultPutTextFontStyle = FontStyle.Regular;
+    internal const string DefaultPutTextFontFamily = "等线";
     #endregion
 
     internal const FlipMode DefaultFlipMode = FlipMode.Y;
@@ -57,7 +62,7 @@ public static class Service {
     /// <param name="savePath"></param>
     /// <param name="text"></param>
     /// <param name="point">文字左上角坐标</param>
-    /// <param name="fontScale">字体放大倍数</param>
+    /// <param name="fontSize">字体大小</param>
     /// <param name="color">字体颜色</param>
     /// <exception cref="ArgumentException">text 为空字符串</exception>
     public static void PutText(
@@ -65,31 +70,36 @@ public static class Service {
         string savePath,
         string text,
         Point point,
-        double fontScale = DefaultPutTextFontScale,
+        FontStyle fontStyle = DefaultPutTextFontStyle,
+        string fontFamily = DefaultPutTextFontFamily,
+        double fontSize = DefaultPutTextFontSize,
         string color = DefaultPutTextFontColor
     ) {
-        if (fontScale < MinPutTextFontScale) {
-            fontScale = MinPutTextFontScale;
+        if (fontSize < MinPutTextFontSize) {
+            fontSize = MinPutTextFontSize;
         }
-        if (fontScale > MaxPutTextFontScale) {
-            fontScale = MaxPutTextFontScale;
+        if (fontSize > MaxPutTextFontSize) {
+            fontSize = MaxPutTextFontSize;
         }
         if (string.IsNullOrEmpty(text)) {
             throw new ArgumentException("text 不能为空");
         }
 
-        using var src = new Mat(sourcePath);
-        using var dst = src.Clone();
-        var c = System.Drawing.ColorTranslator.FromHtml(color);
-        Cv2.PutText(
-            dst,
-            text,
-            point,
-            HersheyFonts.HersheySimplex,
-            fontScale,
-            Scalar.FromRgb(c.R, c.G, c.B)
-        );
-        dst.SaveImage(savePath);
+        // 设置字体、字号、是否加粗
+        using var LabelFont = new Font(fontFamily, (float)fontSize, fontStyle);
+        // 设置字体颜色
+        using var labelColor = new SolidBrush(ColorTranslator.FromHtml(color));
+        // 底图
+        using var ms = new MemoryStream(File.ReadAllBytes(sourcePath));
+        // 底图
+        using var imgSource = Image.FromStream(ms);
+        // 设置画图对象
+        using var graphics = Graphics.FromImage(imgSource);
+        // 绘图区域框，x方向开始位置，y方向开始位置，宽和高是矩形的宽和高
+        var rt = new Rectangle(point.X, point.Y, imgSource.Width, imgSource.Height);
+        // 相对于左上角的x、y坐标
+        graphics.DrawString(text, LabelFont, labelColor, point.X, point.Y);
+        imgSource.Save(savePath);
     }
 
     /// <summary>
