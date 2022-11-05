@@ -62,6 +62,8 @@ public static class Service {
     /// <param name="savePath"></param>
     /// <param name="text"></param>
     /// <param name="point">文字左上角坐标</param>
+    /// <param name="fontStyle">字体样式</param>
+    /// <param name="fontFamily">字体</param>
     /// <param name="fontSize">字体大小</param>
     /// <param name="color">字体颜色</param>
     /// <exception cref="ArgumentException">text 为空字符串</exception>
