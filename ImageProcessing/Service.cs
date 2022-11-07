@@ -279,4 +279,16 @@ public static class Service {
         );
         resultImage.Save(savePath, ImageFormat.Png);
     }
+
+    /// <summary>
+    /// 反色处理
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    public static void InvertColor(string sourcePath, string savePath) {
+        using var src = new Mat(sourcePath);
+        using var dst = new Mat();
+        Cv2.BitwiseNot(src, dst);
+        dst.SaveImage(savePath);
+    }
 }

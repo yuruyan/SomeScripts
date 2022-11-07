@@ -100,3 +100,11 @@
 
     示例：
         Transparent sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'
+
+图片反色（InvertColor）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+
+    示例：
+        InvertColor sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'

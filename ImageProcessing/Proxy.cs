@@ -266,4 +266,16 @@ internal static class Proxy {
         CheckSourcePathAndSavePath(sourcePath, savePath);
         Service.Transparentize(sourcePath, savePath, opacity);
     }
+
+    /// <summary>
+    /// 图片反色
+    /// </summary>
+    /// <param name="config"></param>
+    private static void InvertColor(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        Service.InvertColor(sourcePath, savePath);
+    }
 }
