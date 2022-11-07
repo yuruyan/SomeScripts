@@ -140,7 +140,7 @@ public static class Service {
 
         using var src = new Mat(sourcePath);
         using var dst = new Mat();
-        Mat mat = Cv2.GetRotationMatrix2D(new(src.Width >> 1, src.Height >> 1), angle, 1);
+        using var mat = Cv2.GetRotationMatrix2D(new(src.Width >> 1, src.Height >> 1), angle, 1);
         Cv2.WarpAffine(src, dst, mat, new(src.Cols, src.Rows));
         dst.SaveImage(savePath);
     }
@@ -185,9 +185,9 @@ public static class Service {
             size = MaxConvertToIconSize;
         }
 
-        var inputBitmap = new Bitmap(sourcePath);
+        using var inputBitmap = new Bitmap(sourcePath);
         int width = size, height = width * inputBitmap.Height / inputBitmap.Width;
-        var newBitmap = new Bitmap(inputBitmap, new System.Drawing.Size(width, height));
+        using var newBitmap = new Bitmap(inputBitmap, new System.Drawing.Size(width, height));
         // save the resized png into a memory stream for future use
         using var memoryStream = new MemoryStream();
         // 先删除文件
