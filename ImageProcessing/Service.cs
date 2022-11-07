@@ -1,5 +1,6 @@
 ﻿using OpenCvSharp;
 using System.Drawing;
+using System.Drawing.Imaging;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
@@ -178,9 +179,9 @@ public static class Service {
             size = MaxConvertToIconSize;
         }
 
-        var inputBitmap = new System.Drawing.Bitmap(sourcePath);
+        var inputBitmap = new Bitmap(sourcePath);
         int width = size, height = width * inputBitmap.Height / inputBitmap.Width;
-        var newBitmap = new System.Drawing.Bitmap(inputBitmap, new System.Drawing.Size(width, height));
+        var newBitmap = new Bitmap(inputBitmap, new System.Drawing.Size(width, height));
         // save the resized png into a memory stream for future use
         using var memoryStream = new MemoryStream();
         // 先删除文件
@@ -189,7 +190,7 @@ public static class Service {
         }
         using var outputStream = File.OpenWrite(savePath);
 
-        newBitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+        newBitmap.Save(memoryStream, ImageFormat.Png);
         var iconWriter = new BinaryWriter(outputStream);
         // 0-1 reserved, 0
         iconWriter.Write((byte)0);
@@ -220,4 +221,5 @@ public static class Service {
         iconWriter.Write(memoryStream.ToArray());
         iconWriter.Flush();
     }
+
 }
