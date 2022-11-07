@@ -1,4 +1,5 @@
 ﻿using OpenCvSharp;
+using Svg;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Point = OpenCvSharp.Point;
@@ -312,4 +313,18 @@ public static class Service {
             ImageFormatPng => ImageFormat.Png,
             _ => ImageFormat.Png
         };
+
+    /// <summary>
+    /// Svg 转图片
+    /// <paramref name="width"/> 或 <paramref name="height"/> 为 0 则保持纵横比
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    /// <param name="width">宽度</param>
+    /// <param name="height">高度</param>
+    public static void SvgConvert(string sourcePath, string savePath, int width, int height) {
+        var svgDoc = SvgDocument.Open(sourcePath);
+        using Bitmap bitmap = svgDoc.Draw(width, height);
+        bitmap.Save(savePath, ImageFormat.Png);
+    }
 }

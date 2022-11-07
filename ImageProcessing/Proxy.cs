@@ -278,4 +278,65 @@ internal static class Proxy {
         CheckSourcePathAndSavePath(sourcePath, savePath);
         Service.InvertColor(sourcePath, savePath);
     }
+
+    /// <summary>
+    /// 解析 Size
+    /// </summary>
+    /// <param name="widthArg"></param>
+    /// <param name="heightArg"></param>
+    /// <param name="widthRequired">宽度是否必需</param>
+    /// <param name="heightRequired">高度是否必需</param>
+    /// <param name="widthOrHeightRequired">width 或 height 必需，此时 <paramref name="heightArg"/> 和 <paramref name="widthArg"/> 失效</param>
+    /// <param name="widthArgName">命令行 width 参数名称</param>
+    /// <param name="heightArgName">命令行 height 参数名称</param>
+    /// <returns><paramref name="widthArg"/> 为空返回 0，<paramref name="heightArg"/> 为空返回 0</returns>
+    /// <exception cref="ArgumentException">required 不满足条件时抛出异常</exception>
+    private static System.Drawing.Size GetSize(
+        string? widthArg,
+        string? heightArg,
+        bool widthRequired = false,
+        bool heightRequired = false,
+        bool widthOrHeightRequired = false,
+        string widthArgName = "width",
+        string heightArgName = "height"
+    ) {
+        // null 判断
+        if (widthOrHeightRequired) {
+            if (widthArg == null && heightArg == null) {
+                throw new ArgumentException($"参数 {widthArgName} 和 {heightArgName} 不能同时为空");
+            }
+        } else {
+            if (widthRequired && widthArg == null) {
+                throw new ArgumentException($"参数 {widthArgName} 不能为空");
+            }
+            if (heightRequired && heightArg == null) {
+                throw new ArgumentException($"参数 {heightArgName} 不能为空");
+            }
+        }
+        widthArg ??= "0";
+        heightArg ??= "0";
+        // 解析
+        if (!int.TryParse(widthArg, out var width) || width < 0) {
+            throw new ArgumentException($"参数 {widthArgName} 无效");
+        }
+        if (!int.TryParse(heightArg, out var height) || height < 0) {
+            throw new ArgumentException($"参数 {heightArgName} 无效");
+        }
+        return new System.Drawing.Size(width, height);
+    }
+
+    /// <summary>
+    /// Svg 转图片
+    /// </summary>
+    /// <param name="config"></param>
+    private static void SvgConvert(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string? widthArg = config["width"];
+        string? heightArg = config["height"];
+
+        var size = GetSize(widthArg, heightArg);
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        Service.SvgConvert(sourcePath, savePath, size.Width, size.Height);
+    }
 }

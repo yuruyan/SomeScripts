@@ -108,3 +108,13 @@
 
     示例：
         InvertColor sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'
+
+Svg 转图片（SvgConvert）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        width[可选]: 图像宽度，为空则保持纵横比
+        height[可选]: 图像高度，为空则保持纵横比
+
+    示例：
+        SvgConvert sourcePath='D:/temp/image.png' savePath='D:/temp/output.png' width=256
