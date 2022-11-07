@@ -90,3 +90,13 @@
 
     示例：
         GrayScale sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'
+
+不透明度处理（Transparent）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+        opacity: 不透明度，默认 0.5
+            范围：[0, 1]
+
+    示例：
+        Transparent sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'

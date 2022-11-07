@@ -249,4 +249,21 @@ internal static class Proxy {
         CheckSourcePathAndSavePath(sourcePath, savePath);
         Service.GrayScale(sourcePath, savePath);
     }
+
+    /// <summary>
+    /// 不透明度处理
+    /// </summary>
+    /// <param name="config"></param>
+    private static void Transparentize(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+        string opacityArg = config["opacity"] ?? Service.DefaultTransparentizeOpacity.ToString();
+
+        if (!float.TryParse(opacityArg, out var opacity)) {
+            Logger.Error($"参数 {nameof(opacity)} 无效");
+            return;
+        }
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        Service.Transparentize(sourcePath, savePath, opacity);
+    }
 }

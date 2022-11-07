@@ -36,6 +36,12 @@ public static class Service {
     internal const int MaxConvertToIconSize = 256;
     #endregion
 
+    #region Transparentize
+    internal const float DefaultTransparentizeOpacity = 0.5f;
+    internal const float MinTransparentizeOpacity = 0f;
+    internal const float MaxTransparentizeOpacity = 1f;
+    #endregion
+
     /// <summary>
     /// 高斯模糊
     /// </summary>
@@ -231,5 +237,46 @@ public static class Service {
         using var src = new Mat(sourcePath, ImreadModes.Grayscale);
         using var dst = src.Clone();
         dst.SaveImage(savePath);
+    }
+
+    /// <summary>
+    /// 图片透明
+    /// </summary>
+    /// <param name="opacity">不透明度</param>
+    /// <returns></returns>
+    public static void Transparentize(string sourcePath, string savePath, float opacity = DefaultTransparentizeOpacity) {
+        if (opacity < MinTransparentizeOpacity) {
+            opacity = MinTransparentizeOpacity;
+        }
+        if (opacity > MaxTransparentizeOpacity) {
+            opacity = MaxTransparentizeOpacity;
+        }
+
+        using var srcImage = new Bitmap(sourcePath);
+        float[][] nArray = {
+            new float[] {1, 0, 0, 0, 0},
+            new float[] {0, 1, 0, 0, 0},
+            new float[] {0, 0, 1, 0, 0},
+            new float[] {0, 0, 0, opacity, 0},
+            new float[] {0, 0, 0, 0, 1}
+        };
+        var width = srcImage.Width;
+        var height = srcImage.Height;
+        var matrix = new ColorMatrix(nArray);
+        using var attributes = new ImageAttributes();
+        attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+        using var resultImage = new Bitmap(width, height);
+        using var g = Graphics.FromImage(resultImage);
+        g.DrawImage(
+            srcImage,
+            new(0, 0, width, height),
+            0,
+            0,
+            width,
+            height,
+            GraphicsUnit.Pixel,
+            attributes
+        );
+        resultImage.Save(savePath, ImageFormat.Png);
     }
 }
