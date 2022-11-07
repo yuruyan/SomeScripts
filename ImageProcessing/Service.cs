@@ -222,4 +222,14 @@ public static class Service {
         iconWriter.Flush();
     }
 
+    /// <summary>
+    /// 灰度处理
+    /// </summary>
+    /// <param name="sourcePath"></param>
+    /// <param name="savePath"></param>
+    public static void GrayScale(string sourcePath, string savePath) {
+        using var src = new Mat(sourcePath, ImreadModes.Grayscale);
+        using var dst = src.Clone();
+        dst.SaveImage(savePath);
+    }
 }

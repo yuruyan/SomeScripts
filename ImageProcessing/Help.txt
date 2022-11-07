@@ -82,3 +82,11 @@
 
     示例：
         ConvertToIcon sourcePath='D:/temp/image.png' savePath='D:/temp/output.ico'
+
+灰度处理（GrayScale）
+    参数列表：
+        sourcePath: 源文件路径
+        savePath: 保存路径
+
+    示例：
+        GrayScale sourcePath='D:/temp/image.png' savePath='D:/temp/output.png'

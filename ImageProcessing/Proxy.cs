@@ -237,4 +237,16 @@ internal static class Proxy {
         CheckSourcePathAndSavePath(sourcePath, savePath);
         Service.ConvertToIcon(sourcePath, savePath, size);
     }
+
+    /// <summary>
+    /// 灰度处理
+    /// </summary>
+    /// <param name="config"></param>
+    private static void GrayScale(IConfiguration config) {
+        string sourcePath = config["sourcePath"];
+        string savePath = config["savePath"];
+
+        CheckSourcePathAndSavePath(sourcePath, savePath);
+        Service.GrayScale(sourcePath, savePath);
+    }
 }
