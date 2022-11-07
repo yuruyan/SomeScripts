@@ -229,13 +229,15 @@ internal static class Proxy {
     private static void ConvertToIcon(IConfiguration config) {
         string sourcePath = config["sourcePath"];
         string savePath = config["savePath"];
-        string sizeArg = config["size"] ?? Service.DefaultConvertToIconSize.ToString();
+        string? widthArg = config["width"];
+        string? heightArg = config["height"];
 
-        if (!int.TryParse(sizeArg, out int size)) {
-            throw new FormatException($"参数 {nameof(size)} 无效");
-        }
+        var size = GetSize(widthArg, heightArg);
         CheckSourcePathAndSavePath(sourcePath, savePath);
-        Service.ConvertToIcon(sourcePath, savePath, size);
+        if (size.Width == 0 && size.Height == 0) {
+            size.Width = Service.DefaultConvertToIconSize;
+        }
+        Service.ConvertToIcon(sourcePath, savePath, size.Width, size.Height);
     }
 
     /// <summary>

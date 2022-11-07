@@ -41,8 +41,8 @@ public static class Service {
     #endregion
 
     #region ConvertToIcon
-    internal const int DefaultConvertToIconSize = 64;
-    internal const int MinConvertToIconSize = 8;
+    internal const int DefaultConvertToIconSize = 128;
+    //internal const int MinConvertToIconSize = 8;
     internal const int MaxConvertToIconSize = 256;
     #endregion
 
@@ -183,20 +183,32 @@ public static class Service {
 
     /// <summary>
     /// 图片转换为 icon
+    /// <paramref name="width"/> 或 <paramref name="height"/> 为 0 则保持纵横比
     /// </summary>
     /// <param name="sourcePath"></param>
     /// <param name="savePath"></param>
-    /// <param name="size"></param>
-    public static void ConvertToIcon(string sourcePath, string savePath, int size = DefaultConvertToIconSize) {
-        if (size < MinConvertToIconSize) {
-            size = MinConvertToIconSize;
+    /// <param name="width">宽度</param>
+    /// <param name="height">高度</param>
+    /// <exception cref="ArgumentException">宽高都小于等于 0</exception>
+    public static void ConvertToIcon(string sourcePath, string savePath, int width, int height) {
+        if (width <= 0 && height <= 0) {
+            throw new ArgumentException("width、height 无效");
         }
-        if (size > MaxConvertToIconSize) {
-            size = MaxConvertToIconSize;
+        if (width > MaxConvertToIconSize) {
+            width = MaxConvertToIconSize;
+        }
+        if (height > MaxConvertToIconSize) {
+            height = MaxConvertToIconSize;
         }
 
         using var inputBitmap = new Bitmap(sourcePath);
-        int width = size, height = width * inputBitmap.Height / inputBitmap.Width;
+        // 保持纵横比
+        if (width == 0) {
+            width = height * inputBitmap.Width / inputBitmap.Height;
+        }
+        if (height == 0) {
+            height = width * inputBitmap.Height / inputBitmap.Width;
+        }
         using var newBitmap = new Bitmap(inputBitmap, new System.Drawing.Size(width, height));
         // save the resized png into a memory stream for future use
         using var memoryStream = new MemoryStream();

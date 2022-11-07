@@ -77,8 +77,13 @@
     参数列表：
         sourcePath: 源文件路径
         savePath: 保存路径
-        size[可选]: Icon 大小，默认 64 px
-            范围：[8, 256]
+        width[可选]: Icon 大小，默认 128 px，为空则保持纵横比
+            范围：[1, 256]
+        height[可选]: Icon 大小，默认 128 px，为空则保持纵横比
+            范围：[1, 256]
+
+    说明：
+        如果 width 或 height 都没有指定，则设置 width 为 128px，高度自适应
 
     示例：
         ConvertToIcon sourcePath='D:/temp/image.png' savePath='D:/temp/output.ico'
