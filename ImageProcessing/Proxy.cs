@@ -46,6 +46,52 @@ internal static class Proxy {
     }
 
     /// <summary>
+    /// 解析 Size
+    /// </summary>
+    /// <param name="widthArg"></param>
+    /// <param name="heightArg"></param>
+    /// <param name="widthRequired">宽度是否必需</param>
+    /// <param name="heightRequired">高度是否必需</param>
+    /// <param name="widthOrHeightRequired">width 或 height 必需，此时 <paramref name="heightArg"/> 和 <paramref name="widthArg"/> 失效</param>
+    /// <param name="widthArgName">命令行 width 参数名称</param>
+    /// <param name="heightArgName">命令行 height 参数名称</param>
+    /// <returns><paramref name="widthArg"/> 为空返回 0，<paramref name="heightArg"/> 为空返回 0</returns>
+    /// <exception cref="ArgumentException">required 不满足条件时或解析出错或小于 0 抛出异常</exception>
+    private static System.Drawing.Size GetSize(
+        string? widthArg,
+        string? heightArg,
+        bool widthRequired = false,
+        bool heightRequired = false,
+        bool widthOrHeightRequired = false,
+        string widthArgName = "width",
+        string heightArgName = "height"
+    ) {
+        // null 判断
+        if (widthOrHeightRequired) {
+            if (widthArg == null && heightArg == null) {
+                throw new ArgumentException($"参数 {widthArgName} 和 {heightArgName} 不能同时为空");
+            }
+        } else {
+            if (widthRequired && widthArg == null) {
+                throw new ArgumentException($"参数 {widthArgName} 不能为空");
+            }
+            if (heightRequired && heightArg == null) {
+                throw new ArgumentException($"参数 {heightArgName} 不能为空");
+            }
+        }
+        widthArg ??= "0";
+        heightArg ??= "0";
+        // 解析
+        if (!int.TryParse(widthArg, out var width) || width < 0) {
+            throw new ArgumentException($"参数 {widthArgName} 无效");
+        }
+        if (!int.TryParse(heightArg, out var height) || height < 0) {
+            throw new ArgumentException($"参数 {heightArgName} 无效");
+        }
+        return new System.Drawing.Size(width, height);
+    }
+
+    /// <summary>
     /// 高斯模糊
     /// </summary>
     /// <param name="config"></param>
@@ -137,27 +183,21 @@ internal static class Proxy {
     private static void Crop(IConfiguration config) {
         string sourcePath = config["sourcePath"];
         string savePath = config["savePath"];
-        string xArg = config["x"] ?? "0";
-        string yArg = config["y"] ?? "0";
-        string widthArg = config["width"] ?? throw new ArgumentException("参数 width 不能为空");
-        string heightArg = config["height"] ?? throw new ArgumentException("参数 height 不能为空");
+        string xArg = config["x"];
+        string yArg = config["y"];
+        string widthArg = config["width"];
+        string heightArg = config["height"];
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 参数验证
-        if (!int.TryParse(xArg, out var x)) {
-            throw new ArgumentException($"参数 {nameof(x)} 无效");
-        }
-        if (!int.TryParse(yArg, out var y)) {
-            throw new ArgumentException($"参数 {nameof(y)} 无效");
-        }
-        if (!int.TryParse(widthArg, out var width)) {
-            throw new ArgumentException($"参数 {nameof(width)} 无效");
-        }
-        if (!int.TryParse(heightArg, out var height)) {
-            throw new ArgumentException($"参数 {nameof(height)} 无效");
-        }
-
-        Service.Crop(sourcePath, savePath, new(x, y), new(width, height));
+        var position = GetSize(xArg, yArg, widthArgName: "x", heightArgName: "y");
+        var size = GetSize(widthArg, heightArg, true, true);
+        Service.Crop(
+            sourcePath,
+            savePath,
+            new(position.Width, position.Height),
+            new(size.Width, size.Height)
+        );
     }
 
     private static readonly Regex ResizeSizeArgRegex = new(@"^(\d+(?:\.\d+)?)\*?$");
@@ -279,52 +319,6 @@ internal static class Proxy {
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         Service.InvertColor(sourcePath, savePath);
-    }
-
-    /// <summary>
-    /// 解析 Size
-    /// </summary>
-    /// <param name="widthArg"></param>
-    /// <param name="heightArg"></param>
-    /// <param name="widthRequired">宽度是否必需</param>
-    /// <param name="heightRequired">高度是否必需</param>
-    /// <param name="widthOrHeightRequired">width 或 height 必需，此时 <paramref name="heightArg"/> 和 <paramref name="widthArg"/> 失效</param>
-    /// <param name="widthArgName">命令行 width 参数名称</param>
-    /// <param name="heightArgName">命令行 height 参数名称</param>
-    /// <returns><paramref name="widthArg"/> 为空返回 0，<paramref name="heightArg"/> 为空返回 0</returns>
-    /// <exception cref="ArgumentException">required 不满足条件时抛出异常</exception>
-    private static System.Drawing.Size GetSize(
-        string? widthArg,
-        string? heightArg,
-        bool widthRequired = false,
-        bool heightRequired = false,
-        bool widthOrHeightRequired = false,
-        string widthArgName = "width",
-        string heightArgName = "height"
-    ) {
-        // null 判断
-        if (widthOrHeightRequired) {
-            if (widthArg == null && heightArg == null) {
-                throw new ArgumentException($"参数 {widthArgName} 和 {heightArgName} 不能同时为空");
-            }
-        } else {
-            if (widthRequired && widthArg == null) {
-                throw new ArgumentException($"参数 {widthArgName} 不能为空");
-            }
-            if (heightRequired && heightArg == null) {
-                throw new ArgumentException($"参数 {heightArgName} 不能为空");
-            }
-        }
-        widthArg ??= "0";
-        heightArg ??= "0";
-        // 解析
-        if (!int.TryParse(widthArg, out var width) || width < 0) {
-            throw new ArgumentException($"参数 {widthArgName} 无效");
-        }
-        if (!int.TryParse(heightArg, out var height) || height < 0) {
-            throw new ArgumentException($"参数 {heightArgName} 无效");
-        }
-        return new System.Drawing.Size(width, height);
     }
 
     /// <summary>

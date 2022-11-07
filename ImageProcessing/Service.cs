@@ -162,9 +162,14 @@ public static class Service {
     /// <param name="savePath"></param>
     /// <param name="upperLeft">左上角坐标</param>
     /// <param name="size">裁剪后的图像大小</param>
+    /// <exception cref="ArgumentException">数值越界</exception>
     public static void Crop(string sourcePath, string savePath, Point upperLeft, Size size) {
+        var rect = new Rect(upperLeft, size);
         using var src = new Mat(sourcePath);
-        using var dst = src.Clone(new(upperLeft, size));
+        if (rect.Left < 0 || rect.Top < 0 || rect.Right > src.Width || rect.Height > src.Height) {
+            throw new ArgumentException("数值越界");
+        }
+        using var dst = src.Clone(rect);
         dst.SaveImage(savePath);
     }
 
