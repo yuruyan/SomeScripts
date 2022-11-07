@@ -7,6 +7,15 @@ using Size = OpenCvSharp.Size;
 namespace ImageProcessing;
 
 public static class Service {
+    #region ImageFormat
+    internal const string ImageFormatBmp = ".bmp";
+    internal const string ImageFormatGif = ".gif";
+    internal const string ImageFormatIcon = ".icon";
+    internal const string ImageFormatJpeg = ".jpeg";
+    internal const string ImageFormatJpg = ".jpg";
+    internal const string ImageFormatPng = ".png";
+    #endregion
+
     #region GaussianBlur
     internal const double DefaultGaussianBlurRadius = 5;
     internal const double MinGaussianBlurRadius = 0.1;
@@ -108,7 +117,7 @@ public static class Service {
         var rt = new Rectangle(point.X, point.Y, imgSource.Width, imgSource.Height);
         // 相对于左上角的x、y坐标
         graphics.DrawString(text, LabelFont, labelColor, point.X, point.Y);
-        imgSource.Save(savePath);
+        imgSource.Save(savePath, GetImageFormat(savePath));
     }
 
     /// <summary>
@@ -190,14 +199,10 @@ public static class Service {
         using var newBitmap = new Bitmap(inputBitmap, new System.Drawing.Size(width, height));
         // save the resized png into a memory stream for future use
         using var memoryStream = new MemoryStream();
-        // 先删除文件
-        if (File.Exists(savePath)) {
-            File.Delete(savePath);
-        }
-        using var outputStream = File.OpenWrite(savePath);
+        using var outputStream = new FileStream(savePath, FileMode.Create, FileAccess.Write);
 
         newBitmap.Save(memoryStream, ImageFormat.Png);
-        var iconWriter = new BinaryWriter(outputStream);
+        using var iconWriter = new BinaryWriter(outputStream);
         // 0-1 reserved, 0
         iconWriter.Write((byte)0);
         iconWriter.Write((byte)0);
@@ -221,7 +226,7 @@ public static class Service {
         // 8-11 size of image data
         iconWriter.Write((int)memoryStream.Length);
         // 12-15 offset of image data
-        iconWriter.Write((int)(6 + 16));
+        iconWriter.Write(6 + 16);
         // write image data
         // png data must contain the whole png data file
         iconWriter.Write(memoryStream.ToArray());
@@ -277,7 +282,7 @@ public static class Service {
             GraphicsUnit.Pixel,
             attributes
         );
-        resultImage.Save(savePath, ImageFormat.Png);
+        resultImage.Save(savePath, GetImageFormat(savePath));
     }
 
     /// <summary>
@@ -291,4 +296,20 @@ public static class Service {
         Cv2.BitwiseNot(src, dst);
         dst.SaveImage(savePath);
     }
+
+    /// <summary>
+    /// 根据文件名获取 ImageFormat
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    private static ImageFormat GetImageFormat(string path)
+        => Path.GetExtension(path).ToLowerInvariant() switch {
+            ImageFormatBmp => ImageFormat.Bmp,
+            ImageFormatGif => ImageFormat.Gif,
+            ImageFormatIcon => ImageFormat.Icon,
+            ImageFormatJpeg => ImageFormat.Jpeg,
+            ImageFormatJpg => ImageFormat.Jpeg,
+            ImageFormatPng => ImageFormat.Png,
+            _ => ImageFormat.Png
+        };
 }
