@@ -18,9 +18,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackUpBrowserData", "BackUp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageProcessing", "ImageProcessing\ImageProcessing.csproj", "{AE4CBAE7-E026-4207-B3D0-131A2CF286E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractWordImages", "ExtractWordImages\ExtractWordImages.csproj", "{C8F4AE21-9ABA-4D32-ADE1-0587C5E3A346}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtractWordImages", "ExtractWordImages\ExtractWordImages.csproj", "{C8F4AE21-9ABA-4D32-ADE1-0587C5E3A346}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfficeFormatConverter", "OfficeFormatConverter\OfficeFormatConverter.csproj", "{B99BE30E-6E55-4137-A6B0-8E11EC0DF519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeFormatConverter", "OfficeFormatConverter\OfficeFormatConverter.csproj", "{B99BE30E-6E55-4137-A6B0-8E11EC0DF519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtitleAdjustment", "SubtitleAdjustment\SubtitleAdjustment.csproj", "{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +88,14 @@ Global
 		{B99BE30E-6E55-4137-A6B0-8E11EC0DF519}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B99BE30E-6E55-4137-A6B0-8E11EC0DF519}.Release|x64.ActiveCfg = Release|Any CPU
 		{B99BE30E-6E55-4137-A6B0-8E11EC0DF519}.Release|x64.Build.0 = Release|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Debug|x64.Build.0 = Debug|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Release|x64.ActiveCfg = Release|Any CPU
+		{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

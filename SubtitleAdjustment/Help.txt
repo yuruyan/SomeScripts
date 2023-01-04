@@ -1,0 +1,9 @@
+﻿字幕时间调节
+
+参数列表：
+    sourcePath: 源文件路径
+    savePath: 保存路径
+    offset: 时间偏移量（ms），字幕超前为正数，否则负数
+
+示例：
+    sourcePath='D:/temp/input.srt' savePath='D:/temp/output.srt' offset=1000
