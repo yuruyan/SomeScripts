@@ -21,9 +21,31 @@ public class SrtAdjustment : IAdjustable {
     /// 文件后缀，包括 '.'
     /// </summary>
     public static string FileExtension => ".srt";
+    private const string TimePattern = "HH:mm:ss,fff";
+    private const string FormatTimePattern = "HH:mm:ss,fff";
+    private static readonly DateTimeFormatInfo DateTimeFormatInfo = new() {
+        ShortTimePattern = FormatTimePattern
+    };
+    private static readonly Regex SubtitleNumRegex = new(@"^\d+$");
+    private static readonly Regex SubtitleLineRegex = new(@"\d+:\d+:\d+,\d+ --> \d+:\d+:\d+,\d+");
+    private static readonly Regex SubtitleTimeRegex = new(@"(?<time>\d+:\d+:\d+),(?<milli>\d+)");
 
     public string Adjust(string subText, int offset) {
-        throw new NotImplementedException();
+        var subs = subText.Split('\n', StringSplitOptions.TrimEntries);
+        for (int i = 1; i < subs.Length; i++) {
+            if (!SubtitleNumRegex.IsMatch(subs[i - 1]) || !SubtitleLineRegex.IsMatch(subs[i])) {
+                continue;
+            }
+            // 调节
+            subs[i] = SubtitleTimeRegex.Replace(subs[i], m =>
+                DateTime.Parse(m.Groups["time"].Value, DateTimeFormatInfo)
+                    .AddMilliseconds(int.Parse(m.Groups["milli"].Value))
+                    .AddMilliseconds(offset)
+                    .ToString(TimePattern)
+            );
+            i += 2;
+        }
+        return string.Join('\n', subs);
     }
 }
 
@@ -37,7 +59,7 @@ public class AssAdjustment : IAdjustable {
     private static readonly DateTimeFormatInfo DateTimeFormatInfo = new() {
         ShortTimePattern = TimePattern
     };
-    private static readonly Regex SubtitleLineRegex = new(@"\w+: ", RegexOptions.IgnoreCase);
+    private static readonly Regex SubtitleLineRegex = new(@"[a-zA-Z]+: ", RegexOptions.IgnoreCase);
     private static readonly Regex SubtitleTimeRegex = new(@"\d+:\d+:\d+\.\d+");
 
     public string Adjust(string subText, int offset) {
