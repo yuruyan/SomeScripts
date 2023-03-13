@@ -1,0 +1,9 @@
+{
+  "name": "simple-scripts",
+  "type": "module",
+  "version": "1.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=v19.3.0"
+  }
+}
