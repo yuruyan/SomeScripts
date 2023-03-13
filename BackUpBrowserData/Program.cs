@@ -1,4 +1,5 @@
 ﻿using BackUpBrowserData;
+using CommonTools.Utils;
 using NLog;
 using Shared;
 using System.IO.Compression;
@@ -38,7 +39,7 @@ string defaultFolder = browserType switch {
 
 // 复制文件到临时目录
 string tempDir = string.Empty;
-while (Directory.Exists(tempDir = $"{Path.Combine(Path.GetDirectoryName(savePath), Utils.GenerateRandomLetterString(16))}")) ;
+while (Directory.Exists(tempDir = $"{Path.Combine(Path.GetDirectoryName(savePath), RandomUtils.RandomLetter(16))}")) ;
 Directory.CreateDirectory(tempDir);
 // 判断文件夹创建是否成功
 if (!Directory.Exists(tempDir)) {

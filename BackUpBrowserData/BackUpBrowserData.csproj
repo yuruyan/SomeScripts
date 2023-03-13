@@ -9,6 +9,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(TargetFramework.StartsWith(`net7.0`))' == 'true' ">
+      <ItemGroup>
+        <Reference Include="CommonTools">
+          <HintPath>..\Shared\Lib\Net7\CommonTools.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(TargetFramework.StartsWith(`net6.0`))' == 'true' ">
+      <ItemGroup>
+        <Reference Include="CommonTools">
+          <HintPath>..\Shared\Lib\Net6\CommonTools.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+
+  <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
