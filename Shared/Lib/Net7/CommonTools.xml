@@ -79,6 +79,91 @@
             加载错误
             </summary>
         </member>
+        <member name="M:CommonTools.Model.ISortable.Ascend">
+            <summary>
+            升序
+            </summary>
+        </member>
+        <member name="M:CommonTools.Model.ISortable.AscendBy``1(``0)">
+            <summary>
+            升序
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="sorter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Model.ISortable.Descend">
+            <summary>
+            降序
+            </summary>
+        </member>
+        <member name="M:CommonTools.Model.ISortable.DescendBy``1(``0)">
+            <summary>
+            降序
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="sorter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Model.ISortable`1.Ascend">
+            <summary>
+            升序
+            </summary>
+        </member>
+        <member name="M:CommonTools.Model.ISortable`1.AscendBy``1(``0)">
+            <summary>
+            升序
+            </summary>
+            <typeparam name="Sorter"></typeparam>
+            <param name="sorter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Model.ISortable`1.Descend">
+            <summary>
+            降序
+            </summary>
+        </member>
+        <member name="M:CommonTools.Model.ISortable`1.DescendBy``1(``0)">
+            <summary>
+            降序
+            </summary>
+            <typeparam name="Sorter"></typeparam>
+            <param name="sorter"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:CommonTools.Model.ISortable`2.AscendBy(`0)" -->
+        <member name="M:CommonTools.Model.ISortable`2.DescendBy(`0)">
+            <summary>
+            降序
+            </summary>
+            <param name="sorter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Model.JsonResponse`1.When(System.Boolean,`0,System.String)">
+            <summary>
+            成功返回 <see cref="M:CommonTools.Model.JsonResponse`1.Success(`0)"/>，失败返回 <see cref="M:CommonTools.Model.JsonResponse`1.Failed(`0)"/>
+            </summary>
+            <param name="success"></param>
+            <param name="data"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Model.JsonResponse`1.From(`0,System.String)">
+            <summary>
+            <paramref name="data"/> 不为 null 返回 <see cref="M:CommonTools.Model.JsonResponse`1.Success(`0)"/>，否则返回 <see cref="M:CommonTools.Model.JsonResponse`1.Failed(`0)"/>
+            </summary>
+            <param name="data"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Model.JsonResponse.When(System.Boolean,System.String)">
+            <summary>
+            成功返回 <see cref="P:CommonTools.Model.JsonResponse.Success"/>，是否返回 <see cref="P:CommonTools.Model.JsonResponse.Failed"/>
+            </summary>
+            <param name="success"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
         <member name="E:CommonTools.Model.ObservableProperty`1.ValueChanged">
             <summary>
             值改变时触发
@@ -89,23 +174,23 @@
             设置时触发
             </summary>
         </member>
-        <member name="T:CommonTools.Resource.Resource">
+        <member name="T:CommonTools.Resources.Resource">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
             </summary>
         </member>
-        <member name="P:CommonTools.Resource.Resource.ResourceManager">
+        <member name="P:CommonTools.Resources.Resource.ResourceManager">
             <summary>
               Returns the cached ResourceManager instance used by this class.
             </summary>
         </member>
-        <member name="P:CommonTools.Resource.Resource.Culture">
+        <member name="P:CommonTools.Resources.Resource.Culture">
             <summary>
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
-        <member name="P:CommonTools.Resource.Resource.ChineseCharacterPinYin">
+        <member name="P:CommonTools.Resources.Resource.ChineseCharacterPinYin">
             <summary>
               Looks up a localized resource of type System.Byte[].
             </summary>
@@ -116,21 +201,6 @@
             </summary>
             <typeparam name="T"></typeparam>
             <param name="obj"></param>
-            <returns></returns>
-        </member>
-        <member name="M:CommonTools.Utils.CommonUtils.GetSamePrefix(System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            获取集合相同前缀
-            </summary>
-            <param name="list"></param>
-            <returns></returns>
-        </member>
-        <member name="M:CommonTools.Utils.CommonUtils.NormalizeMultipleLineText(System.String)">
-            <summary>
-            标准化多行输入文本
-            将 "\r\n" 替换为 '\n'
-            </summary>
-            <param name="text"></param>
             <returns></returns>
         </member>
         <member name="F:CommonTools.Utils.CommonUtils.SingletonDict">
@@ -177,6 +247,14 @@
             路径分隔符正则
             </summary>
         </member>
+        <member name="M:CommonTools.Utils.CommonUtils.GetPathSpliterRegex">
+            <remarks>
+            Pattern explanation:<br/>
+            <code>
+            ○ Match a character in the set [/\\].<br/>
+            </code>
+            </remarks>
+        </member>
         <member name="M:CommonTools.Utils.CommonUtils.RemovePathSpliter(System.String)">
             <summary>
             移除路径分隔符(\, /)
@@ -205,6 +283,13 @@
             最多读取前 64kb 字节，判断是否包含 '\0'
             </summary>
             <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.CommonUtils.GetUniqueRandomFileName(System.String)">
+            <summary>
+            获取随机唯一文件名
+            </summary>
+            <param name="dirPath">随机文件所在路径，默认为 <see cref="P:System.Environment.CurrentDirectory"/></param>
             <returns></returns>
         </member>
         <member name="F:CommonTools.Utils.ConstantUtils.OneKbSize">
@@ -337,14 +422,14 @@
             当前时间戳(s)
             </summary>
         </member>
-        <member name="M:CommonTools.Utils.DateTimeUtils.ConvertToTimestamp(System.DateTime)">
+        <member name="M:CommonTools.Utils.DateTimeUtils.ToTimestamp(System.DateTime)">
             <summary>
             DateTime 转 Timestamp
             </summary>
             <param name="value"></param>
             <returns></returns>
         </member>
-        <member name="M:CommonTools.Utils.DateTimeUtils.ConvertToDateTime(System.String,System.String)">
+        <member name="M:CommonTools.Utils.DateTimeUtils.ToDateTime(System.String,System.String)">
             <summary>
             string 日期转 DateTime
             </summary>
@@ -352,7 +437,7 @@
             <param name="pattern"></param>
             <returns></returns>
         </member>
-        <member name="M:CommonTools.Utils.DateTimeUtils.ConvertToDateTime(System.Int64,System.Boolean)">
+        <member name="M:CommonTools.Utils.DateTimeUtils.ToDateTime(System.Int64,System.Boolean)">
             <summary>
             时间戳转 DateTime
             </summary>
@@ -381,32 +466,93 @@
             <param name="date"></param>
             <returns></returns>
         </member>
-        <member name="F:CommonTools.Utils.DebounceUtils.NoResponseTimes">
+        <member name="F:CommonTools.Utils.Debounce.NoResponseTimes">
             <summary>
-            超过 interval * <see cref="F:CommonTools.Utils.DebounceUtils.NoResponseTimes"/> 时间没有请求，则暂停定时器
+            超过 interval * <see cref="F:CommonTools.Utils.Debounce.NoResponseTimes"/> 时间没有请求，则暂停定时器
             </summary>
         </member>
-        <member name="M:CommonTools.Utils.DebounceUtils.Debounce(System.Object,System.Action,System.Boolean,System.Int32)">
+        <member name="P:CommonTools.Utils.Debounce.CanInvoke">
             <summary>
-            防抖
+            是否可以调用
             </summary>
-            <param name="identifier"></param>
-            <param name="callback"></param>
-            <param name="callRegular">是否每隔 interval 时间调用一次</param>
-            <param name="interval"></param>
-        </member>
-        <member name="M:CommonTools.Utils.DebounceUtils.Debounce``1(System.Action{``0},System.Int32)">
-            <summary>
-            防抖函数
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="callback"></param>
-            <param name="interval"></param>
             <returns></returns>
+        </member>
+        <member name="P:CommonTools.Utils.Debounce.CanStop">
+            <summary>
+            是否可以停止计时以节省资源
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:CommonTools.Utils.DigestUtils.ReadBufferSize">
+            <summary>
+            默认读取缓冲区大小
+            </summary>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.String,Org.BouncyCastle.Crypto.IDigest)">
+            <summary>
+            摘要算法
+            </summary>
+            <param name="text"></param>
+            <param name="digest"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)">
+            <summary>
+            摘要算法
+            </summary>
+            <param name="stream"></param>
+            <param name="digest"></param>
+            <returns>digest</returns>
+            <remarks>不会自动关闭 stream</remarks>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.MD5Digest(System.String)">
+            <summary>
+            md5 摘要
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.MD5Digest(System.IO.Stream)">
+            <summary>
+            md5 摘要
+            </summary>
+            <param name="stream"></param>
+            <inheritdoc cref="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)"/>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha256Digest(System.String)">
+            <summary>
+            Sha256Digest 摘要
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha256Digest(System.IO.Stream)">
+            <summary>
+            Sha256Digest 摘要
+            </summary>
+            <param name="stream"></param>
+            <inheritdoc cref="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)"/>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha512Digest(System.String)">
+            <summary>
+            Sha512Digest 摘要
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha512Digest(System.IO.Stream)">
+            <summary>
+            Sha512Digest 摘要
+            </summary>
+            <param name="stream"></param>
+            <inheritdoc cref="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)"/>
         </member>
         <member name="T:CommonTools.Utils.ExtensionUtils">
             <summary>
             扩展方法
+            </summary>
+            <summary>
+            for string
             </summary>
         </member>
         <member name="M:CommonTools.Utils.ExtensionUtils.Remove``1(System.Collections.Generic.ICollection{``0},System.Func{``0,System.Boolean})">
@@ -438,6 +584,15 @@
             <typeparam name="T"></typeparam>
             <param name="thisCollection"></param>
             <param name="toBeRemovedItems"></param>
+        </member>
+        <member name="M:CommonTools.Utils.ExtensionUtils.RemoveKeyList``2(System.Collections.Generic.IDictionary{``0,``1},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            移除 Dictionary 多个 Key
+            </summary>
+            <typeparam name="Key"></typeparam>
+            <typeparam name="Value"></typeparam>
+            <param name="source"></param>
+            <param name="keys"></param>
         </member>
         <member name="M:CommonTools.Utils.ExtensionUtils.Print``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
             <summary>
@@ -474,20 +629,6 @@
             <param name="target"></param>
             <param name="source"></param>
             <param name="converter">转换器</param>
-        </member>
-        <member name="M:CommonTools.Utils.ExtensionUtils.ReplaceSlashWithBackSlash(System.String)">
-            <summary>
-            替换 '/' 为 '\\'
-            </summary>
-            <param name="source"></param>
-            <returns></returns>
-        </member>
-        <member name="M:CommonTools.Utils.ExtensionUtils.ReplaceBackSlashWithSlash(System.String)">
-            <summary>
-            替换 '\\' 为 '/'
-            </summary>
-            <param name="source"></param>
-            <returns></returns>
         </member>
         <member name="M:CommonTools.Utils.ExtensionUtils.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
@@ -586,6 +727,43 @@
             <param name="data"></param>
             <returns>A new list which contains all data from <paramref name="source"/> and <paramref name="data"/></returns>
         </member>
+        <member name="M:CommonTools.Utils.ExtensionUtils.Contains``1(System.Collections.Generic.IEnumerable{``0},System.Predicate{``0})">
+            <summary>
+            查看是否包含指定 Predicate 的元素
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ExtensionUtils.GetSamePrefix(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            获取集合相同前缀
+            </summary>
+            <param name="list"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ExtensionUtils.ReplaceSlashWithBackSlash(System.String)">
+            <summary>
+            替换 '/' 为 '\\'
+            </summary>
+            <param name="source"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ExtensionUtils.ReplaceBackSlashWithSlash(System.String)">
+            <summary>
+            替换 '\\' 为 '/'
+            </summary>
+            <param name="source"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ExtensionUtils.ReplaceLineFeedWithLinuxStyle(System.String)">
+            <summary>
+            将换行符替换为 Linux 样式 (\n)
+            </summary>
+            <param name="source"></param>
+            <returns></returns>
+        </member>
         <member name="T:CommonTools.Utils.MessageUtils">
             <summary>
             消息工具
@@ -632,6 +810,18 @@
             </summary>
             <param name="groupName">组名称，区分大小写</param>
             <param name="handler"></param>
+        </member>
+        <member name="M:CommonTools.Utils.NameUtils.FullNameOf``1(``0,System.String)">
+            <summary>
+            获取全名称表达式
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="_"></param>
+            <param name="fullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.NameUtilsExtension.FullNameOf``1(``0,System.String)">
+            <inheritdoc cref="M:CommonTools.Utils.NameUtils.FullNameOf``1(``0,System.String)"/>
         </member>
         <member name="M:CommonTools.Utils.NetworkUtils.GetLocalIpAddress">
             <summary>
@@ -762,6 +952,7 @@
             简化 try 代码块，以异步方式
             </summary>
             <param name="task"></param>
+            <param name="defaultValue"></param>
         </member>
         <member name="M:CommonTools.Utils.TaskUtils.DelayTaskAsync(System.Int32,System.Action)">
             <summary>
@@ -799,26 +990,26 @@
             调用过的方法 Set
             </summary>
         </member>
-        <member name="F:CommonTools.Utils.TaskUtils.MethodCalledTupleSet">
-            <summary>
-            调用过的方法 Set
-            </summary>
-        </member>
         <member name="F:CommonTools.Utils.TaskUtils.MethodCalledLockDict">
             <summary>
             Tuple lock
             </summary>
         </member>
-        <member name="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.Object,System.Delegate)">
+        <member name="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.Object,System.Delegate,System.Boolean,System.Object)">
             <summary>
             确保方法只调用一次
             </summary>
             <param name="identifier">唯一标识</param>
             <param name="callback">回调方法</param>
+            <param name="hasParameters">是否有参数</param>
+            <param name="args"><paramref name="callback"/> 参数</param>
             <returns>返回 true 则未调用过，否则返回 false</returns>
         </member>
-        <member name="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.ValueTuple{System.Object,System.Object},System.Delegate)">
-            <inheritdoc cref="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.Object,System.Delegate)"/>
+        <member name="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.Object,System.Delegate,System.Object)">
+            <inheritdoc cref="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.Object,System.Delegate,System.Boolean,System.Object)"/>
+        </member>
+        <member name="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.Object,System.Delegate)">
+            <inheritdoc cref="M:CommonTools.Utils.TaskUtils.EnsureCalledOnce(System.Object,System.Delegate,System.Boolean,System.Object)"/>
         </member>
         <member name="F:CommonTools.Utils.TaskUtils.PreviousTaskDict">
             <summary>
@@ -891,51 +1082,41 @@
             <param name="fallbackValue">未调用返回值</param>
             <returns></returns>
         </member>
-        <member name="M:CommonTools.Core.DigestUtils.GeneralDigest(System.String,Org.BouncyCastle.Crypto.IDigest)">
-            <summary>
-            摘要算法
-            </summary>
-            <param name="s"></param>
-            <param name="digest"></param>
-            <returns></returns>
+        <member name="T:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the GetPathSpliterRegex method.</summary>
         </member>
-        <member name="F:CommonTools.Core.DigestUtils.ReadBufferQueue">
-            <summary>
-            读取缓冲区队列
-            </summary>
+        <member name="F:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
         </member>
-        <member name="F:CommonTools.Core.DigestUtils.DefaultReadBufferSize">
-            <summary>
-            默认读取缓冲区个数
-            </summary>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.#ctor">
+            <summary>Initializes the instance.</summary>
         </member>
-        <member name="F:CommonTools.Core.DigestUtils.FileReadBuffer">
-            <summary>
-            默认读取缓冲区大小
-            </summary>
+        <member name="T:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
         </member>
-        <member name="M:CommonTools.Core.DigestUtils.GeneralDigest(System.IO.FileStream,Org.BouncyCastle.Crypto.IDigest,System.Action{System.Int64})">
-            <summary>
-            摘要算法
-            </summary>
-            <param name="stream"></param>
-            <param name="digest"></param>
-            <param name="callback">回调，参数为总读取的大小</param>
-            <returns></returns>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
         </member>
-        <member name="M:CommonTools.Core.DigestUtils.MD5Digest(System.String)">
-            <summary>
-            md5 摘要
-            </summary>
-            <param name="s"></param>
-            <returns></returns>
+        <member name="T:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
         </member>
-        <member name="M:CommonTools.Core.DigestUtils.MD5Digest(System.IO.FileStream,System.Action{System.Int64})">
-            <summary>
-            md5 摘要
-            </summary>
-            <param name="stream"></param>
-            <returns></returns>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.Utilities">
+            <summary>Helper methods used by generated <see cref="T:System.Text.RegularExpressions.Regex"/>-derived implementations.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout">
+            <summary>Default timeout value set in <see cref="T:System.AppContext"/>, or <see cref="F:System.Text.RegularExpressions.Regex.InfiniteMatchTimeout"/> if none was set.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_hasTimeout">
+            <summary>Whether <see cref="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout"/> is non-infinite.</summary>
         </member>
     </members>
 </doc>
