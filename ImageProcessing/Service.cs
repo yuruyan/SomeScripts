@@ -180,9 +180,8 @@ public static class Service {
     /// <param name="savePath"></param>
     /// <param name="getSize">获取目标大小，第1、2个参数分别为原图像的宽高</param>
     public static void Resize(string sourcePath, string savePath, Func<int, int, Size> getSize) {
-        using var src = new Mat(sourcePath);
-        using var dst = new Mat();
-        Cv2.Resize(src, dst, getSize(src.Width, src.Height));
+        using var src = new Mat(sourcePath, ImreadModes.Unchanged);
+        using var dst = src.Resize(getSize(src.Width, src.Height));
         dst.SaveImage(savePath);
     }
 
