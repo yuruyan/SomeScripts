@@ -8,6 +8,7 @@ using Size = OpenCvSharp.Size;
 namespace ImageProcessing;
 
 public static class Service {
+    #region Field
     #region ImageFormat
     internal const string ImageFormatBmp = ".bmp";
     internal const string ImageFormatGif = ".gif";
@@ -50,6 +51,7 @@ public static class Service {
     internal const float DefaultTransparentizeOpacity = 0.5f;
     internal const float MinTransparentizeOpacity = 0f;
     internal const float MaxTransparentizeOpacity = 1f;
+    #endregion 
     #endregion
 
     /// <summary>
@@ -66,7 +68,7 @@ public static class Service {
             radius = MaxGaussianBlurRadius;
         }
 
-        using var src = new Mat(sourcePath);
+        using var src = new Mat(sourcePath, ImreadModes.Unchanged);
         using var dst = new Mat();
         Cv2.GaussianBlur(src, dst, Size.Zero, radius);
         dst.SaveImage(savePath);
@@ -128,7 +130,7 @@ public static class Service {
     /// <param name="savePath"></param>
     /// <param name="flipMode"></param>
     public static void Flip(string sourcePath, string savePath, FlipMode flipMode = DefaultFlipMode) {
-        using var src = new Mat(sourcePath);
+        using var src = new Mat(sourcePath, ImreadModes.Unchanged);
         using var dst = new Mat();
         Cv2.Flip(src, dst, flipMode);
         dst.SaveImage(savePath);
@@ -148,7 +150,7 @@ public static class Service {
             angle = MaxRotateAngle;
         }
 
-        using var src = new Mat(sourcePath);
+        using var src = new Mat(sourcePath, ImreadModes.Unchanged);
         using var dst = new Mat();
         using var mat = Cv2.GetRotationMatrix2D(new(src.Width >> 1, src.Height >> 1), angle, 1);
         Cv2.WarpAffine(src, dst, mat, new(src.Cols, src.Rows));
@@ -165,7 +167,7 @@ public static class Service {
     /// <exception cref="ArgumentException">数值越界</exception>
     public static void Crop(string sourcePath, string savePath, Point upperLeft, Size size) {
         var rect = new Rect(upperLeft, size);
-        using var src = new Mat(sourcePath);
+        using var src = new Mat(sourcePath, ImreadModes.Unchanged);
         if (rect.Left < 0 || rect.Top < 0 || rect.Right > src.Width || rect.Height > src.Height) {
             throw new ArgumentException("数值越界");
         }
@@ -308,7 +310,7 @@ public static class Service {
     /// <param name="sourcePath"></param>
     /// <param name="savePath"></param>
     public static void InvertColor(string sourcePath, string savePath) {
-        using var src = new Mat(sourcePath);
+        using var src = new Mat(sourcePath, ImreadModes.Unchanged);
         using var dst = new Mat();
         Cv2.BitwiseNot(src, dst);
         dst.SaveImage(savePath);
