@@ -195,6 +195,11 @@
               Looks up a localized resource of type System.Byte[].
             </summary>
         </member>
+        <member name="F:CommonTools.Utils.CommonUtils.PathSpliterRegex">
+            <summary>
+            路径分隔符正则
+            </summary>
+        </member>
         <member name="M:CommonTools.Utils.CommonUtils.Copy``1(``0)">
             <summary>
             拷贝对象
@@ -216,12 +221,11 @@
             <returns></returns>
             <exception cref="T:System.Exception">对象创建失败</exception>
         </member>
-        <member name="M:CommonTools.Utils.CommonUtils.GetSingletonInstance``1(System.Type)">
+        <member name="M:CommonTools.Utils.CommonUtils.GetSingletonInstance``1">
             <summary>
             获取单例对象
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="type"></param>
             <returns></returns>
             <exception cref="T:System.Exception">对象创建失败</exception>
         </member>
@@ -233,19 +237,13 @@
             <param name="init"></param>
             <returns></returns>
         </member>
-        <member name="M:CommonTools.Utils.CommonUtils.GetSingletonInstance``1(System.Type,System.Func{System.Object})">
+        <member name="M:CommonTools.Utils.CommonUtils.GetSingletonInstance``1(System.Func{System.Object})">
             <summary>
             根据 init 函数创建单例对象
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="type"></param>
             <param name="init"></param>
             <returns></returns>
-        </member>
-        <member name="F:CommonTools.Utils.CommonUtils.PathSpliterRegex">
-            <summary>
-            路径分隔符正则
-            </summary>
         </member>
         <member name="M:CommonTools.Utils.CommonUtils.RemovePathSpliter(System.String)">
             <summary>
@@ -735,6 +733,16 @@
             <param name="list"></param>
             <returns></returns>
         </member>
+        <member name="M:CommonTools.Utils.ExtensionUtils.TryGet``1(System.Collections.Generic.IEnumerable{``0},System.Predicate{``0},``0@)">
+            <summary>
+            获取一个符合 <paramref name="predicate"/> 的元素
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"></param>
+            <param name="predicate"></param>
+            <param name="result"></param>
+            <returns>成功返回 true，失败返回 false</returns>
+        </member>
         <member name="M:CommonTools.Utils.ExtensionUtils.ReplaceSlashWithBackSlash(System.String)">
             <summary>
             替换 '/' 为 '\\'
@@ -754,6 +762,20 @@
             将换行符替换为 Linux 样式 (\n)
             </summary>
             <param name="source"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.FileLockUtils.TryLockFile(System.String)">
+            <summary>
+            尝试锁定文件
+            </summary>
+            <param name="filepath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.FileLockUtils.IsFileLocked(System.String)">
+            <summary>
+            文件是否锁定
+            </summary>
+            <param name="filepath"></param>
             <returns></returns>
         </member>
         <member name="T:CommonTools.Utils.MessageUtils">
@@ -1005,15 +1027,15 @@
         </member>
         <member name="F:CommonTools.Utils.TaskUtils.PreviousTaskDict">
             <summary>
-            (Identifier, 上一个任务)
+            (identifier, 上一个任务)
             </summary>
         </member>
-        <member name="M:CommonTools.Utils.TaskUtils.AddToTaskQueue(System.Object,System.Action{System.Threading.Tasks.Task})">
+        <member name="M:CommonTools.Utils.TaskUtils.GetPreviousTaskQueueTask(System.Object)">
             <summary>
-            添加到任务队列
+            Get last task, auto Initialie
             </summary>
-            <param name="Identifier">标识</param>
-            <param name="newTaskCallback">第一个参数为已经执行完的上一个任务，第二个参数为需要执行的任务</param>
+            <param name="Identifier"></param>
+            <returns></returns>
         </member>
         <member name="F:CommonTools.Utils.ThrottleUtils.Interval">
             <summary>
