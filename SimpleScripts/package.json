@@ -4,6 +4,6 @@
   "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "node": ">=v19.3.0"
+    "node": ">=18.16.0"
   }
 }
