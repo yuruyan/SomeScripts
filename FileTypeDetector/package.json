@@ -1,0 +1,16 @@
+{
+  "name": "file_type_detector",
+  "version": "1.0.0",
+  "description": "文件类型检测",
+  "main": "index.js",
+  "author": "luxiu",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "engines": {
+    "node": ">=18.16.0"
+  },
+  "dependencies": {
+    "file-type": "^18.2.1"
+  }
+}

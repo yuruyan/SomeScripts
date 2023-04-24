@@ -1,0 +1,6 @@
+﻿文件类型检测
+
+参数列表：
+
+示例：
+    node index.js 'e:/temp/image.png'
