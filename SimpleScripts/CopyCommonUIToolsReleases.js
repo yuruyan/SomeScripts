@@ -1,46 +1,74 @@
 /**
-复制 CommonUITools Release 到各项目
- */
+澶嶅埗 CommonUITools Release 鍒板悇椤圭洰
+*/
 
-import * as fs from "fs"
-import * as path from "path"
-
-// 原项目目录
-const releaseDir = "F:/Code/CSharp/CommonUITools/CommonUITools/bin/x64/Release"
-const releaseDirs = [
-    `${path.join(releaseDir, "net6.0-windows10.0.17763.0")}`,
-    `${path.join(releaseDir, "net7.0-windows10.0.17763.0")}`
-]
-// 要复制的文件
-const copyFiles = [
-    "CommonTools.xml",
-    "CommonUITools.xml",
-    "CommonTools.dll",
-    "CommonUITools.dll",
-]
-// 目标项目文件夹
-const targetProjects = [
-    "F:/Code/CSharp/IMApp/IMApp.Shared/Lib",
-    "F:/Code/CSharp/CommonUtil/CommonUtil.Core/Lib",
-    "F:/Code/CSharp/CommonAPI/CommonAPI/Lib"
-]
-// 版本目录
-const targetDirs = [
-    "Net6",
-    "Net7"
-]
-
-for (let projDir of targetProjects) {
-    // Net Version
-    for (var i = 0; i < releaseDirs.length; i++) {
-        // Target files
-        for (let file of copyFiles) {
-            fs.copyFileSync(
-                `${path.join(releaseDirs[i], file)}`,
-                `${path.join(projDir, targetDirs[i], file)}`
-            )
-        }
+import * as fs from "fs";
+import * as path from "path";
+import JSON5 from "json5";
+import { fileURLToPath } from "url";
+// 瑕佸鍒剁殑鏂囦欢
+const commonToolsFiles = ["CommonTools.xml", "CommonTools.dll"];
+const commonUIToolsFiles = ["CommonUITools.xml", "CommonUITools.dll"];
+const config = JSON5.parse(
+  fs
+    .readFileSync(
+      path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        "./Resources/CopyCommonUIToolsReleases.json"
+      )
+    )
+    .toString()
+);
+const releaseRootDir = config["releaseRootDir"];
+const releaseVersions = Object.keys(config["releaseVersions"]);
+// copy
+for (const target of config["targets"]) {
+  const destRootDir = target["destRootDir"];
+  let versions = target["versions"];
+  // not specify 'versions'
+  if (typeof versions == "undefined") {
+    versions = releaseVersions;
+  }
+  let versionDirs = target["versionDirs"];
+  // not specify 'versionDirs'
+  if (typeof versionDirs == "undefined") {
+    versionDirs = versions;
+  }
+  // version
+  for (let i = 0; i < versions.length; i++) {
+    const version = versions[i];
+    const releaseVersionDir = config["releaseVersions"][version];
+    // version doesn't exist
+    if (typeof releaseVersionDir == "undefined") {
+      console.log(`release version '${version}' is invalid`);
+      continue;
     }
-    console.log(`Copy files to ${projDir} done`)
+    // create destination folder
+    for (const dir of versionDirs) {
+      fs.mkdirSync(path.join(destRootDir, dir), { recursive: true });
+    }
+    // coping CommonTools
+    for (const filename of commonToolsFiles) {
+      fs.copyFileSync(
+        path.join(releaseRootDir, releaseVersionDir, filename),
+        path.join(destRootDir, versionDirs[i], filename)
+      );
+    }
+    if (!target["copyUITools"]) {
+      continue;
+    }
+    // coping CommonUITools
+    for (const filename of commonUIToolsFiles) {
+      fs.copyFileSync(
+        path.join(releaseRootDir, releaseVersionDir, filename),
+        path.join(destRootDir, versionDirs[i], filename)
+      );
+    }
+  }
+  console.log(`copying ${target["destRootDir"]} done`);
 }
 
+await new Promise((resolve, reject) => {
+  setTimeout(() => resolve(), 1000);
+});
+console.log("over");
