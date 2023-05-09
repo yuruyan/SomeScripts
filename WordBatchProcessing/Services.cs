@@ -1,7 +1,6 @@
-﻿using Microsoft.Office.Interop.Word;
+﻿using Csv;
+using Microsoft.Extensions.Configuration;
 using NLog;
-using CommonTools.Model;
-using System.Runtime.InteropServices;
 
 namespace WordBatchProcessing;
 
@@ -11,69 +10,84 @@ public static class Services {
     /// <summary>
     /// 批量替换
     /// </summary>
-    /// <param name="path">Word 文件路径</param>
-    /// <param name="replacementList">替换列表</param>
-    /// <param name="matchCase">区分大小写</param>
-    /// <param name="matchWholeWord">匹配整个文本</param>
-    /// <param name="matchWildcards">使用通配符</param>
-    /// <param name="replaceAll">是否替换全部</param>
-    [NoException]
-    public static void BatchReplace(
-        string path,
-        IReadOnlyCollection<KeyValuePair<string, string>> replacementList,
-        bool matchCase = false,
-        bool matchWholeWord = false,
-        bool matchWildcards = false,
-        bool replaceAll = true
-    ) {
-        // Empty list
-        if (replacementList.Count == 0) {
+    /// <param name="configuration"></param>
+    public static void BatchReplace(IConfiguration configuration) {
+        const string PathArgName = "path";
+        const string ReplacementPathArgName = "replacementPath";
+        const string MatchCaseArgName = "matchCase";
+        const string MatchWholeWordArgName = "matchWholeWord";
+        const string MatchWildcardsArgName = "useWildcards";
+        const string ReplaceAllArgName = "replaceAll";
+
+        var pathArg = configuration[PathArgName];
+        var replacementPathArg = configuration[ReplacementPathArgName];
+        var matchCaseArg = configuration[MatchCaseArgName];
+        var matchWholeWordArg = configuration[MatchWholeWordArgName];
+        var matchWildcardsArg = configuration[MatchWildcardsArgName];
+        var replaceAllArg = configuration[ReplaceAllArgName];
+
+        #region Check arguments
+        // Path is empty
+        if (string.IsNullOrEmpty(pathArg)) {
+            Logger.Error($"Argument '{PathArgName}' cannot be empty");
             return;
         }
-        Application app = null!;
-        Document? document = null;
-        try {
-            app = new Application();
-            Logger.Debug("Opening document...");
-            document = app.Documents.Open(path, ConfirmConversions: true, ReadOnly: false);
-            document.Select();
-            // Switch to editing view
-            document.ActiveWindow.View.ReadingLayout = false;
-            if (document is null) {
-                throw new Exception("Opening failed");
-            }
-            Logger.Debug("Executing replacements");
-            var selection = app.Selection;
-            var find = selection.Find;
-            foreach (var (id, number) in replacementList) {
-                find.ClearFormatting();
-                // Execute replacement
-                find.Execute(
-                    FindText: id,
-                    ReplaceWith: number,
-                    MatchCase: matchCase,
-                    MatchWholeWord: matchWholeWord,
-                    MatchWildcards: matchWildcards,
-                    Replace: replaceAll
-                );
-                Logger.Debug($"Replace '{id}' done");
-            }
-            document.Save();
-            Logger.Debug("Over");
-        } catch (Exception error) {
-            Logger.Error(error);
-        } finally {
-            try {
-                document?.Close();
-                app?.Quit();
-            } catch (Exception error) {
-                Logger.Error(error);
-            }
-            // ReleaseComObject
-            if (document is not null) {
-                Marshal.ReleaseComObject(document);
-            }
-            Marshal.ReleaseComObject(app);
+        // ReplacementPath is empty
+        if (string.IsNullOrEmpty(replacementPathArg)) {
+            Logger.Error($"Argument '{ReplacementPathArgName}' cannot be empty");
+            return;
         }
+        // Path not found
+        if (!File.Exists(pathArg)) {
+            Logger.Error($"File '{pathArg}' doesn't exist");
+            return;
+        }
+        // ReplacementPath not found
+        if (!File.Exists(replacementPathArg)) {
+            Logger.Error($"File '{replacementPathArg}' doesn't exist");
+            return;
+        }
+        #endregion
+
+        #region Parse arguments
+        if (!bool.TryParse(matchCaseArg, out var matchCase)) {
+            matchCase = false;
+        }
+        if (!bool.TryParse(matchWildcardsArg, out var useWildcards)) {
+            useWildcards = false;
+        }
+        if (!bool.TryParse(matchWholeWordArg, out var matchWholeWord)) {
+            matchWholeWord = false;
+        }
+        if (!bool.TryParse(replaceAllArg, out var replaceAll)) {
+            replaceAll = true;
+        }
+        #endregion
+
+        #region Reading replacement file
+        var replacementFileText = File.ReadAllText(replacementPathArg);
+        var replacementList = CsvReader
+            .ReadFromText(
+                replacementFileText,
+                new() { HeaderMode = HeaderMode.HeaderAbsent }
+            )
+            .Select<ICsvLine, KeyValuePair<string, string>>(line => {
+                return line.ColumnCount switch {
+                    0 => new(string.Empty, string.Empty),
+                    1 => new(line[0], string.Empty),
+                    _ => new(line[0], line[1])
+                };
+            })
+            .ToList();
+        #endregion
+
+        WordService.BatchReplace(
+            pathArg,
+            replacementList,
+            matchCase,
+            matchWholeWord,
+            useWildcards,
+            replaceAll
+        );
     }
 }
