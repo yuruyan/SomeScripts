@@ -3,13 +3,13 @@ using OfficeFormatConverter;
 using Shared;
 
 // 输入参数验证
-if (!Helper.CheckArgs(args, Resource.Help)) {
+if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
 Logger Logger = LogManager.GetCurrentClassLogger();
 
-var Config = Helper.GetConfiguration(args);
+var Config = SharedHelper.GetConfiguration(args);
 string sourcePath = Config["sourcePath"];
 string savePath = Config["savePath"];
 // 参数验证

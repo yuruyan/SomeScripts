@@ -5,7 +5,7 @@ using Shared;
 using System.IO.Compression;
 
 // 输入参数验证
-if (!Helper.CheckArgs(args, Resource.Help)) {
+if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
@@ -13,7 +13,7 @@ Logger Logger = LogManager.GetCurrentClassLogger();
 
 const string DocxExtension = ".docx";
 const string DocExtension = ".doc";
-var Config = Helper.GetConfiguration(args);
+var Config = SharedHelper.GetConfiguration(args);
 string sourcePath = Config["sourcePath"];
 string saveDir = Config["saveDir"];
 

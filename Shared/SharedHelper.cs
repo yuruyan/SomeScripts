@@ -2,7 +2,7 @@
 
 namespace Shared;
 
-public static class Helper {
+public static class SharedHelper {
     /// <summary>
     /// 检查参数是否有参数
     /// </summary>

@@ -5,7 +5,7 @@ using Shared;
 using System.IO.Compression;
 
 // 输入参数验证
-if (!Helper.CheckArgs(args, Resource.Help)) {
+if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
@@ -16,7 +16,7 @@ const BrowserType DefaultBrowser = BrowserType.Edge;
 const bool DefaultOverrideIfExist = true;
 Logger Logger = LogManager.GetCurrentClassLogger();
 
-var Config = Helper.GetConfiguration(args);
+var Config = SharedHelper.GetConfiguration(args);
 string savePath = Config["savePath"];
 // 验证参数
 if (!bool.TryParse(Config["override"], out bool overrideIfExist)) {

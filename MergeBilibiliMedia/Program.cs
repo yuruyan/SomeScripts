@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 // 输入参数验证
-if (!Helper.CheckArgs(args, Resource.Help)) {
+if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
@@ -17,7 +17,7 @@ var SpecialCharactersRegex = new Regex("[?*:\"<>\\/|]");
 const int DefaultThreadCount = 4, MaxThreadCount = 16, MinThreadCount = 1;
 const bool DefaultIgnoreError = false;
 
-var Config = Helper.GetConfiguration(args);
+var Config = SharedHelper.GetConfiguration(args);
 string rootDir = Config["rootDir"];
 string saveDir = Config["saveDir"];
 string threadArg = Config["threads"];
