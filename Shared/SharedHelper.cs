@@ -23,4 +23,13 @@ public static class SharedHelper {
     /// <param name="args"></param>
     /// <returns></returns>
     public static IConfiguration GetConfiguration(string[] args) => new ConfigurationBuilder().AddCommandLine(args).Build();
+
+    /// <summary>
+    /// 是否启用调试模式
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public static bool IsDebugMode(this IConfiguration configuration) {
+        return configuration.GetSection("debug").Value?.ToLowerInvariant() == "true";
+    }
 }
