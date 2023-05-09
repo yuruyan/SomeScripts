@@ -24,7 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeFormatConverter", "Of
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubtitleAdjustment", "SubtitleAdjustment\SubtitleAdjustment.csproj", "{E24F35EF-41B0-4E92-93AB-2D7D6DBF0B70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleScripts", "SimpleScripts\SimpleScripts.csproj", "{F10B498F-757B-4398-A734-E430528EBCB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleScripts", "SimpleScripts\SimpleScripts.csproj", "{F10B498F-757B-4398-A734-E430528EBCB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordBatchProcessing", "WordBatchProcessing\WordBatchProcessing.csproj", "{CBCEA717-F30A-4235-8329-B201B826C433}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,6 +108,14 @@ Global
 		{F10B498F-757B-4398-A734-E430528EBCB3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F10B498F-757B-4398-A734-E430528EBCB3}.Release|x64.ActiveCfg = Release|Any CPU
 		{F10B498F-757B-4398-A734-E430528EBCB3}.Release|x64.Build.0 = Release|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Debug|x64.Build.0 = Debug|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Release|x64.ActiveCfg = Release|Any CPU
+		{CBCEA717-F30A-4235-8329-B201B826C433}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
