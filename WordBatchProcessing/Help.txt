@@ -13,7 +13,7 @@
         Word 文件必须处于关闭状态
 
     示例：
-        path='D:/temp/demo.docx' replacementPath='D:/temp/replace.csv' matchCase=true
+        BatchReplace path='D:/temp/demo.docx' replacementPath='D:/temp/replace.csv' matchCase=true
 
 批量调整图形大小：
     参数列表：
@@ -25,4 +25,4 @@
         Word 文件必须处于关闭状态，width 和 height 至少指定一个，如果只指定 width 或 height，则为等比缩放
 
     示例：
-        path='D:/temp/demo.docx' width=500 height='0.5*'
+        BatchResizeShapes path='D:/temp/demo.docx' width=500 height='0.5*'
