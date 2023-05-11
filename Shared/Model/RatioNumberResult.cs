@@ -10,4 +10,10 @@ public readonly record struct RatioNumberResult {
         HasValue = hasValue;
         IsRatio = isRatio;
     }
+
+    public void Deconstruct(out double value, out bool hasValue, out bool isRatio) {
+        value = Value;
+        hasValue = HasValue;
+        isRatio = IsRatio;
+    }
 }
