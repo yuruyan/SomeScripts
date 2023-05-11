@@ -2,11 +2,57 @@
 using NLog;
 using CommonTools.Model;
 using System.Runtime.InteropServices;
+using CommonTools.Utils;
 
 namespace WordBatchProcessing;
 
 public static class WordService {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+    /// <summary>
+    /// 执行
+    /// </summary>
+    /// <param name="path">Word 文件路径</param>
+    /// <param name="action">(app, document, ComObjects)，在 <paramref name="action"/> 中将 ComObject 添加到集合</param>
+    private static void WrapExecution(string path, Action<Application, Document, List<object>> action) {
+        Application app = null!;
+        Document? document = null;
+        var comObjects = new List<object>();
+        try {
+            Logger.Debug("Starting application");
+            app = new Application();
+            Logger.Debug("Opening document...");
+            document = app.Documents.Open(path, ConfirmConversions: true, ReadOnly: false);
+            if (document is null) {
+                throw new Exception("Opening document failed");
+            }
+            document.Select();
+            // Process
+            action(app, document, comObjects);
+            Logger.Debug("Over");
+        } catch (Exception error) {
+            Logger.Error(error);
+        } finally {
+            try {
+                document?.Close();
+                app.Quit();
+            } catch (Exception error) {
+                Logger.Error(error);
+            }
+            // 逆序释放引用
+            comObjects
+                .Where(item => item != null)
+                .RemoveDuplicates()
+                .Reverse<object>()
+                .ForEach(item => Marshal.FinalReleaseComObject(item));
+            // ReleaseComObject
+            if (document is not null) {
+                Marshal.FinalReleaseComObject(document);
+            }
+            Marshal.FinalReleaseComObject(app);
+        }
+    }
+
 
     /// <summary>
     /// 批量替换
@@ -30,24 +76,25 @@ public static class WordService {
         if (replacementList.Count == 0) {
             return;
         }
-        Application app = null!;
-        Document? document = null;
-        try {
-            app = new Application();
-            Logger.Debug("Opening document...");
-            document = app.Documents.Open(path, ConfirmConversions: true, ReadOnly: false);
-            document.Select();
-            // Switch to editing view
-            document.ActiveWindow.View.ReadingLayout = false;
-            if (document is null) {
-                throw new Exception("Opening failed");
-            }
-            Logger.Debug("Executing replacements");
+        WrapExecution(path, (app, document, comObjects) => {
+            var activeWindow = document.ActiveWindow;
+            var activeWindowView = activeWindow.View;
             var selection = app.Selection;
             var find = selection.Find;
+            var replacement = find.Replacement;
+
+            comObjects.Add(activeWindow);
+            comObjects.Add(activeWindowView);
+            comObjects.Add(selection);
+            comObjects.Add(find);
+            comObjects.Add(replacement);
+
+            // Switch to editing view
+            activeWindowView.ReadingLayout = false;
+            Logger.Debug("Executing replacements");
             foreach (var (key, value) in replacementList) {
                 find.ClearFormatting();
-                find.Replacement.ClearFormatting();
+                replacement.ClearFormatting();
                 // Execute replacement
                 find.Execute(
                     FindText: key,
@@ -62,21 +109,6 @@ public static class WordService {
                 Logger.Debug($"Replace '{key}' with '{value}' done");
             }
             document.Save();
-            Logger.Debug("Over");
-        } catch (Exception error) {
-            Logger.Error(error);
-        } finally {
-            try {
-                document?.Close();
-                app.Quit();
-            } catch (Exception error) {
-                Logger.Error(error);
-            }
-            // ReleaseComObject
-            if (document is not null) {
-                Marshal.ReleaseComObject(document);
-            }
-            Marshal.ReleaseComObject(app);
-        }
+        });
     }
 }
