@@ -3,6 +3,7 @@ using NLog;
 using CommonTools.Model;
 using System.Runtime.InteropServices;
 using CommonTools.Utils;
+using System.Drawing;
 
 namespace WordBatchProcessing;
 
@@ -53,6 +54,36 @@ public static class WordService {
         }
     }
 
+    /// <summary>
+    /// 批量调整图形大小
+    /// </summary>
+    /// <param name="path">Word 文件路径</param>
+    /// <param name="getSize">根据原图像大小返回新图像大小</param>
+    public static void BatchResizeShapes(string path, Func<Size, Size> getSize) {
+        WrapExecution(path, (_, document, comObjects) => {
+            var activeWindow = document.ActiveWindow;
+            var activeWindowView = activeWindow.View;
+            var shapes = document.InlineShapes;
+
+            comObjects.Add(activeWindow);
+            comObjects.Add(activeWindowView);
+            comObjects.Add(shapes);
+
+            // Switch to editing view
+            activeWindowView.ReadingLayout = false;
+            Logger.Debug("Executing resizing");
+            // Starts from 1
+            for (int i = 1, total = shapes.Count; i <= total; i++) {
+                var shape = shapes[i];
+                comObjects.Add(shape);
+                var newSize = getSize(new((int)shape.Width, (int)shape.Height));
+                shape.Height = newSize.Height;
+                shape.Width = newSize.Width;
+                Logger.Debug($"Updated image {i}");
+            }
+            document.Save();
+        });
+    }
 
     /// <summary>
     /// 批量替换
