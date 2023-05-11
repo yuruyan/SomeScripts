@@ -4,6 +4,7 @@ using CommonTools.Model;
 using System.Runtime.InteropServices;
 using CommonTools.Utils;
 using System.Drawing;
+using Microsoft.Office.Core;
 
 namespace WordBatchProcessing;
 
@@ -76,6 +77,7 @@ public static class WordService {
             for (int i = 1, total = shapes.Count; i <= total; i++) {
                 var shape = shapes[i];
                 comObjects.Add(shape);
+                //shape.LockAspectRatio = MsoTriState.msoTrue;
                 var newSize = getSize(new((int)shape.Width, (int)shape.Height));
                 shape.Height = newSize.Height;
                 shape.Width = newSize.Width;

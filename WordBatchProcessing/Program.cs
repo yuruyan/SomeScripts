@@ -10,7 +10,7 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
 }
 
 try {
-    Services.BatchReplace(SharedHelper.GetConfiguration(args));
+    Services.Process(args);
 } catch (Exception error) {
     Logger.Error(error);
 }
