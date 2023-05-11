@@ -77,10 +77,14 @@ public static class WordService {
             for (int i = 1, total = shapes.Count; i <= total; i++) {
                 var shape = shapes[i];
                 comObjects.Add(shape);
-                //shape.LockAspectRatio = MsoTriState.msoTrue;
+                var originalLockAspectRatio = shape.LockAspectRatio;
+                // Unlock AspectRatio
+                shape.LockAspectRatio = MsoTriState.msoFalse;
                 var newSize = getSize(new((int)shape.Width, (int)shape.Height));
                 shape.Height = newSize.Height;
                 shape.Width = newSize.Width;
+                // Restore AspectRatio
+                shape.LockAspectRatio = originalLockAspectRatio;
                 Logger.Debug($"Updated image {i}");
             }
             document.Save();

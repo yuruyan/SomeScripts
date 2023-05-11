@@ -183,7 +183,6 @@ public static partial class Services {
                 double newWidth, newHeight;
                 newWidth = widthHasRatio ? originalSize.Width * specifiedWidth : specifiedWidth;
                 newHeight = heightHasRatio ? originalSize.Height * specifiedHeight : specifiedHeight;
-                Console.WriteLine($"{newWidth}, {newHeight}");
                 return new((int)newWidth, (int)newHeight);
             });
             return;
