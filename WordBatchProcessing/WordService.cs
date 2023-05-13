@@ -16,7 +16,8 @@ public static class WordService {
     /// </summary>
     /// <param name="path">Word 文件路径</param>
     /// <param name="action">(app, document, ComObjects)，在 <paramref name="action"/> 中将 ComObject 添加到集合</param>
-    private static void WrapExecution(string path, Action<Application, Document, List<object>> action) {
+    /// <param name="openReadonly">以只读方式打开</param>
+    private static void WrapExecution(string path, Action<Application, Document, List<object>> action, bool openReadonly = false) {
         Application app = null!;
         Document? document = null;
         var comObjects = new List<object>();
@@ -24,7 +25,7 @@ public static class WordService {
             Logger.Debug("Starting application");
             app = new Application();
             Logger.Debug("Opening document...");
-            document = app.Documents.Open(path, ConfirmConversions: true, ReadOnly: false);
+            document = app.Documents.Open(path, ConfirmConversions: true, ReadOnly: openReadonly);
             if (document is null) {
                 throw new Exception("Opening document failed");
             }
@@ -38,6 +39,7 @@ public static class WordService {
             try {
                 document?.Close();
                 app.Quit();
+                Logger.Debug("Application quit");
             } catch (Exception error) {
                 Logger.Error(error);
             }
