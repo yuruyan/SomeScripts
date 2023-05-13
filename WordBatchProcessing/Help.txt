@@ -10,10 +10,25 @@
         replaceAll[bool](可选): 是否替换全部，默认 true
 
     注意：
-        Word 文件必须处于关闭状态
+        Word 文件必须处于关闭状态，指定 matchWildcards 时，matchCase 和 matchWholeWord 会被忽略
 
     示例：
         BatchReplace path='D:/temp/demo.docx' replacementPath='D:/temp/replace.csv' matchCase=true
+
+查找提取：
+    参数列表：
+        path[string]: Word 文件路径
+        savePath[string]: 结果保存路径
+        search[string]: 搜索文本
+        matchCase[bool](可选): 区分大小写，默认 false
+        matchWholeWord[bool](可选): 匹配整个文本，默认 false
+        matchWildcards[bool](可选): 使用通配符，默认 false
+
+    注意：
+        Word 文件必须处于关闭状态，指定 matchWildcards 时，matchCase 和 matchWholeWord 会被忽略
+
+    示例：
+        BatchReplace path='D:/temp/demo.docx' savePath='D:/temp/result.txt' search='abc'
 
 批量调整图形大小：
     参数列表：
