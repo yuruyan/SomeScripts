@@ -116,18 +116,28 @@ public static class WordService {
         WrapExecution(path, (app, document, comObjects) => {
             var activeWindow = document.ActiveWindow;
             var activeWindowView = activeWindow.View;
-            var selection = app.Selection;
-            var find = selection.Find;
+            var range = document.Content;
+            var find = range.Find;
             var replacement = find.Replacement;
 
             comObjects.Add(activeWindow);
             comObjects.Add(activeWindowView);
-            comObjects.Add(selection);
+            comObjects.Add(range);
             comObjects.Add(find);
             comObjects.Add(replacement);
 
             // Switch to editing view
             activeWindowView.ReadingLayout = false;
+            // Set find properties
+            if (!useWildcards) {
+                find.MatchCase = matchCase;
+                find.MatchWholeWord = matchWholeWord;
+            }
+            find.Forward = true;
+            find.MatchWildcards = useWildcards;
+            find.Wrap = WdFindWrap.wdFindContinue;
+            var replaceMode = replaceAll ? WdReplace.wdReplaceAll : WdReplace.wdReplaceOne;
+
             Logger.Debug("Executing replacements");
             foreach (var (key, value) in replacementList) {
                 find.ClearFormatting();
@@ -136,12 +146,7 @@ public static class WordService {
                 find.Execute(
                     FindText: key,
                     ReplaceWith: value,
-                    Forward: true,
-                    Wrap: WdFindWrap.wdFindContinue,
-                    MatchCase: matchCase,
-                    MatchWholeWord: matchWholeWord,
-                    MatchWildcards: useWildcards,
-                    Replace: replaceAll ? WdReplace.wdReplaceAll : WdReplace.wdReplaceOne
+                    Replace: replaceMode
                 );
                 Logger.Debug($"Replace '{key}' with '{value}' done");
             }
