@@ -90,7 +90,6 @@ public static class WordService {
                 find.MatchWholeWord = matchWholeWord;
             }
             find.Text = searchText;
-            find.Forward = true;
             find.MatchWildcards = useWildcards;
             find.Wrap = WdFindWrap.wdFindStop;
             find.ClearFormatting();
@@ -100,7 +99,7 @@ public static class WordService {
             while (find.Execute() && find.Found) {
                 results.Add(range.Text);
                 count++;
-                Console.Write($"\rFind '{range.Text}'");
+                Console.Write($"\rFind '{range.Text}' {count}");
             }
             Console.WriteLine();
             Logger.Debug($"{count} found");
