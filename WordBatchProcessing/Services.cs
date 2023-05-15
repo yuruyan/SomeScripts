@@ -28,6 +28,75 @@ public static partial class Services {
         targetMethod.Invoke(null, new[] { args.GetConfiguration() });
     }
 
+    private static void SearchText(IConfiguration configuration) {
+        #region ArgumentNames
+        const string PathArgName = "path";
+        const string SavePathArgName = "savePath";
+        const string SearchArgName = "search";
+        const string MatchCaseArgName = "matchCase";
+        const string MatchWholeWordArgName = "matchWholeWord";
+        const string MatchWildcardsArgName = "matchWildcards";
+        #endregion
+
+        #region Argument string value
+        var pathArg = configuration[PathArgName];
+        var savePathArg = configuration[SavePathArgName];
+        var searchArg = configuration[SearchArgName];
+        var matchCaseArg = configuration[MatchCaseArgName];
+        var matchWholeWordArg = configuration[MatchWholeWordArgName];
+        var matchWildcardsArg = configuration[MatchWildcardsArgName];
+        #endregion
+
+        #region Check arguments
+        // Path is empty
+        if (string.IsNullOrEmpty(pathArg)) {
+            Logger.Error($"Argument '{PathArgName}' cannot be empty");
+            return;
+        }
+        // Replacement is empty
+        if (string.IsNullOrEmpty(savePathArg)) {
+            Logger.Error($"Argument '{SavePathArgName}' cannot be empty");
+            return;
+        }
+        // Search is empty
+        if (string.IsNullOrEmpty(searchArg)) {
+            Logger.Error($"Argument '{SearchArgName}' cannot be empty");
+            return;
+        }
+        // Path not found
+        if (!File.Exists(pathArg)) {
+            Logger.Error($"File '{pathArg}' doesn't exist");
+            return;
+        }
+        // Path not found
+        if (!File.Exists(savePathArg)) {
+            Logger.Error($"File '{savePathArg}' doesn't exist");
+            return;
+        }
+        #endregion
+
+        #region Parse arguments
+        if (!bool.TryParse(matchCaseArg, out var matchCase)) {
+            matchCase = false;
+        }
+        if (!bool.TryParse(matchWildcardsArg, out var useWildcards)) {
+            useWildcards = false;
+        }
+        if (!bool.TryParse(matchWholeWordArg, out var matchWholeWord)) {
+            matchWholeWord = false;
+        }
+        #endregion
+
+        WordService.SearchText(
+            pathArg,
+            savePathArg,
+            searchArg,
+            matchCase,
+            matchWholeWord,
+            useWildcards
+        );
+    }
+
     /// <summary>
     /// 批量替换
     /// </summary>
