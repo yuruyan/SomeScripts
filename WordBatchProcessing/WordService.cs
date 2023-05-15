@@ -58,6 +58,58 @@ public static class WordService {
     }
 
     /// <summary>
+    /// 搜索文本
+    /// </summary>
+    /// <param name="path">Word 文件路径</param>
+    /// <param name="savePath">结果保存路径</param>
+    /// <param name="searchText">搜索文本</param>
+    /// <param name="matchCase">区分大小写</param>
+    /// <param name="matchWholeWord">匹配整个文本</param>
+    /// <param name="useWildcards">使用通配符</param>
+    public static void SearchText(
+        string path,
+        string savePath,
+        string searchText,
+        bool matchCase = false,
+        bool matchWholeWord = false,
+        bool useWildcards = false
+    ) {
+        WrapExecution(path, (app, document, comObjects) => {
+            var activeWindow = document.ActiveWindow;
+            var range = document.Content;
+            var find = range.Find;
+            var results = new List<string>();
+
+            comObjects.Add(activeWindow);
+            comObjects.Add(range);
+            comObjects.Add(find);
+
+            // Set find properties
+            if (!useWildcards) {
+                find.MatchCase = matchCase;
+                find.MatchWholeWord = matchWholeWord;
+            }
+            find.Text = searchText;
+            find.Forward = true;
+            find.MatchWildcards = useWildcards;
+            find.Wrap = WdFindWrap.wdFindStop;
+            find.ClearFormatting();
+
+            Logger.Debug("Executing searching");
+            int count = 0;
+            while (find.Execute() && find.Found) {
+                results.Add(range.Text);
+                count++;
+                Console.Write($"\rFind '{range.Text}'");
+            }
+            Console.WriteLine();
+            Logger.Debug($"{count} found");
+            // Save results
+            File.WriteAllLines(savePath, results);
+        }, true);
+    }
+
+    /// <summary>
     /// 批量调整图形大小
     /// </summary>
     /// <param name="path">Word 文件路径</param>
