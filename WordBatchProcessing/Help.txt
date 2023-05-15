@@ -28,7 +28,7 @@
         Word 文件必须处于关闭状态，指定 matchWildcards 时，matchCase 和 matchWholeWord 会被忽略
 
     示例：
-        BatchReplace path='D:/temp/demo.docx' savePath='D:/temp/result.txt' search='abc'
+        SearchText path='D:/temp/demo.docx' savePath='D:/temp/result.txt' search='abc'
 
 批量调整图形大小：
     参数列表：
