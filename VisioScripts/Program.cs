@@ -1,4 +1,16 @@
-﻿using Microsoft.Office.Interop.Visio;
-using System.Linq;
+﻿using NLog;
+using Shared;
+using VisioScripts;
 
-Console.WriteLine();
+Logger Logger = LogManager.GetCurrentClassLogger();
+
+// 输入参数验证
+if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+    return;
+}
+
+try {
+    args.ProcessService(typeof(Services));
+} catch (Exception error) {
+    Logger.Error(error);
+}
