@@ -7,6 +7,10 @@ namespace VisioScripts;
 public static class Services {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+    /// <summary>
+    /// 批量创建文本形状
+    /// </summary>
+    /// <param name="configuration"></param>
     private static void BatchCreatingTextShapes(IConfiguration configuration) {
         #region ArgumentNames
         const string PathArgName = "path";
@@ -14,8 +18,8 @@ public static class Services {
         #endregion
 
         #region Argument string value
-        var pathArg = configuration["PathArgName"];
-        var textPathArg = configuration["TextPathArgName"];
+        var pathArg = configuration[PathArgName];
+        var textPathArg = configuration[TextPathArgName];
         #endregion
 
         #region Check arguments
