@@ -1,6 +1,6 @@
 ﻿Visio 脚本
 
-批量添加文本：
+批量创建文本形状：
     参数列表：
         path[string]: Visio 文件路径
         textPath[string]: 文本路径（每行一条记录）
@@ -9,4 +9,4 @@
         Visio 文件必须处于关闭状态
 
     示例：
-        BatchAddingText path='D:/temp/demo.vsdx' textPath='D:/temp/text.txt'
+        BatchCreatingTextShapes path='D:/temp/demo.vsdx' textPath='D:/temp/text.txt'
