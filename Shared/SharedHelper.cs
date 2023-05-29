@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Shared.Model;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Shared;
@@ -13,6 +14,18 @@ public static partial class SharedHelper {
     /// 比例数参数正则
     /// </summary>
     private static readonly Regex RatioNumberArgRegex = GetRatioNumberArgRegex();
+
+#if NET7_0_OR_GREATER
+    [GeneratedRegex(@"^(?<number>\d+(?:\.\d+)?)\*?$")]
+    private static partial Regex GetRatioNonNegativeNumberArgRegex();
+
+    [GeneratedRegex(@"^-?(?<number>\d+(?:\.\d+)?)\*?$")]
+    private static partial Regex GetRatioNumberArgRegex();
+#elif NET6_0_OR_GREATER
+    private static Regex GetRatioNonNegativeNumberArgRegex() => new(@"^(?<number>\d+(?:\.\d+)?)\*?$");
+
+    private static Regex GetRatioNumberArgRegex() => new(@"^-?(?<number>\d+(?:\.\d+)?)\*?$");
+#endif
 
     /// <summary>
     /// 检查参数是否有参数
@@ -64,15 +77,23 @@ public static partial class SharedHelper {
         );
     }
 
-#if NET7_0_OR_GREATER
-    [GeneratedRegex(@"^(?<number>\d+(?:\.\d+)?)\*?$")]
-    private static partial Regex GetRatioNonNegativeNumberArgRegex();
-
-    [GeneratedRegex(@"^-?(?<number>\d+(?:\.\d+)?)\*?$")]
-    private static partial Regex GetRatioNumberArgRegex();
-#elif NET6_0_OR_GREATER
-    private static Regex GetRatioNonNegativeNumberArgRegex() => new(@"^(?<number>\d+(?:\.\d+)?)\*?$");
-
-    private static Regex GetRatioNumberArgRegex() => new(@"^-?(?<number>\d+(?:\.\d+)?)\*?$");
-#endif
+    /// <summary>
+    /// 处理服务
+    /// </summary>
+    /// <param name="args"><paramref name="args"/>[0] 对应 <paramref name="staticServiceType"/> 方法名称，不区分大小写</param>
+    /// <param name="staticServiceType">其中静态方法参数为 <see cref="IConfiguration"/></param>
+    /// <exception cref="ArgumentException">Invalid first argument in <paramref name="args"/></exception>
+    public static void ProcessService(this string[] args, Type staticServiceType) {
+        var targetMethodNameLowerCase = args[0].ToLowerInvariant();
+        var targetMethod = staticServiceType
+            .GetMethods(BindingFlags.Default | BindingFlags.Static | BindingFlags.NonPublic)
+            .Where(info => info.ReturnType == typeof(void))
+            .Where(info => {
+                var paramInfos = info.GetParameters();
+                return paramInfos.Length == 1 && paramInfos[0].ParameterType == typeof(IConfiguration);
+            })
+            .FirstOrDefault(info => info.Name.ToLowerInvariant() == targetMethodNameLowerCase)
+            ?? throw new ArgumentException($"Invalid argument '{args[0]}'");
+        targetMethod.Invoke(null, new[] { args.GetConfiguration() });
+    }
 }
