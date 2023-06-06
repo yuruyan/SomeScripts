@@ -36,6 +36,8 @@ string defaultFolder = browserType switch {
     BrowserType.Chrome => ChromeDefaultFolder,
     _ => DefaultFolder,
 };
+// Collections Directory
+var collectionsFile = Path.Combine(defaultFolder, "Collections/collectionsSQLite");
 
 // 复制文件到临时目录
 string tempDir = string.Empty;
@@ -44,11 +46,16 @@ Directory.CreateDirectory(tempDir);
 // 判断文件夹创建是否成功
 if (!Directory.Exists(tempDir)) {
     Console.WriteLine($"创建文件夹 '{tempDir}' 失败");
+    return;
 }
 foreach (var path in Directory.GetFiles(defaultFolder)) {
     File.Copy(path, Path.Combine(tempDir, Path.GetFileName(path)));
 }
-
+// Copy collections file
+if (File.Exists(collectionsFile)) {
+    File.Copy(collectionsFile, Path.Combine(tempDir, "collectionsSQLite"));
+    Logger.Debug("Copy collectionsSQLite done");
+}
 // 设置 savePath
 if (overrideIfExist) {
     File.Delete(savePath);
