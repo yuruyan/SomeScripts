@@ -1,0 +1,6 @@
+﻿获取可执行文件属性
+
+参数列表：
+    filepath: 可执行文件路径
+示例：
+    filepath='D:/temp/app.exe'

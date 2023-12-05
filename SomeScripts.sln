@@ -28,7 +28,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleScripts", "SimpleScri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordBatchProcessing", "WordBatchProcessing\WordBatchProcessing.csproj", "{CBCEA717-F30A-4235-8329-B201B826C433}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisioScripts", "VisioScripts\VisioScripts.csproj", "{D0B34C6B-4158-4DD6-A08C-B238EEB5CC91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisioScripts", "VisioScripts\VisioScripts.csproj", "{D0B34C6B-4158-4DD6-A08C-B238EEB5CC91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationProperty", "ApplicationProperty\ApplicationProperty.csproj", "{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,6 +128,14 @@ Global
 		{D0B34C6B-4158-4DD6-A08C-B238EEB5CC91}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D0B34C6B-4158-4DD6-A08C-B238EEB5CC91}.Release|x64.ActiveCfg = Release|Any CPU
 		{D0B34C6B-4158-4DD6-A08C-B238EEB5CC91}.Release|x64.Build.0 = Release|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Debug|x64.Build.0 = Debug|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Release|x64.ActiveCfg = Release|Any CPU
+		{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
