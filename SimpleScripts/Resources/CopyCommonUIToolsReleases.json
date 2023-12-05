@@ -2,16 +2,16 @@
   "releaseRootDir": "F:/Code/CSharp/CommonUITools/CommonUITools/bin/x64/Release",
   "releaseVersions": {
     "net6": "net6.0-windows10.0.17763.0",
-    "net7": "net7.0-windows10.0.17763.0"
+    "net8": "net8.0-windows10.0.17763.0"
   },
   "targets": [
     {
       // 根目录
       "destRootDir": "F:/Code/CSharp/CommonAPI/CommonAPI/Lib",
       // // 版本，net + 版本号，省略则包括所有版本
-      // "versions": ["net6", "net7"],
+      // "versions": ["net6", "net8"],
       // // 版本对应的目录，省略则使用 versions 作为目录
-      // "versionDirs": ["net6", "net7"],
+      // "versionDirs": ["net6", "net8"],
       // 是否拷贝 UITools，默认 false
       "copyUITools": true
     },

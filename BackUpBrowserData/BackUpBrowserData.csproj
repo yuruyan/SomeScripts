@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
@@ -14,10 +14,10 @@
   </ItemGroup>
 
   <Choose>
-    <When Condition=" '$(TargetFramework.StartsWith(`net7.0`))' == 'true' ">
+    <When Condition=" '$(TargetFramework.StartsWith(`net8.0`))' == 'true' ">
       <ItemGroup>
         <Reference Include="CommonTools">
-          <HintPath>..\Shared\Lib\Net7\CommonTools.dll</HintPath>
+          <HintPath>..\Shared\Lib\net8\CommonTools.dll</HintPath>
         </Reference>
       </ItemGroup>
     </When>
