@@ -28,29 +28,28 @@ public static class BrowserService {
         }
         tempDir = Path.Combine(saveDirectory, tempDir);
         Directory.CreateDirectory(tempDir);
-        // 判断文件夹创建是否成功
-        if (!Directory.Exists(tempDir)) {
-            Logger.Error($"创建文件夹 '{tempDir}' 失败");
-            return;
-        }
         // Copy files to temp directory
         foreach (var path in Directory.GetFiles(defaultFolder)) {
             var filename = Path.GetFileName(path);
-            File.Copy(path, Path.Combine(tempDir, filename));
-            Logger.Debug($"{filename} Copyed");
+            try {
+                File.Copy(path, Path.Combine(tempDir, filename));
+                Logger.Info($"{filename} Copyed");
+            } catch {
+                Logger.Error($"Copy file {filename} failed");
+            }
         }
         // Copy collections file
         if (File.Exists(collectionsFile)) {
             File.Copy(collectionsFile, Path.Combine(tempDir, "collectionsSQLite"));
-            Logger.Debug("Copy collectionsSQLite done");
+            Logger.Info("Copy collectionsSQLite done");
         }
         // Delete the original file
         File.Delete(savePath);
-        Logger.Debug("压缩中...");
+        Logger.Info("压缩中...");
         // 开始压缩
         ZipFile.CreateFromDirectory(tempDir, savePath); // 简易
         // 删除临时文件夹
         Directory.Delete(tempDir, true);
-        Logger.Debug("压缩完毕");
+        Logger.Info("压缩完毕");
     }
 }
