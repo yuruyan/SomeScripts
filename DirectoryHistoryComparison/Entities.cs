@@ -2,7 +2,7 @@
 
 namespace DirectoryHistoryComparison;
 
-internal class CommonItem {
+internal record CommonItem {
     public string Name { get; set; } = string.Empty;
 
     public CommonItem() { }
@@ -12,13 +12,13 @@ internal class CommonItem {
     }
 }
 
-internal class FileItem : CommonItem {
+internal record FileItem : CommonItem {
     public FileItem() { }
 
     public FileItem(string name) : base(name) { }
 }
 
-internal class DirectoryItem : CommonItem {
+internal record DirectoryItem : CommonItem {
     public List<FileItem> Files { get; set; } = [];
     public List<DirectoryItem> Directories { get; set; } = [];
 
