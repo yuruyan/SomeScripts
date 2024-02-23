@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisioScripts", "VisioScript
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationProperty", "ApplicationProperty\ApplicationProperty.csproj", "{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryHistoryComparison", "DirectoryHistoryComparison\DirectoryHistoryComparison.csproj", "{CAF2CE27-7022-4463-AF8F-1D5FA77E7DF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryComparison", "DirectoryComparison\DirectoryComparison.csproj", "{CAF2CE27-7022-4463-AF8F-1D5FA77E7DF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
