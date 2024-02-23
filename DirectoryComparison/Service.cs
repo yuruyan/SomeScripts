@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace DirectoryHistoryComparison;
+namespace DirectoryComparison;
 
 internal static class Service {
     /// <summary>

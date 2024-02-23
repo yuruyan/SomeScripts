@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DirectoryHistoryComparison;
+namespace DirectoryComparison;
 
 internal record CommonItem {
     public string Name { get; set; } = string.Empty;

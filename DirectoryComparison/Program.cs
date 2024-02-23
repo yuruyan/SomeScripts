@@ -1,4 +1,4 @@
-﻿using DirectoryHistoryComparison;
+﻿using DirectoryComparison;
 using NLog;
 using Shared;
 
