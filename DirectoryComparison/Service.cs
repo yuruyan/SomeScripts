@@ -2,13 +2,13 @@
 
 namespace DirectoryHistoryComparison;
 
-internal class Main {
+internal static class Service {
     /// <summary>
     /// 保存文件夹结构到文件
     /// </summary>
     /// <param name="directory"></param>
     /// <param name="outfile"></param>
-    public void SaveStructure(string directory, string outfile) {
+    public static void SaveStructure(string directory, string outfile) {
         var dir = GetDirectoryStructure(directory);
         dir.Name = directory;
         var json = JsonSerializer.Serialize(dir, SourceGenerationContext.Default.DirectoryItem);
@@ -20,7 +20,7 @@ internal class Main {
     /// </summary>
     /// <param name="dir1DataPath"></param>
     /// <param name="dir2DataPath"></param>
-    public void CompareDirectories(string dir1DataPath, string dir2DataPath) {
+    public static void CompareDirectories(string dir1DataPath, string dir2DataPath) {
         var dir1 = JsonSerializer.Deserialize(File.ReadAllText(dir1DataPath), SourceGenerationContext.Default.DirectoryItem)!;
         var dir2 = JsonSerializer.Deserialize(File.ReadAllText(dir2DataPath), SourceGenerationContext.Default.DirectoryItem)!;
         CompareDirectories(dir1, dir2, Path.GetDirectoryName(dir1.Name)!);
@@ -32,7 +32,7 @@ internal class Main {
     /// <param name="dir1"></param>
     /// <param name="dir2"></param>
     /// <param name="currentRoot">当前父目录</param>
-    private void CompareDirectories(DirectoryItem dir1, DirectoryItem dir2, string currentRoot) {
+    private static void CompareDirectories(DirectoryItem dir1, DirectoryItem dir2, string currentRoot) {
         // todo: 不区分大小写
         // 文件夹名称不一致
         if (dir1.Name != dir2.Name) {
@@ -63,7 +63,7 @@ internal class Main {
     /// </summary>
     /// <param name="directory"></param>
     /// <returns></returns>
-    private DirectoryItem GetDirectoryStructure(string directory) {
+    private static DirectoryItem GetDirectoryStructure(string directory) {
         return new DirectoryItem(Path.GetFileName(directory)) {
             Files = Directory.GetFiles(directory).Select(item => new FileItem(Path.GetFileName(item))).ToList(),
             Directories = Directory.GetDirectories(directory).Select(GetDirectoryStructure).ToList()
