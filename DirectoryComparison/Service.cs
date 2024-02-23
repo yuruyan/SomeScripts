@@ -36,14 +36,14 @@ internal static class Service {
         // todo: 不区分大小写
         // 文件夹名称不一致
         if (dir1.Name != dir2.Name) {
-            Console.WriteLine(Path.Combine(dirRoot, dir2.Name));
+            Console.WriteLine("New Directory: " + Path.Combine(dirRoot, dir2.Name));
             return;
         }
         // 比对文件
         foreach (var file in dir2.Files) {
             // 新文件
             if (!dir1.Files.Contains(file)) {
-                Console.WriteLine(Path.Combine(dirRoot, dir2.Name, file.Name));
+                Console.WriteLine("New File: " + Path.Combine(dirRoot, dir2.Name, file.Name));
             }
         }
         // 比对文件夹
@@ -52,7 +52,7 @@ internal static class Service {
         foreach (var dir in dir2.Directories) {
             // 新目录
             if (!subDir1.Contains(dir.Name)) {
-                Console.WriteLine(Path.Combine(currentSubDirRoot, dir.Name));
+                Console.WriteLine("New Directory: " + Path.Combine(currentSubDirRoot, dir.Name));
                 continue;
             }
             CompareDirectories(
