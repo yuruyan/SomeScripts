@@ -1,0 +1,15 @@
+﻿目录结构比对
+
+生成目录结构：
+    参数列表：
+        Directory: 要生成结构的目录
+        SavePath:  保存目录结构文件路径
+    示例：
+        SaveStructure Directory='D:/temp' SavePath='E:/struct.json'
+
+目录比对：
+    参数列表：
+        StructFile1: 对比目录结构文件1
+        StructFile2: 对比目录结构文件2
+    示例：
+        CompareDirectories StructFile1='E:/temp/struct1.json' StructFile2='E:/struct2.json'
