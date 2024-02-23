@@ -7,12 +7,12 @@ internal static class Service {
     /// 保存文件夹结构到文件
     /// </summary>
     /// <param name="directory"></param>
-    /// <param name="outfile"></param>
-    public static void SaveStructure(string directory, string outfile) {
+    /// <param name="savePath"></param>
+    public static void SaveStructure(string directory, string savePath) {
         var dir = GetDirectoryStructure(directory);
         dir.Name = directory;
         var json = JsonSerializer.Serialize(dir, SourceGenerationContext.Default.DirectoryItem);
-        File.WriteAllText(outfile, json);
+        File.WriteAllText(savePath, json);
     }
 
     /// <summary>
