@@ -8,7 +8,7 @@ internal class Main {
     /// </summary>
     /// <param name="directory"></param>
     /// <param name="outfile"></param>
-    public void SaveStructureToFile(string directory, string outfile) {
+    public void SaveStructure(string directory, string outfile) {
         var dir = GetDirectoryStructure(directory);
         dir.Name = directory;
         var json = JsonSerializer.Serialize(dir, SourceGenerationContext.Default.DirectoryItem);
