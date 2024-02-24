@@ -38,13 +38,13 @@ internal static class Service {
         NewDirectories.Sort();
 
         Console.WriteLine("Deleted Files:");
-        DeletedFiles.ForEach(Console.WriteLine);
+        DeletedFiles.ForEach(item => Console.WriteLine("\t" + item));
         Console.WriteLine("Deleted Directories:");
-        DeletedDirectories.ForEach(Console.WriteLine);
+        DeletedDirectories.ForEach(item => Console.WriteLine("\t" + item));
         Console.WriteLine("New Files:");
-        NewFiles.ForEach(Console.WriteLine);
+        NewFiles.ForEach(item => Console.WriteLine("\t" + item));
         Console.WriteLine("New Directories:");
-        NewDirectories.ForEach(Console.WriteLine);
+        NewDirectories.ForEach(item => Console.WriteLine("\t" + item));
         #endregion
     }
 
