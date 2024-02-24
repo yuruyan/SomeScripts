@@ -27,7 +27,7 @@ internal record DirectoryItem : CommonItem {
     public DirectoryItem(string name) : base(name) { }
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(Dictionary<int, string>))]
 [JsonSerializable(typeof(CommonItem))]

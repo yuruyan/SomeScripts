@@ -1,5 +1,5 @@
 ﻿using ApplicationProperty;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Shared;
 using System.Diagnostics;
 
@@ -8,17 +8,17 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
-Logger Logger = LogManager.GetCurrentClassLogger();
+var Logger = SharedLogging.Logger;
 var Config = SharedHelper.GetConfiguration(args);
-string filepath = Config["filepath"];
+var filepath = Config["filepath"];
 if (!File.Exists(filepath)) {
-    Logger.Error($"文件 '{nameof(filepath)}' 不存在！");
+    Logger.LogError($"文件 '{nameof(filepath)}' 不存在！");
     return;
 }
 // 获取文件属性
 try {
     Console.WriteLine(FileVersionInfo.GetVersionInfo(filepath));
 } catch (Exception error) {
-    Logger.Error(error);
+    Logger.LogError(error, "Program terminated");
     Environment.Exit(-1);
 }
