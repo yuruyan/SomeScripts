@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared.Model;
-using SharedHelper;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -105,7 +104,7 @@ public static partial class SharedHelper {
     /// <param name="filePath">文件路径</param>
     /// <param name="argumentName">命令行参数名称</param>
     /// <returns></returns>
-    public static bool ValidateFileArgument(string filePath, string argumentName) {
+    public static bool ValidateFileArgument(string? filePath, string argumentName) {
         if (string.IsNullOrEmpty(filePath)) {
             SharedLogging.Logger.LogError("Argument '{argumentName}' cannot be empty", argumentName);
             return false;
@@ -123,7 +122,7 @@ public static partial class SharedHelper {
     /// <param name="directory">文件夹路径</param>
     /// <param name="argumentName">命令行参数名称</param>
     /// <returns></returns>
-    public static bool ValidateDirectoryArgument(string directory, string argumentName) {
+    public static bool ValidateDirectoryArgument(string? directory, string argumentName) {
         if (string.IsNullOrEmpty(directory)) {
             SharedLogging.Logger.LogError("Argument '{argumentName}' cannot be empty", argumentName);
             return false;
