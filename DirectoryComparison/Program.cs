@@ -45,7 +45,7 @@ void SaveStructure(IConfiguration config) {
     if (!SharedHelper.ValidateDirectoryArgument(dir, "Directory")) {
         return;
     }
-    if (!string.IsNullOrEmpty(file)) {
+    if (string.IsNullOrEmpty(file)) {
         Logger.LogError("Argument 'SavePath' cannot be empty");
         return;
     }
