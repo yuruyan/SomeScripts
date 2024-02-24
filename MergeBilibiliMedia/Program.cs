@@ -18,10 +18,10 @@ const int DefaultThreadCount = 4, MaxThreadCount = 16, MinThreadCount = 1;
 const bool DefaultIgnoreError = false;
 
 var Config = SharedHelper.GetConfiguration(args);
-string rootDir = Config["rootDir"];
-string saveDir = Config["saveDir"];
-string threadArg = Config["threads"];
-string ignoreErrorArg = Config["ignoreError"]?.ToLowerInvariant() ?? DefaultIgnoreError.ToString();
+var rootDir = Config["rootDir"];
+var saveDir = Config["saveDir"];
+var threadArg = Config["threads"];
+var ignoreErrorArg = Config["ignoreError"]?.ToLowerInvariant() ?? DefaultIgnoreError.ToString();
 
 // 解析参数
 int threadCount = string.IsNullOrEmpty(threadArg) ? DefaultThreadCount : int.TryParse(threadArg, out int n) ? n : DefaultThreadCount;
@@ -53,9 +53,9 @@ try {
     Process.Start(new ProcessStartInfo {
         FileName = "ffmpeg",
         CreateNoWindow = true,
-    }).WaitForExit();
+    })!.WaitForExit();
 } catch {
-    Logger.LogError("FFmpeg 不存在！");
+    Logger.LogError("Starting ffmpeg failed");
     return;
 }
 
@@ -78,9 +78,9 @@ for (int i = 0; i < threadCount; i++) {
                 // 弹幕文件
                 //string danmuXml = File.ReadAllText(Path.Combine(dir, "danmaku.xml"));
                 JToken jToken = JToken.Parse(entryJson);
-                string folderName = jToken["type_tag"].ToString();
+                string folderName = jToken["type_tag"]!.ToString();
                 // 视频名称
-                string videoName = jToken["page_data"]["part"].ToString();
+                string videoName = jToken["page_data"]!["part"]!.ToString();
                 // 音频文件
                 string audioPath = Path.Combine(dir, folderName, "audio.m4s");
                 // 视频文件
@@ -92,7 +92,7 @@ for (int i = 0; i < threadCount; i++) {
                     FileName = "ffmpeg",
                     Arguments = $"-i \"{videoPath}\" -i \"{audioPath}\" -vcodec copy -acodec copy -y \"{outVideoPath}\"",
                     CreateNoWindow = true,
-                }).WaitForExit();
+                })!.WaitForExit();
                 Logger.LogInformation($"finished {videoName}");
             } catch {
                 if (ignoreError) {

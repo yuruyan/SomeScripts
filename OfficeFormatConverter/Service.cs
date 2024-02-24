@@ -236,8 +236,8 @@ public static class Service {
             // 其他格式
             else {
                 var worksheets = workbook.Worksheets;
-                var saveDir = Path.GetDirectoryName(savePath);
-                var saveFileName = Path.GetFileNameWithoutExtension(savePath);
+                var saveDir = Path.GetDirectoryName(savePath)!;
+                var saveFileName = Path.GetFileNameWithoutExtension(savePath)!;
 
                 // 导出全部 sheet
                 for (int i = 1; i <= worksheets.Count; i++) {
@@ -321,8 +321,8 @@ public static class Service {
             else if (savePathExtension == Png || savePathExtension == Jpg) {
                 // 图片保存目录
                 string saveDir = Path.Combine(
-                    Path.GetDirectoryName(savePath),
-                    Path.GetFileNameWithoutExtension(savePath)
+                    Path.GetDirectoryName(savePath)!,
+                    Path.GetFileNameWithoutExtension(savePath)!
                 );
                 Directory.CreateDirectory(saveDir);
                 int count = 0;

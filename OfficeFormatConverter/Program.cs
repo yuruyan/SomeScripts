@@ -8,10 +8,9 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
 }
 
 var Logger = SharedLogging.Logger;
-
 var Config = SharedHelper.GetConfiguration(args);
-string sourcePath = Config["sourcePath"];
-string savePath = Config["savePath"];
+var sourcePath = Config["sourcePath"];
+var savePath = Config["savePath"];
 // 参数验证
 if (string.IsNullOrEmpty(sourcePath)) {
     Logger.LogError("参数 sourcePath 不能为空");

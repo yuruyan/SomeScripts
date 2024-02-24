@@ -33,7 +33,7 @@ internal static class Proxy {
     /// <param name="savePath"></param>
     /// <exception cref="FileNotFoundException"></exception>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    private static void CheckSourcePathAndSavePath(string sourcePath, string savePath) {
+    private static void CheckSourcePathAndSavePath(string? sourcePath, string? savePath) {
         var savePathDirectory = Path.GetDirectoryName(savePath);
 
         // 验证 sourcePath
@@ -97,16 +97,16 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void GaussianBlur(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string radiusArg = config["radius"];
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var radiusArg = config["radius"];
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 解析 radiusArg
         if (!double.TryParse(radiusArg, out var radius)) {
             radius = Service.DefaultGaussianBlurRadius;
         }
-        Service.GaussianBlur(sourcePath, savePath, radius);
+        Service.GaussianBlur(sourcePath!, savePath!, radius);
     }
 
     private static readonly Regex PutTextPointArgRegex = new(@" *\( *(\d+(?:\.\d+)?) *, *(\d+(?:\.\d+)?) *\) *");
@@ -116,8 +116,8 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void PutText(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
         string text = config["text"] ?? string.Empty;
         string pointArg = config["point"] ?? $"(0,0)";
         string fontSizeArg = config["fontSize"] ?? Service.DefaultPutTextFontSize.ToString();
@@ -140,7 +140,7 @@ internal static class Proxy {
         if (!Enum.TryParse(fontStyleArg, out System.Drawing.FontStyle fontStyle)) {
             fontStyle = Service.DefaultPutTextFontStyle;
         }
-        Service.PutText(sourcePath, savePath, text, point, fontStyle, fontFamily, fontSize, color);
+        Service.PutText(sourcePath!, savePath!, text, point, fontStyle, fontFamily, fontSize, color);
     }
 
     /// <summary>
@@ -148,16 +148,16 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void Flip(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string modeArg = (config["mode"] ?? Service.DefaultFlipMode.ToString()).ToUpperInvariant();
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var modeArg = (config["mode"] ?? Service.DefaultFlipMode.ToString()).ToUpperInvariant();
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 验证 modeArg 
         if (!Enum.TryParse(modeArg, out FlipMode flipMode)) {
             throw new ArgumentException("参数 mode 无效");
         }
-        Service.Flip(sourcePath, savePath, flipMode);
+        Service.Flip(sourcePath!, savePath!, flipMode);
     }
 
     /// <summary>
@@ -165,16 +165,16 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void Rotate(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string angleArg = config["angle"] ?? Service.DefaultRotateAngle.ToString();
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var angleArg = config["angle"] ?? Service.DefaultRotateAngle.ToString();
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 验证 angleArg
         if (!double.TryParse(angleArg, out var angle)) {
             throw new FormatException("参数 angle 无效");
         }
-        Service.Rotate(sourcePath, savePath, angle);
+        Service.Rotate(sourcePath!, savePath!, angle);
     }
 
     /// <summary>
@@ -182,20 +182,20 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void Crop(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string xArg = config["x"];
-        string yArg = config["y"];
-        string widthArg = config["width"];
-        string heightArg = config["height"];
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var xArg = config["x"];
+        var yArg = config["y"];
+        var widthArg = config["width"];
+        var heightArg = config["height"];
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 参数验证
         var position = GetSize(xArg, yArg, widthArgName: "x", heightArgName: "y");
         var size = GetSize(widthArg, heightArg, true, true);
         Service.Crop(
-            sourcePath,
-            savePath,
+            sourcePath!,
+            savePath!,
             new(position.Width, position.Height),
             new(size.Width, size.Height)
         );
@@ -208,10 +208,10 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void Resize(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string? widthArg = config["width"]?.Trim();
-        string? heightArg = config["height"]?.Trim();
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var widthArg = config["width"]?.Trim();
+        var heightArg = config["height"]?.Trim();
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
         // 都为空
@@ -236,7 +236,7 @@ internal static class Proxy {
         bool isHeightRatio = heightArg != null && heightArg.Contains('*');
         // 都指定
         if (widthVal != null && heightVal != null) {
-            Service.Resize(sourcePath, savePath, (w, h) => {
+            Service.Resize(sourcePath!, savePath!, (w, h) => {
                 double width = (double)(isWidthRatio ? w * widthVal : widthVal);
                 double height = (double)(isHeightRatio ? h * heightVal : heightVal);
                 return new(width, height);
@@ -245,7 +245,7 @@ internal static class Proxy {
         }
         // 只指定 width
         if (widthVal != null) {
-            Service.Resize(sourcePath, savePath, (w, h) => {
+            Service.Resize(sourcePath!, savePath!, (w, h) => {
                 double width = (double)(isWidthRatio ? w * widthVal : widthVal);
                 double height = width * h / w;
                 return new(width, height);
@@ -255,7 +255,7 @@ internal static class Proxy {
         // 只指定 height
         // 为了消除 heightVal waring
         if (heightVal != null) {
-            Service.Resize(sourcePath, savePath, (w, h) => {
+            Service.Resize(sourcePath!, savePath!, (w, h) => {
                 double height = (double)(isHeightRatio ? h * heightVal : heightVal);
                 double width = w * height / h;
                 return new(width, height);
@@ -268,17 +268,17 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void ConvertToIcon(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string? widthArg = config["width"];
-        string? heightArg = config["height"];
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var widthArg = config["width"];
+        var heightArg = config["height"];
 
         var size = GetSize(widthArg, heightArg);
         CheckSourcePathAndSavePath(sourcePath, savePath);
         if (size.Width == 0 && size.Height == 0) {
             size.Width = Service.DefaultConvertToIconSize;
         }
-        Service.ConvertToIcon(sourcePath, savePath, size.Width, size.Height);
+        Service.ConvertToIcon(sourcePath!, savePath!, size.Width, size.Height);
     }
 
     /// <summary>
@@ -286,11 +286,11 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void GrayScale(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
-        Service.GrayScale(sourcePath, savePath);
+        Service.GrayScale(sourcePath!, savePath!);
     }
 
     /// <summary>
@@ -298,16 +298,16 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void Transparentize(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string opacityArg = config["opacity"] ?? Service.DefaultTransparentizeOpacity.ToString();
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var opacityArg = config["opacity"] ?? Service.DefaultTransparentizeOpacity.ToString();
 
         if (!float.TryParse(opacityArg, out var opacity)) {
             Logger.LogError($"参数 {nameof(opacity)} 无效");
             return;
         }
         CheckSourcePathAndSavePath(sourcePath, savePath);
-        Service.Transparentize(sourcePath, savePath, opacity);
+        Service.Transparentize(sourcePath!, savePath!, opacity);
     }
 
     /// <summary>
@@ -315,11 +315,11 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void InvertColor(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
 
         CheckSourcePathAndSavePath(sourcePath, savePath);
-        Service.InvertColor(sourcePath, savePath);
+        Service.InvertColor(sourcePath!, savePath!);
     }
 
     /// <summary>
@@ -327,13 +327,13 @@ internal static class Proxy {
     /// </summary>
     /// <param name="config"></param>
     private static void SvgConvert(IConfiguration config) {
-        string sourcePath = config["sourcePath"];
-        string savePath = config["savePath"];
-        string? widthArg = config["width"];
-        string? heightArg = config["height"];
+        var sourcePath = config["sourcePath"];
+        var savePath = config["savePath"];
+        var widthArg = config["width"];
+        var heightArg = config["height"];
 
         var size = GetSize(widthArg, heightArg);
         CheckSourcePathAndSavePath(sourcePath, savePath);
-        Service.SvgConvert(sourcePath, savePath, size.Width, size.Height);
+        Service.SvgConvert(sourcePath!, savePath!, size.Width, size.Height);
     }
 }

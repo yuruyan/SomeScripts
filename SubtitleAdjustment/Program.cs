@@ -9,9 +9,9 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
 
 var Logger = SharedLogging.Logger;
 var Config = SharedHelper.GetConfiguration(args);
-string sourcePath = Config["sourcePath"];
-string savePath = Config["savePath"];
-string offsetArg = Config["offset"];
+var sourcePath = Config["sourcePath"];
+var savePath = Config["savePath"];
+var offsetArg = Config["offset"];
 
 // 参数验证
 if (string.IsNullOrEmpty(sourcePath)) {
