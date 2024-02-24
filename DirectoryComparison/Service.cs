@@ -4,6 +4,11 @@ using System.Text.Json;
 namespace DirectoryComparison;
 
 internal static class Service {
+    private static List<string> DeletedFiles = new();
+    private static List<string> DeletedDirectories = new();
+    private static List<string> NewFiles = new();
+    private static List<string> NewDirectories = new();
+
     /// <summary>
     /// 保存文件夹结构到文件
     /// </summary>
@@ -25,6 +30,22 @@ internal static class Service {
         var dir1 = JsonSerializer.Deserialize(File.ReadAllText(dir1DataPath), SourceGenerationContext.Default.DirectoryItem)!;
         var dir2 = JsonSerializer.Deserialize(File.ReadAllText(dir2DataPath), SourceGenerationContext.Default.DirectoryItem)!;
         CompareDirectories(dir1, dir2, Path.GetDirectoryName(dir1.Name)!, Path.GetDirectoryName(dir2.Name)!);
+
+        #region Print Result
+        DeletedFiles.Sort();
+        DeletedDirectories.Sort();
+        NewFiles.Sort();
+        NewDirectories.Sort();
+
+        Console.WriteLine("Deleted Files:");
+        DeletedFiles.ForEach(Console.WriteLine);
+        Console.WriteLine("Deleted Directories:");
+        DeletedDirectories.ForEach(Console.WriteLine);
+        Console.WriteLine("New Files:");
+        NewFiles.ForEach(Console.WriteLine);
+        Console.WriteLine("New Directories:");
+        NewDirectories.ForEach(Console.WriteLine);
+        #endregion
     }
 
     /// <summary>
@@ -39,8 +60,8 @@ internal static class Service {
         var subDir2Root = Path.Combine(dir2Root, dir2.Name);
         // 文件夹名称不一致
         if (!dir1.Name.Equals(dir2.Name, StringComparison.InvariantCultureIgnoreCase)) {
-            Console.WriteLine($"Deleted Directory: {subDir1Root}");
-            Console.WriteLine($"New Directory: {subDir2Root}");
+            DeletedDirectories.Add(subDir1Root);
+            NewDirectories.Add(subDir2Root);
             return;
         }
 
@@ -50,11 +71,13 @@ internal static class Service {
         // 删除的文件
         dir1.Files
             .Where(item => !dir2LowercaseFiles.Contains(item.Name.ToLowerInvariant()))
-            .ForEach(item => Console.WriteLine("Deleted File: " + Path.Combine(subDir1Root, item.Name)));
+            .Select(item => Path.Combine(subDir1Root, item.Name))
+            .ForEach(DeletedFiles.Add);
         // 新增的文件
         dir2.Files
             .Where(item => !dir1LowercaseFiles.Contains(item.Name.ToLowerInvariant()))
-            .ForEach(item => Console.WriteLine("New File: " + Path.Combine(subDir2Root, item.Name)));
+            .Select(item => Path.Combine(subDir2Root, item.Name))
+            .ForEach(NewFiles.Add);
         #endregion
 
         #region 比对文件夹
@@ -63,11 +86,13 @@ internal static class Service {
         // 删除的文件夹
         dir1.Directories
             .Where(item => !subDir2LowercaseDirs.Contains(item.Name.ToLowerInvariant()))
-            .ForEach(item => Console.WriteLine("Deleted Directory: " + Path.Combine(subDir1Root, item.Name)));
+            .Select(item => Path.Combine(subDir1Root, item.Name))
+            .ForEach(DeletedDirectories.Add);
         // 新增的文件夹
         dir2.Directories
             .Where(item => !subDir1LowercaseDirs.Contains(item.Name.ToLowerInvariant()))
-            .ForEach(item => Console.WriteLine("New Directory: " + Path.Combine(subDir2Root, item.Name)));
+            .Select(item => Path.Combine(subDir2Root, item.Name))
+            .ForEach(NewDirectories.Add);
         // 递归比对相同文件夹
         foreach (var dir in dir2.Directories) {
             if (!subDir1LowercaseDirs.Contains(dir.Name.ToLowerInvariant())) {
