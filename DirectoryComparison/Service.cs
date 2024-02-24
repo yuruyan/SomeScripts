@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using CommonTools.Utils;
+using System.Text.Json;
 
 namespace DirectoryComparison;
 
@@ -23,7 +24,7 @@ internal static class Service {
     public static void CompareDirectories(string dir1DataPath, string dir2DataPath) {
         var dir1 = JsonSerializer.Deserialize(File.ReadAllText(dir1DataPath), SourceGenerationContext.Default.DirectoryItem)!;
         var dir2 = JsonSerializer.Deserialize(File.ReadAllText(dir2DataPath), SourceGenerationContext.Default.DirectoryItem)!;
-        CompareDirectories(dir1, dir2, Path.GetDirectoryName(dir1.Name)!);
+        CompareDirectories(dir1, dir2, Path.GetDirectoryName(dir1.Name)!, Path.GetDirectoryName(dir2.Name)!);
     }
 
     /// <summary>
@@ -31,36 +32,55 @@ internal static class Service {
     /// </summary>
     /// <param name="dir1"></param>
     /// <param name="dir2"></param>
-    /// <param name="dir1Root">dir 父目录</param>
-    private static void CompareDirectories(DirectoryItem dir1, DirectoryItem dir2, string dirRoot) {
-        // todo: 不区分大小写
+    /// <param name="dir1Root">dir1 父目录</param>
+    /// <param name="dir2Root">dir2 父目录</param>
+    private static void CompareDirectories(DirectoryItem dir1, DirectoryItem dir2, string dir1Root, string dir2Root) {
+        var subDir1Root = Path.Combine(dir1Root, dir1.Name);
+        var subDir2Root = Path.Combine(dir2Root, dir2.Name);
         // 文件夹名称不一致
-        if (dir1.Name != dir2.Name) {
-            Console.WriteLine("New Directory: " + Path.Combine(dirRoot, dir2.Name));
+        if (!dir1.Name.Equals(dir2.Name, StringComparison.InvariantCultureIgnoreCase)) {
+            Console.WriteLine($"Deleted Directory: {subDir1Root}");
+            Console.WriteLine($"New Directory: {subDir2Root}");
             return;
         }
-        // 比对文件
-        foreach (var file in dir2.Files) {
-            // 新文件
-            if (!dir1.Files.Contains(file)) {
-                Console.WriteLine("New File: " + Path.Combine(dirRoot, dir2.Name, file.Name));
-            }
-        }
-        // 比对文件夹
-        var subDir1 = dir1.Directories.Select(item => item.Name).ToList();
-        var currentSubDirRoot = Path.Combine(dirRoot, dir2.Name);
+
+        #region 比对文件
+        var dir1LowercaseFiles = dir1.Files.Select(item => item.Name.ToLowerInvariant()).ToHashSet();
+        var dir2LowercaseFiles = dir2.Files.Select(item => item.Name.ToLowerInvariant()).ToHashSet();
+        // 删除的文件
+        dir1.Files
+            .Where(item => !dir2LowercaseFiles.Contains(item.Name.ToLowerInvariant()))
+            .ForEach(item => Console.WriteLine("Deleted File: " + Path.Combine(subDir1Root, item.Name)));
+        // 新增的文件
+        dir2.Files
+            .Where(item => !dir1LowercaseFiles.Contains(item.Name.ToLowerInvariant()))
+            .ForEach(item => Console.WriteLine("New File: " + Path.Combine(subDir2Root, item.Name)));
+        #endregion
+
+        #region 比对文件夹
+        var subDir1LowercaseDirs = dir1.Directories.Select(item => item.Name.ToLowerInvariant()).ToHashSet();
+        var subDir2LowercaseDirs = dir2.Directories.Select(item => item.Name.ToLowerInvariant()).ToHashSet();
+        // 删除的文件夹
+        dir1.Directories
+            .Where(item => !subDir2LowercaseDirs.Contains(item.Name.ToLowerInvariant()))
+            .ForEach(item => Console.WriteLine("Deleted Directory: " + Path.Combine(subDir1Root, item.Name)));
+        // 新增的文件夹
+        dir2.Directories
+            .Where(item => !subDir1LowercaseDirs.Contains(item.Name.ToLowerInvariant()))
+            .ForEach(item => Console.WriteLine("New Directory: " + Path.Combine(subDir2Root, item.Name)));
+        // 递归比对相同文件夹
         foreach (var dir in dir2.Directories) {
-            // 新目录
-            if (!subDir1.Contains(dir.Name)) {
-                Console.WriteLine("New Directory: " + Path.Combine(currentSubDirRoot, dir.Name));
+            if (!subDir1LowercaseDirs.Contains(dir.Name.ToLowerInvariant())) {
                 continue;
             }
             CompareDirectories(
-                dir1.Directories.First(item => item.Name == dir.Name),
+                dir1.Directories.First(item => item.Name.Equals(dir.Name, StringComparison.InvariantCultureIgnoreCase)),
                 dir,
-                currentSubDirRoot
+                subDir1Root,
+                subDir2Root
             );
         }
+        #endregion
     }
 
     /// <summary>
