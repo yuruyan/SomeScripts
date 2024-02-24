@@ -1,15 +1,16 @@
 ﻿using Microsoft.Office.Interop.Word;
-using NLog;
+using Microsoft.Extensions.Logging;
 using CommonTools.Model;
 using System.Runtime.InteropServices;
 using CommonTools.Utils;
 using System.Drawing;
 using Microsoft.Office.Core;
+using Shared;
 
 namespace WordBatchProcessing;
 
 public static class WordService {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = SharedLogging.Logger;
 
     /// <summary>
     /// 执行
@@ -22,9 +23,9 @@ public static class WordService {
         Document? document = null;
         var comObjects = new List<object>();
         try {
-            Logger.Debug("Starting application");
+            Logger.LogInformation("Starting application");
             app = new Application();
-            Logger.Debug("Opening document...");
+            Logger.LogInformation("Opening document...");
             document = app.Documents.Open(path, ConfirmConversions: true, ReadOnly: openReadonly);
             if (document is null) {
                 throw new Exception("Opening document failed");
@@ -32,16 +33,16 @@ public static class WordService {
             document.Select();
             // Process
             action(app, document, comObjects);
-            Logger.Debug("Over");
+            Logger.LogInformation("Over");
         } catch (Exception error) {
-            Logger.Error(error);
+            Logger.LogError(error, "Error in processing document");
         } finally {
             try {
                 document?.Close();
                 app.Quit();
-                Logger.Debug("Application quit");
+                Logger.LogInformation("Application quit");
             } catch (Exception error) {
-                Logger.Error(error);
+                Logger.LogError(error, "Error in closing document");
             }
             // 逆序释放引用
             comObjects
@@ -94,7 +95,7 @@ public static class WordService {
             find.Wrap = WdFindWrap.wdFindStop;
             find.ClearFormatting();
 
-            Logger.Debug("Executing searching");
+            Logger.LogInformation("Executing searching");
             int count = 0;
             while (find.Execute() && find.Found) {
                 results.Add(range.Text);
@@ -102,7 +103,7 @@ public static class WordService {
                 Console.Write($"\rFind '{range.Text}' {count}");
             }
             Console.WriteLine();
-            Logger.Debug($"{count} found");
+            Logger.LogInformation($"{count} found");
             // Save results
             File.WriteAllLines(savePath, results);
         }, true);
@@ -125,7 +126,7 @@ public static class WordService {
 
             // Switch to editing view
             activeWindowView.ReadingLayout = false;
-            Logger.Debug("Executing resizing");
+            Logger.LogInformation("Executing resizing");
             // Starts from 1
             for (int i = 1, total = shapes.Count; i <= total; i++) {
                 var shape = shapes[i];
@@ -138,7 +139,7 @@ public static class WordService {
                 shape.Width = newSize.Width;
                 // Restore AspectRatio
                 shape.LockAspectRatio = originalLockAspectRatio;
-                Logger.Debug($"Updated image {i}");
+                Logger.LogInformation($"Updated image {i}");
             }
             document.Save();
         });
@@ -191,7 +192,7 @@ public static class WordService {
             find.Wrap = WdFindWrap.wdFindContinue;
             var replaceMode = replaceAll ? WdReplace.wdReplaceAll : WdReplace.wdReplaceOne;
 
-            Logger.Debug("Executing replacements");
+            Logger.LogInformation("Executing replacements");
             foreach (var (key, value) in replacementList) {
                 find.ClearFormatting();
                 replacement.ClearFormatting();
@@ -201,7 +202,7 @@ public static class WordService {
                     ReplaceWith: value,
                     Replace: replaceMode
                 );
-                Logger.Debug($"Replace '{key}' with '{value}' done");
+                Logger.LogInformation($"Replace '{key}' with '{value}' done");
             }
             document.Save();
         });

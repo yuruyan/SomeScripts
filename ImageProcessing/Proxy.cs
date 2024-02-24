@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
-using NLog;
+using Microsoft.Extensions.Logging;
 using OpenCvSharp;
+using Shared;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace ImageProcessing;
 
 internal static class Proxy {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = SharedLogging.Logger;
 
     public static Action<IConfiguration> Parse(string name) {
         var targetMethod = typeof(Proxy)
@@ -302,7 +303,7 @@ internal static class Proxy {
         string opacityArg = config["opacity"] ?? Service.DefaultTransparentizeOpacity.ToString();
 
         if (!float.TryParse(opacityArg, out var opacity)) {
-            Logger.Error($"参数 {nameof(opacity)} 无效");
+            Logger.LogError($"参数 {nameof(opacity)} 无效");
             return;
         }
         CheckSourcePathAndSavePath(sourcePath, savePath);

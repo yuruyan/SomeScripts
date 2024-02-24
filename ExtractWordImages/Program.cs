@@ -1,6 +1,6 @@
 ﻿using ExtractWordImages;
+using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Word;
-using NLog;
 using Shared;
 using System.IO.Compression;
 
@@ -9,30 +9,30 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
-Logger Logger = LogManager.GetCurrentClassLogger();
+var Logger = SharedLogging.Logger;
 
 const string DocxExtension = ".docx";
 const string DocExtension = ".doc";
 var Config = SharedHelper.GetConfiguration(args);
-string sourcePath = Config["sourcePath"];
-string saveDir = Config["saveDir"];
+var sourcePath = Config["sourcePath"];
+var saveDir = Config["saveDir"];
 
 // 参数验证
 if (string.IsNullOrEmpty(sourcePath)) {
-    Logger.Error("参数 sourcePath 不能为空");
+    Logger.LogError("参数 sourcePath 不能为空");
     return;
 }
 if (string.IsNullOrEmpty(saveDir)) {
-    Logger.Error("参数 saveDir 不能为空");
+    Logger.LogError("参数 saveDir 不能为空");
     return;
 }
 // 验证文件/文件夹是否存在
 if (!File.Exists(sourcePath)) {
-    Logger.Error($"路径 '{sourcePath}' 不存在");
+    Logger.LogError($"路径 '{sourcePath}' 不存在");
     return;
 }
 if (!Directory.Exists(saveDir)) {
-    Logger.Error($"目录 '{saveDir}' 不存在");
+    Logger.LogError($"目录 '{saveDir}' 不存在");
     return;
 }
 // 文件后缀
@@ -42,7 +42,7 @@ bool isDocFile = fileExtension == DocExtension;
 
 // 验证文件是否是 word 文件
 if (!isDocxFile && !isDocFile) {
-    Logger.Debug($"文件 '{sourcePath}' 不是 word 文件");
+    Logger.LogError($"文件 '{sourcePath}' 不是 word 文件");
     return;
 }
 
@@ -53,19 +53,19 @@ var extractDocxImages = (string path) => {
     var imagesEntries = zipArchive.Entries.Where(e => e.FullName.StartsWith("word/media/"));
     // 没有图像数据
     if (!imagesEntries.Any()) {
-        Logger.Info("文件无图像数据");
+        Logger.LogInformation("文件无图像数据");
         return;
     }
     // 解压到指定目录
     foreach (var entry in imagesEntries) {
         entry.ExtractToFile(Path.Combine(saveDir, entry.Name), true);
-        Logger.Debug($"保存 {entry.Name} 成功");
+        Logger.LogInformation($"保存 {entry.Name} 成功");
     }
 };
 
 // 提取 doc 文件图像
 var extractDocImages = () => {
-    Logger.Debug("转换文件中");
+    Logger.LogInformation("转换文件中");
     #region 保存为 docx 文件
     var word = new Application();
     var document = word.Documents.Open(sourcePath);
@@ -89,5 +89,6 @@ try {
         extractDocxImages(sourcePath);
     }
 } catch (Exception error) {
-    Logger.Error(error);
+    Logger.LogError(error, "Program terminated");
+    Environment.Exit(-1);
 }

@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using Shared;
 using SubtitleAdjustment;
 
@@ -7,7 +7,7 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
-Logger Logger = LogManager.GetCurrentClassLogger();
+var Logger = SharedLogging.Logger;
 var Config = SharedHelper.GetConfiguration(args);
 string sourcePath = Config["sourcePath"];
 string savePath = Config["savePath"];
@@ -15,21 +15,22 @@ string offsetArg = Config["offset"];
 
 // 参数验证
 if (string.IsNullOrEmpty(sourcePath)) {
-    Logger.Error("参数 sourcePath 不能为空");
+    Logger.LogError("参数 sourcePath 不能为空");
     return;
 }
 if (string.IsNullOrEmpty(savePath)) {
-    Logger.Error("参数 savePath 不能为空");
+    Logger.LogError("参数 savePath 不能为空");
     return;
 }
 // 解析 offset
 if (!int.TryParse(offsetArg, out var offset)) {
-    Logger.Error("解析 offset 失败");
+    Logger.LogError("解析 offset 失败");
     return;
 }
 
 try {
     Service.Adjust(sourcePath, savePath, offset);
 } catch (Exception error) {
-    Logger.Error(error);
+    Logger.LogError(error, "Program terminated");
+    Environment.Exit(-1);
 }

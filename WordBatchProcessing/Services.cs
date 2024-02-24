@@ -1,13 +1,13 @@
 ﻿using Csv;
 using Microsoft.Extensions.Configuration;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Shared;
 using System.Reflection;
 
 namespace WordBatchProcessing;
 
 public static partial class Services {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = SharedLogging.Logger;
 
     /// <summary>
     /// 处理
@@ -50,27 +50,27 @@ public static partial class Services {
         #region Check arguments
         // Path is empty
         if (string.IsNullOrEmpty(pathArg)) {
-            Logger.Error($"Argument '{PathArgName}' cannot be empty");
+            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
             return;
         }
         // Replacement is empty
         if (string.IsNullOrEmpty(savePathArg)) {
-            Logger.Error($"Argument '{SavePathArgName}' cannot be empty");
+            Logger.LogError($"Argument '{SavePathArgName}' cannot be empty");
             return;
         }
         // Search is empty
         if (string.IsNullOrEmpty(searchArg)) {
-            Logger.Error($"Argument '{SearchArgName}' cannot be empty");
+            Logger.LogError($"Argument '{SearchArgName}' cannot be empty");
             return;
         }
         // Path not found
         if (!File.Exists(pathArg)) {
-            Logger.Error($"File '{pathArg}' doesn't exist");
+            Logger.LogError($"File '{pathArg}' doesn't exist");
             return;
         }
         // Path not found
         if (!File.Exists(savePathArg)) {
-            Logger.Error($"File '{savePathArg}' doesn't exist");
+            Logger.LogError($"File '{savePathArg}' doesn't exist");
             return;
         }
         #endregion
@@ -119,22 +119,22 @@ public static partial class Services {
         #region Check arguments
         // Path is empty
         if (string.IsNullOrEmpty(pathArg)) {
-            Logger.Error($"Argument '{PathArgName}' cannot be empty");
+            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
             return;
         }
         // ReplacementPath is empty
         if (string.IsNullOrEmpty(replacementPathArg)) {
-            Logger.Error($"Argument '{ReplacementPathArgName}' cannot be empty");
+            Logger.LogError($"Argument '{ReplacementPathArgName}' cannot be empty");
             return;
         }
         // Path not found
         if (!File.Exists(pathArg)) {
-            Logger.Error($"File '{pathArg}' doesn't exist");
+            Logger.LogError($"File '{pathArg}' doesn't exist");
             return;
         }
         // ReplacementPath not found
         if (!File.Exists(replacementPathArg)) {
-            Logger.Error($"File '{replacementPathArg}' doesn't exist");
+            Logger.LogError($"File '{replacementPathArg}' doesn't exist");
             return;
         }
         #endregion
@@ -197,17 +197,17 @@ public static partial class Services {
         #region Check arguments
         // Path is empty
         if (string.IsNullOrEmpty(pathArg)) {
-            Logger.Error($"Argument '{PathArgName}' cannot be empty");
+            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
             return;
         }
         // Not specify any size
         if (string.IsNullOrEmpty(widthArg) && string.IsNullOrEmpty(heightArg)) {
-            Logger.Error($"Size not specified");
+            Logger.LogError($"Size not specified");
             return;
         }
         // Path not found
         if (!File.Exists(pathArg)) {
-            Logger.Error($"File '{pathArg}' doesn't exist");
+            Logger.LogError($"File '{pathArg}' doesn't exist");
             return;
         }
         #endregion
@@ -219,25 +219,25 @@ public static partial class Services {
         // Both specified
         if (widthArg is not null && heightArg is not null) {
             if (!widthRatioResult.HasValue) {
-                Logger.Error($"Invalid argument '{widthArgName}' value '{widthArg}'");
+                Logger.LogError($"Invalid argument '{widthArgName}' value '{widthArg}'");
                 return;
             }
             if (!heightRatioResult.HasValue) {
-                Logger.Error($"Invalid argument '{heightArgName}' value '{heightArg}'");
+                Logger.LogError($"Invalid argument '{heightArgName}' value '{heightArg}'");
                 return;
             }
         }
         // Specified width
         else if (widthArg is not null) {
             if (!widthRatioResult.HasValue) {
-                Logger.Error($"Invalid argument '{widthArgName}' value '{widthArg}'");
+                Logger.LogError($"Invalid argument '{widthArgName}' value '{widthArg}'");
                 return;
             }
         }
         // Specified height
         else {
             if (!heightRatioResult.HasValue) {
-                Logger.Error($"Invalid argument '{heightArgName}' value '{heightArg}'");
+                Logger.LogError($"Invalid argument '{heightArgName}' value '{heightArg}'");
                 return;
             }
         }

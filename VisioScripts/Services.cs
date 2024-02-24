@@ -1,11 +1,12 @@
 ﻿using CommonTools.Utils;
 using Microsoft.Extensions.Configuration;
-using NLog;
+using Microsoft.Extensions.Logging;
+using Shared;
 
 namespace VisioScripts;
 
 public static class Services {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = SharedLogging.Logger;
 
     /// <summary>
     /// 批量创建文本形状
@@ -25,22 +26,22 @@ public static class Services {
         #region Check arguments
         // Path is empty
         if (string.IsNullOrEmpty(pathArg)) {
-            Logger.Error($"Argument '{PathArgName}' cannot be empty");
+            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
             return;
         }
         // TextPath is empty
         if (string.IsNullOrEmpty(textPathArg)) {
-            Logger.Error($"Argument '{TextPathArgName}' cannot be empty");
+            Logger.LogError($"Argument '{TextPathArgName}' cannot be empty");
             return;
         }
         // Path not found
         if (!File.Exists(pathArg)) {
-            Logger.Error($"File '{pathArg}' doesn't exist");
+            Logger.LogError($"File '{pathArg}' doesn't exist");
             return;
         }
         // Path not found
         if (!File.Exists(textPathArg)) {
-            Logger.Error($"File '{textPathArg}' doesn't exist");
+            Logger.LogError($"File '{textPathArg}' doesn't exist");
             return;
         }
         #endregion

@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
-using NLog;
+using Microsoft.Extensions.Logging;
+using Shared;
 using System.Data;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -23,7 +24,7 @@ public static class Service {
     private const string Xlsx = ".xlsx";
     private const string Csv = ".csv";
 
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = SharedLogging.Logger;
 
     /// <summary>
     /// 选择匹配的转换器并转换
@@ -252,7 +253,7 @@ public static class Service {
                     else {
                         string name = $"{saveFileName}-{sheet.Name}{savePathExtension}";
                         sheet.SaveAs(Path.Combine(saveDir, name), saveFormat);
-                        Logger.Debug($"导出 {name} 成功");
+                        Logger.LogInformation($"导出 {name} 成功");
                     }
                     Marshal.ReleaseComObject(sheet);
                 }
@@ -302,7 +303,7 @@ public static class Service {
             // 转换为视频
             if (savePathExtension == Mp4) {
                 presentation.CreateVideo(savePath, VertResolution: 1080, Quality: 100);
-                Logger.Debug("开始导出视频");
+                Logger.LogInformation("开始导出视频");
                 while (
                     presentation.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusInProgress
                     || presentation.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusQueued
@@ -311,9 +312,9 @@ public static class Service {
                 }
                 // 创建完成
                 if (presentation.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusFailed) {
-                    Logger.Error("导出视频失败");
+                    Logger.LogError("导出视频失败");
                 } else {
-                    Logger.Error("导出视频完毕");
+                    Logger.LogError("导出视频完毕");
                 }
             }
             // 转换为图片
@@ -336,7 +337,7 @@ public static class Service {
                         slideDoubleWidth,
                         slideDoubleHeight
                     );
-                    Logger.Debug($"导出第 {count} 张幻灯片成功");
+                    Logger.LogInformation($"导出第 {count} 张幻灯片成功");
                 }
             }
             // 其他格式

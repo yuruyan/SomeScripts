@@ -1,8 +1,8 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using Shared;
 using WordBatchProcessing;
 
-Logger Logger = LogManager.GetCurrentClassLogger();
+var Logger = SharedLogging.Logger;
 
 // 输入参数验证
 if (!SharedHelper.CheckArgs(args, Resource.Help)) {
@@ -12,5 +12,6 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
 try {
     Services.Process(args);
 } catch (Exception error) {
-    Logger.Error(error);
+    Logger.LogError(error, "Program terminated");
+    Environment.Exit(-1);
 }

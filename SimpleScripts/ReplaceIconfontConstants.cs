@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
+using Shared;
 using System.Text.RegularExpressions;
 
 namespace SimpleScripts;
@@ -7,7 +8,7 @@ namespace SimpleScripts;
 /// 将 Iconfont Unicode 格式替换为 IconfontConstants 常量
 /// </summary>
 public static class ReplaceIconfontConstants {
-    private static Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = SharedLogging.Logger;
 
     public static void Run(string searchDir) {
         // 搜索 .xaml, .cs 文件
@@ -20,7 +21,7 @@ public static class ReplaceIconfontConstants {
         var sourceDict = GetIconfontDict();
         Replace(xamlFiles, sourceDict);
         Replace(csFiles, sourceDict);
-        Logger.Info("done");
+        Logger.LogInformation("done");
     }
 
     /// <summary>
@@ -38,13 +39,13 @@ public static class ReplaceIconfontConstants {
                 if (iconDict.TryGetValue(matchValue, out var value)) {
                     return $"\"{{x:Static store:IconfontConstants.{value}}}\"";
                 } else {
-                    Logger.Warn($"No icon match for {matchValue}");
+                    Logger.LogWarning($"No icon match for {matchValue}");
                 }
                 return matchValue;
             });
             // 匹配
             if (srcText != distText) {
-                Logger.Info($"Updated {file}");
+                Logger.LogInformation($"Updated {file}");
                 File.WriteAllText(file, distText);
             }
         }

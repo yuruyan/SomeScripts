@@ -1,7 +1,4 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using NLog;
+using Microsoft.Extensions.Logging;
 
-Logger logger = LogManager.GetCurrentClassLogger();
-logger.Info("hello");
-logger.Warn("hello");
-logger.Error("hello");
+Console.WriteLine("hello");

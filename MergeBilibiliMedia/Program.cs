@@ -1,6 +1,6 @@
 ﻿using MergeBilibiliMedia;
 using Newtonsoft.Json.Linq;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -11,7 +11,7 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
-Logger Logger = LogManager.GetCurrentClassLogger();
+var Logger = SharedLogging.Logger;
 //var specialCharacters = new string[] { "?", "*", ":", "\"", "<", ">", "\\", "/", "|" };
 var SpecialCharactersRegex = new Regex("[?*:\"<>\\/|]");
 const int DefaultThreadCount = 4, MaxThreadCount = 16, MinThreadCount = 1;
@@ -41,11 +41,11 @@ if (threadCount > MaxThreadCount) {
 
 // 判断路径是否存在
 if (!Directory.Exists(rootDir)) {
-    Logger.Error($"{nameof(rootDir)} 不存在！");
+    Logger.LogError($"{nameof(rootDir)} 不存在！");
     return;
 }
 if (!Directory.Exists(saveDir)) {
-    Logger.Error($"{nameof(saveDir)} 不存在！");
+    Logger.LogError($"{nameof(saveDir)} 不存在！");
     return;
 }
 // 检查 ffmpeg 是否存在
@@ -55,7 +55,7 @@ try {
         CreateNoWindow = true,
     }).WaitForExit();
 } catch {
-    Logger.Error("FFmpeg 不存在！");
+    Logger.LogError("FFmpeg 不存在！");
     return;
 }
 
@@ -87,13 +87,13 @@ for (int i = 0; i < threadCount; i++) {
                 string videoPath = Path.Combine(dir, folderName, "video.m4s");
                 // 输出文件
                 string outVideoPath = Path.Combine(saveDir, validateVideoName(videoName) + ".mp4");
-                Logger.Debug($"starting {videoName}");
+                Logger.LogInformation($"starting {videoName}");
                 Process.Start(new ProcessStartInfo {
                     FileName = "ffmpeg",
                     Arguments = $"-i \"{videoPath}\" -i \"{audioPath}\" -vcodec copy -acodec copy -y \"{outVideoPath}\"",
                     CreateNoWindow = true,
                 }).WaitForExit();
-                Logger.Debug($"finished {videoName}");
+                Logger.LogInformation($"finished {videoName}");
             } catch {
                 if (ignoreError) {
                     continue;

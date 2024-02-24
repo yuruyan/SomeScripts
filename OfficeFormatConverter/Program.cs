@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using OfficeFormatConverter;
 using Shared;
 
@@ -7,32 +7,33 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
     return;
 }
 
-Logger Logger = LogManager.GetCurrentClassLogger();
+var Logger = SharedLogging.Logger;
 
 var Config = SharedHelper.GetConfiguration(args);
 string sourcePath = Config["sourcePath"];
 string savePath = Config["savePath"];
 // 参数验证
 if (string.IsNullOrEmpty(sourcePath)) {
-    Logger.Error("参数 sourcePath 不能为空");
+    Logger.LogError("参数 sourcePath 不能为空");
     return;
 }
 if (string.IsNullOrEmpty(savePath)) {
-    Logger.Error("参数 savePath 不能为空");
+    Logger.LogError("参数 savePath 不能为空");
     return;
 }
 // 验证文件/文件夹是否存在
 if (!File.Exists(sourcePath)) {
-    Logger.Error($"路径 '{sourcePath}' 不存在");
+    Logger.LogError($"路径 '{sourcePath}' 不存在");
     return;
 }
 if (Path.GetDirectoryName(savePath) is var saveDir && !Directory.Exists(saveDir)) {
-    Logger.Error($"目录 '{saveDir}' 不存在");
+    Logger.LogError($"目录 '{saveDir}' 不存在");
     return;
 }
 
 try {
     Service.Convert(sourcePath, savePath);
 } catch (Exception error) {
-    Logger.Error(error);
+    Logger.LogError(error, "Program terminated");
+    Environment.Exit(-1);
 }

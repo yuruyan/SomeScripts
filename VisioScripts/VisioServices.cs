@@ -1,12 +1,13 @@
 ﻿using CommonTools.Utils;
 using Microsoft.Office.Interop.Visio;
-using NLog;
+using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
+using Shared;
 
 namespace VisioScripts;
 
 public static class VisioServices {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = SharedLogging.Logger;
 
     /// <summary>
     /// 执行
@@ -18,9 +19,9 @@ public static class VisioServices {
         Document? document = null;
         var comObjects = new List<object>();
         try {
-            Logger.Debug("Starting application");
+            Logger.LogInformation("Starting application");
             app = new Application();
-            Logger.Debug("Opening document...");
+            Logger.LogInformation("Opening document...");
             document = app.Documents.Open(path);
             if (document is null) {
                 throw new Exception("Opening document failed");
@@ -28,16 +29,16 @@ public static class VisioServices {
             //document.Select();
             // Process
             action(app, document, comObjects);
-            Logger.Debug("Over");
+            Logger.LogInformation("Over");
         } catch (Exception error) {
-            Logger.Error(error);
+            Logger.LogError(error, "Error in processing document");
         } finally {
             try {
                 document?.Close();
                 app.Quit();
-                Logger.Debug("Application quit");
+                Logger.LogInformation("Application quit");
             } catch (Exception error) {
-                Logger.Error(error);
+                Logger.LogError(error, "Error in closing document");
             }
             // 逆序释放引用
             comObjects
@@ -79,7 +80,7 @@ public static class VisioServices {
                 shape.Text = text;
                 comObjects.Add(shape);
                 i++;
-                Logger.Debug($"Shape {i} created");
+                Logger.LogInformation($"Shape {i} created");
             }
             document.Save();
         });
