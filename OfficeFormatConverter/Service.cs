@@ -1,8 +1,5 @@
-﻿using CsvHelper;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Shared;
-using System.Data;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using PpMediaTaskStatus = Microsoft.Office.Interop.PowerPoint.PpMediaTaskStatus;
 using PpSaveAsFileType = Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType;
