@@ -15,19 +15,19 @@ public static class Service {
         var browserArg = configuration[BrowserArgName];
         // 验证参数
         if (string.IsNullOrEmpty(savePathArg)) {
-            Logger.LogError($"Argument {SavePathArgName} cannot be empty");
+            Logger.LogError("Argument {SavePathArgName} cannot be empty", SavePathArgName);
             return;
         }
         if (!Enum.TryParse(browserArg, out BrowserType browserType)) {
-            Logger.LogError($"Invalid argument {BrowserArgName}");
+            Logger.LogError("Invalid argument {BrowserArgName}", BrowserArgName);
             return;
         }
         // 检查路径
         string saveDirectory = Path.GetDirectoryName(savePathArg)!;
         if (!Directory.Exists(saveDirectory)) {
-            Logger.LogError($"目录 '{saveDirectory}' 不存在！");
+            Logger.LogError("Directory '{saveDirectory}' doesn't exist", saveDirectory);
             return;
         }
-        BrowserService.BackUpHistory(browserType, savePathArg);
+        BrowserService.BackUpHistory(browserType, savePathArg!);
     }
 }
