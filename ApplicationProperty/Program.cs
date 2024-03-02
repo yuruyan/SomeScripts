@@ -11,14 +11,17 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
 var Logger = SharedLogging.Logger;
 var Config = SharedHelper.GetConfiguration(args);
 var filepath = Config["filepath"];
-if (!File.Exists(filepath)) {
-    Logger.LogError($"文件 '{nameof(filepath)}' 不存在！");
-    return;
-}
+
 // 获取文件属性
 try {
-    Console.WriteLine(FileVersionInfo.GetVersionInfo(filepath));
+    if (!SharedHelper.ValidateFileArgument(filepath, "filepath")) {
+        return;
+    }
+    Console.WriteLine(FileVersionInfo.GetVersionInfo(filepath!));
 } catch (Exception error) {
     Logger.LogError(error, "Program terminated");
     Environment.Exit(-1);
+} finally {
+    SharedLogging.LoggerFactory.Dispose();
+    SharedLogging.FileLoggerFactory.Dispose();
 }

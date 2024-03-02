@@ -103,7 +103,7 @@ public static partial class SharedHelper {
     /// </summary>
     /// <param name="filePath">文件路径</param>
     /// <param name="argumentName">命令行参数名称</param>
-    /// <returns></returns>
+    /// <returns>存在返回 true</returns>
     public static bool ValidateFileArgument(string? filePath, string argumentName) {
         if (string.IsNullOrEmpty(filePath)) {
             SharedLogging.Logger.LogError("Argument '{argumentName}' cannot be empty", argumentName);
