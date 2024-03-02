@@ -87,7 +87,7 @@ public static partial class SharedHelper {
     public static void ProcessService(this string[] args, Type staticServiceType) {
         var targetMethodNameLowerCase = args[0].ToLowerInvariant();
         var targetMethod = staticServiceType
-            .GetMethods(BindingFlags.Default | BindingFlags.Static | BindingFlags.NonPublic)
+            .GetMethods(BindingFlags.Default | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
             .Where(info => info.ReturnType == typeof(void))
             .Where(info => {
                 var paramInfos = info.GetParameters();

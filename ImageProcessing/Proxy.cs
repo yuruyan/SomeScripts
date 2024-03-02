@@ -10,22 +10,6 @@ namespace ImageProcessing;
 internal static class Proxy {
     private static readonly ILogger Logger = SharedLogging.Logger;
 
-    public static Action<IConfiguration> Parse(string name) {
-        var targetMethod = typeof(Proxy)
-            .GetMethods(BindingFlags.Default | BindingFlags.Static | BindingFlags.NonPublic)
-            .Where(info => info.ReturnType == typeof(void))
-            .Where(info => {
-                var paramInfos = info.GetParameters();
-                return paramInfos.Length == 1 && paramInfos[0].ParameterType == typeof(IConfiguration);
-            })
-            .FirstOrDefault(info => info.Name.ToLowerInvariant() == name.ToLowerInvariant());
-        // 参数错误
-        if (targetMethod == null) {
-            throw new ArgumentException($"参数 '{name}' 错误");
-        }
-        return targetMethod.CreateDelegate<Action<IConfiguration>>();
-    }
-
     /// <summary>
     /// 检查 sourcePath 和 savePath 是否合法
     /// </summary>
@@ -96,7 +80,7 @@ internal static class Proxy {
     /// 高斯模糊
     /// </summary>
     /// <param name="config"></param>
-    private static void GaussianBlur(IConfiguration config) {
+    public static void GaussianBlur(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var radiusArg = config["radius"];
@@ -115,7 +99,7 @@ internal static class Proxy {
     /// 图片添加文字
     /// </summary>
     /// <param name="config"></param>
-    private static void PutText(IConfiguration config) {
+    public static void PutText(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         string text = config["text"] ?? string.Empty;
@@ -147,7 +131,7 @@ internal static class Proxy {
     /// 图像镜像
     /// </summary>
     /// <param name="config"></param>
-    private static void Flip(IConfiguration config) {
+    public static void Flip(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var modeArg = (config["mode"] ?? Service.DefaultFlipMode.ToString()).ToUpperInvariant();
@@ -164,7 +148,7 @@ internal static class Proxy {
     /// 图像旋转
     /// </summary>
     /// <param name="config"></param>
-    private static void Rotate(IConfiguration config) {
+    public static void Rotate(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var angleArg = config["angle"] ?? Service.DefaultRotateAngle.ToString();
@@ -181,7 +165,7 @@ internal static class Proxy {
     /// 图像裁剪
     /// </summary>
     /// <param name="config"></param>
-    private static void Crop(IConfiguration config) {
+    public static void Crop(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var xArg = config["x"];
@@ -207,7 +191,7 @@ internal static class Proxy {
     /// 图像缩放
     /// </summary>
     /// <param name="config"></param>
-    private static void Resize(IConfiguration config) {
+    public static void Resize(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var widthArg = config["width"]?.Trim();
@@ -267,7 +251,7 @@ internal static class Proxy {
     /// 转换图片为 icon
     /// </summary>
     /// <param name="config"></param>
-    private static void ConvertToIcon(IConfiguration config) {
+    public static void ConvertToIcon(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var widthArg = config["width"];
@@ -285,7 +269,7 @@ internal static class Proxy {
     /// 灰度处理
     /// </summary>
     /// <param name="config"></param>
-    private static void GrayScale(IConfiguration config) {
+    public static void GrayScale(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
 
@@ -297,7 +281,7 @@ internal static class Proxy {
     /// 不透明度处理
     /// </summary>
     /// <param name="config"></param>
-    private static void Transparentize(IConfiguration config) {
+    public static void Transparentize(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var opacityArg = config["opacity"] ?? Service.DefaultTransparentizeOpacity.ToString();
@@ -314,7 +298,7 @@ internal static class Proxy {
     /// 图片反色
     /// </summary>
     /// <param name="config"></param>
-    private static void InvertColor(IConfiguration config) {
+    public static void InvertColor(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
 
@@ -326,7 +310,7 @@ internal static class Proxy {
     /// Svg 转图片
     /// </summary>
     /// <param name="config"></param>
-    private static void SvgConvert(IConfiguration config) {
+    public static void SvgConvert(IConfiguration config) {
         var sourcePath = config["sourcePath"];
         var savePath = config["savePath"];
         var widthArg = config["width"];

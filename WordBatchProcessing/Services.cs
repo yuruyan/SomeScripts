@@ -9,26 +9,7 @@ namespace WordBatchProcessing;
 public static partial class Services {
     private static readonly ILogger Logger = SharedLogging.Logger;
 
-    /// <summary>
-    /// 处理
-    /// </summary>
-    /// <param name="args"></param>
-    /// <exception cref="ArgumentException">Invalid first argument</exception>
-    public static void Process(string[] args) {
-        var targetMethodNameLowerCase = args[0].ToLowerInvariant();
-        var targetMethod = typeof(Services)
-            .GetMethods(BindingFlags.Default | BindingFlags.Static | BindingFlags.NonPublic)
-            .Where(info => info.ReturnType == typeof(void))
-            .Where(info => {
-                var paramInfos = info.GetParameters();
-                return paramInfos.Length == 1 && paramInfos[0].ParameterType == typeof(IConfiguration);
-            })
-            .FirstOrDefault(info => info.Name.ToLowerInvariant() == targetMethodNameLowerCase)
-            ?? throw new ArgumentException($"Invalid argument '{args[0]}'");
-        targetMethod.Invoke(null, new[] { args.GetConfiguration() });
-    }
-
-    private static void SearchText(IConfiguration configuration) {
+    public static void SearchText(IConfiguration configuration) {
         #region ArgumentNames
         const string PathArgName = "path";
         const string SavePathArgName = "savePath";
@@ -101,7 +82,7 @@ public static partial class Services {
     /// 批量替换
     /// </summary>
     /// <param name="configuration"></param>
-    private static void BatchReplace(IConfiguration configuration) {
+    public static void BatchReplace(IConfiguration configuration) {
         const string PathArgName = "path";
         const string ReplacementPathArgName = "replacementPath";
         const string MatchCaseArgName = "matchCase";
@@ -185,7 +166,7 @@ public static partial class Services {
     /// 批量调整图形大小
     /// </summary>
     /// <param name="configuration"></param>
-    private static void BatchResizeShapes(IConfiguration configuration) {
+    public static void BatchResizeShapes(IConfiguration configuration) {
         const string PathArgName = "path";
         const string widthArgName = "width";
         const string heightArgName = "height";

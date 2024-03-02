@@ -12,7 +12,7 @@ public static class Services {
     /// 批量创建文本形状
     /// </summary>
     /// <param name="configuration"></param>
-    private static void BatchCreatingTextShapes(IConfiguration configuration) {
+    public static void BatchCreatingTextShapes(IConfiguration configuration) {
         #region ArgumentNames
         const string PathArgName = "path";
         const string TextPathArgName = "textPath";

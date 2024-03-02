@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Shared;
+using System.Reflection;
 using VisioScripts;
 
 var Logger = SharedLogging.Logger;
@@ -10,6 +11,7 @@ if (!SharedHelper.CheckArgs(args, Resource.Help)) {
 }
 
 try {
+    _ = typeof(Services).GetMethods(BindingFlags.Static | BindingFlags.NonPublic);
     args.ProcessService(typeof(Services));
 } catch (Exception error) {
     Logger.LogError(error, "Program terminated");
