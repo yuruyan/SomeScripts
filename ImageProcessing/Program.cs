@@ -12,5 +12,7 @@ try {
     Proxy.Parse(args[0])(SharedHelper.GetConfiguration(args));
 } catch (Exception error) {
     Logger.LogError(error, "Program terminated");
-    Environment.Exit(-1);
+} finally {
+    SharedLogging.LoggerFactory.Dispose();
+    SharedLogging.FileLoggerFactory.Dispose();
 }
