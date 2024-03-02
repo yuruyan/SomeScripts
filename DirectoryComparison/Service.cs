@@ -4,10 +4,11 @@ using System.Text.Json;
 namespace DirectoryComparison;
 
 internal static class Service {
-    private static List<string> DeletedFiles = new();
-    private static List<string> DeletedDirectories = new();
-    private static List<string> NewFiles = new();
-    private static List<string> NewDirectories = new();
+    private static readonly List<string> DeletedFiles = [];
+    private static readonly List<string> DeletedDirectories = [];
+    private static readonly List<string> NewFiles = [];
+    private static readonly List<string> NewDirectories = [];
+    private static readonly List<string> ModifiedFiles = [];
 
     /// <summary>
     /// 保存文件夹结构到文件
@@ -36,6 +37,7 @@ internal static class Service {
         DeletedDirectories.Sort();
         NewFiles.Sort();
         NewDirectories.Sort();
+        ModifiedFiles.Sort();
 
         Console.WriteLine("Deleted Files:");
         DeletedFiles.ForEach(item => Console.WriteLine("\t" + item));
@@ -45,6 +47,8 @@ internal static class Service {
         NewFiles.ForEach(item => Console.WriteLine("\t" + item));
         Console.WriteLine("New Directories:");
         NewDirectories.ForEach(item => Console.WriteLine("\t" + item));
+        Console.WriteLine("Modified Files:");
+        ModifiedFiles.ForEach(item => Console.WriteLine("\t" + item));
         #endregion
     }
 
@@ -78,6 +82,17 @@ internal static class Service {
             .Where(item => !dir1LowercaseFiles.Contains(item.Name.ToLowerInvariant()))
             .Select(item => Path.Combine(subDir2Root, item.Name))
             .ForEach(NewFiles.Add);
+        // 修改的文件
+        CompareFilesWithSameName(
+            dir1LowercaseFiles
+            .Where(dir2LowercaseFiles.Contains)
+            .Select(item => (
+                dir1.Files.First(f => string.Equals(f.Name, item, StringComparison.InvariantCultureIgnoreCase)),
+                dir2.Files.First(f => string.Equals(f.Name, item, StringComparison.InvariantCultureIgnoreCase))
+            ))
+        )
+            .Select(item => Path.Combine(subDir2Root, item))
+            .ForEach(ModifiedFiles.Add);
         #endregion
 
         #region 比对文件夹
@@ -106,6 +121,18 @@ internal static class Service {
             );
         }
         #endregion
+    }
+
+    /// <summary>
+    /// 对比相同名称的文件
+    /// </summary>
+    /// <param name="sameNameFiles"></param>
+    /// <returns></returns>
+    /// <remarks>只要修改时间不一样，就认定为已修改</remarks>
+    private static IEnumerable<string> CompareFilesWithSameName(IEnumerable<(FileItem, FileItem)> sameNameFiles) {
+        return sameNameFiles
+            .Where(item => item.Item1.ModifyTime != item.Item2.ModifyTime)
+            .Select(item => item.Item2.Name);
     }
 
     /// <summary>
