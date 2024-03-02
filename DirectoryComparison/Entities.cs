@@ -13,9 +13,15 @@ internal record CommonItem {
 }
 
 internal record FileItem : CommonItem {
+    public DateTime ModifyTime { get; set; }
+
     public FileItem() { }
 
     public FileItem(string name) : base(name) { }
+
+    public FileItem(string name, DateTime modifyTime) : base(name) {
+        ModifyTime = modifyTime;
+    }
 }
 
 internal record DirectoryItem : CommonItem {

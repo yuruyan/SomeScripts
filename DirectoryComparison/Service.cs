@@ -115,7 +115,9 @@ internal static class Service {
     /// <returns></returns>
     private static DirectoryItem GetDirectoryStructure(string directory) {
         return new DirectoryItem(Path.GetFileName(directory)) {
-            Files = Directory.GetFiles(directory).Select(item => new FileItem(Path.GetFileName(item))).ToList(),
+            Files = Directory.GetFiles(directory).Select(
+                item => new FileItem(Path.GetFileName(item), new FileInfo(item).LastWriteTime)
+            ).ToList(),
             Directories = Directory.GetDirectories(directory).Select(GetDirectoryStructure).ToList()
         };
     }
