@@ -25,7 +25,6 @@ try {
     }
 } catch (Exception error) {
     Logger.LogError(error, "Program terminated");
-    Environment.Exit(-1);
 } finally {
     SharedLogging.LoggerFactory.Dispose();
     SharedLogging.FileLoggerFactory.Dispose();
