@@ -110,7 +110,7 @@ public static partial class SharedHelper {
             return false;
         }
         if (!File.Exists(filePath)) {
-            SharedLogging.Logger.LogError("File \"{path}\" cannot be empty", filePath);
+            SharedLogging.Logger.LogError("File \"{path}\" doesn't exist", filePath);
             return false;
         }
         return true;
@@ -128,7 +128,7 @@ public static partial class SharedHelper {
             return false;
         }
         if (!Directory.Exists(directory)) {
-            SharedLogging.Logger.LogError("Directory \"{path}\" cannot be empty", directory);
+            SharedLogging.Logger.LogError("Directory \"{path}\" doesn't exist", directory);
             return false;
         }
         return true;
