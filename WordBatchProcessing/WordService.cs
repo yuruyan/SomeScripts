@@ -1,11 +1,11 @@
-﻿using Microsoft.Office.Interop.Word;
-using Microsoft.Extensions.Logging;
-using CommonTools.Model;
-using System.Runtime.InteropServices;
+﻿using CommonTools.Model;
 using CommonTools.Utils;
-using System.Drawing;
+using Microsoft.Extensions.Logging;
 using Microsoft.Office.Core;
+using Microsoft.Office.Interop.Word;
 using Shared;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace WordBatchProcessing;
 
