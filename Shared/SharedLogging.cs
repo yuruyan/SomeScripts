@@ -6,10 +6,12 @@ namespace Shared;
 public static class SharedLogging {
     public static readonly ILogger FileLogger;
     public static readonly ILogger Logger;
+    public static readonly ILoggerFactory FileLoggerFactory;
+    public static readonly ILoggerFactory LoggerFactory;
 
     static SharedLogging() {
-        var factory = LoggerFactory.Create(builder => builder.AddConsole());
-        var fileFactory = LoggerFactory.Create(
+        LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+        FileLoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(
             builder => builder.AddConsole().AddFile(context => {
                 context.RootPath = Path.GetDirectoryName(Environment.ProcessPath);
                 context.Files = [new LogFileOptions() {
@@ -20,7 +22,7 @@ public static class SharedLogging {
                 }];
             })
         );
-        Logger = factory.CreateLogger("Program");
-        FileLogger = fileFactory.CreateLogger("Program");
+        Logger = LoggerFactory.CreateLogger("Program");
+        FileLogger = FileLoggerFactory.CreateLogger("Program");
     }
 }
