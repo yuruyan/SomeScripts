@@ -15,4 +15,5 @@ try {
 } finally {
     SharedLogging.LoggerFactory.Dispose();
     SharedLogging.FileLoggerFactory.Dispose();
+    Thread.Sleep(3000);
 }
