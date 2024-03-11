@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeScripts", "SomeScripts\SomeScripts.csproj", "{61D64752-7DB6-4708-9C5D-788CD09C6A73}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MergeBilibiliMedia", "MergeBilibiliMedia\MergeBilibiliMedia.csproj", "{DA1685A9-28D2-4BD0-A286-8A3CCAE03346}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{BBDFED73-B182-48A1-8608-4D9CC276459D}"
@@ -32,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisioScripts", "VisioScript
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationProperty", "ApplicationProperty\ApplicationProperty.csproj", "{586F5B7A-DA56-4FEC-B02E-0C95007E21C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryComparison", "DirectoryComparison\DirectoryComparison.csproj", "{CAF2CE27-7022-4463-AF8F-1D5FA77E7DF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DirectoryComparison", "DirectoryComparison\DirectoryComparison.csproj", "{CAF2CE27-7022-4463-AF8F-1D5FA77E7DF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,14 +40,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Debug|x64.ActiveCfg = Debug|x64
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Debug|x64.Build.0 = Debug|x64
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Release|x64.ActiveCfg = Release|x64
-		{61D64752-7DB6-4708-9C5D-788CD09C6A73}.Release|x64.Build.0 = Release|x64
 		{DA1685A9-28D2-4BD0-A286-8A3CCAE03346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DA1685A9-28D2-4BD0-A286-8A3CCAE03346}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA1685A9-28D2-4BD0-A286-8A3CCAE03346}.Debug|x64.ActiveCfg = Debug|Any CPU

@@ -10,10 +10,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Include="favicon.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Reference Include="CommonTools">
 			<HintPath>..\Shared\Lib\net8\CommonTools.dll</HintPath>
 		</Reference>
