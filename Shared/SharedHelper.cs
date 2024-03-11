@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared.Model;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -132,5 +133,15 @@ public static partial class SharedHelper {
             return false;
         }
         return true;
+    }
+
+    /// <summary>
+    /// 等待用户按键退出
+    /// </summary>
+    public static void WaitUserInputToExit() {
+        Process.Start(Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
+            "/c pause"
+        ).WaitForExit();
     }
 }
