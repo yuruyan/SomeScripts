@@ -1,37 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ApplicationIcon>favicon.ico</ApplicationIcon>
+		<PublishAot>true</PublishAot>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="CommonTools">
+			<HintPath>..\Shared\Lib\net8\CommonTools.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <Choose>
-    <When Condition=" '$(TargetFramework.StartsWith(`net8.0`))' == 'true' ">
-      <ItemGroup>
-        <Reference Include="CommonTools">
-          <HintPath>..\Shared\Lib\net8\CommonTools.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition=" '$(TargetFramework.StartsWith(`net6.0`))' == 'true' ">
-      <ItemGroup>
-        <Reference Include="CommonTools">
-          <HintPath>..\Shared\Lib\Net6\CommonTools.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
 
 </Project>
