@@ -60,6 +60,16 @@ public static partial class SharedHelper {
     }
 
     /// <summary>
+    /// 是否包含 wait 参数
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    public static bool ContainsWaitArgument(this string[] args) {
+        args = args.Select(arg => arg.ToLowerInvariant()).ToArray();
+        return args.Contains("--wait") || args.Contains("/wait");
+    }
+
+    /// <summary>
     /// 解析比例参数
     /// </summary>
     /// <param name="arg"></param>
