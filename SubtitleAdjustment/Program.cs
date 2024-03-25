@@ -1,21 +1,21 @@
-﻿using CommonTools;
+﻿using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
 using Shared;
 using SubtitleAdjustment;
 
 // 输入参数验证
-if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
     return;
 }
 
 var Logger = SharedLogging.Logger;
-var Config = SharedHelper.GetConfiguration(args);
+var Config = ArgumentUtils.GetConfiguration(args);
 var sourcePath = Config["sourcePath"];
 var savePath = Config["savePath"];
 var offsetArg = Config["offset"];
 
 try {
-    if (SharedHelper.ValidateFileArgument(sourcePath, "sourcePath")) {
+    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath")) {
         return;
     }
     if (string.IsNullOrEmpty(savePath)) {

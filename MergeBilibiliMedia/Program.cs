@@ -1,4 +1,4 @@
-﻿using CommonTools;
+﻿using CommonTools.Utils;
 using MergeBilibiliMedia;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 // 输入参数验证
-if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
     return;
 }
 
@@ -18,7 +18,7 @@ var SpecialCharactersRegex = new Regex("[?*:\"<>\\/|]");
 const int DefaultThreadCount = 4, MaxThreadCount = 16, MinThreadCount = 1;
 const bool DefaultIgnoreError = false;
 
-var Config = SharedHelper.GetConfiguration(args);
+var Config = ArgumentUtils.GetConfiguration(args);
 var rootDir = Config["rootDir"];
 var saveDir = Config["saveDir"];
 var threadArg = Config["threads"];
@@ -43,7 +43,7 @@ if (threadCount > MaxThreadCount) {
 
 // 检查 ffmpeg 是否存在
 try {
-    if (SharedHelper.ValidateDirectoryArgument(rootDir, "rootDir") || SharedHelper.ValidateDirectoryArgument(saveDir, "saveDir")) {
+    if (ArgumentUtils.ValidateDirectoryArgument(rootDir, "rootDir") || ArgumentUtils.ValidateDirectoryArgument(saveDir, "saveDir")) {
         return;
     }
     Process.Start(new ProcessStartInfo {

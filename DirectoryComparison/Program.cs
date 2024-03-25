@@ -1,16 +1,16 @@
-﻿using CommonTools;
+﻿using CommonTools.Utils;
 using DirectoryComparison;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
 
 // 输入参数验证
-if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
     return;
 }
 
 var Logger = SharedLogging.Logger;
-var Config = SharedHelper.GetConfiguration(args);
+var Config = ArgumentUtils.GetConfiguration(args);
 
 try {
     switch (args[0].ToLowerInvariant()) {
@@ -33,10 +33,10 @@ try {
 
 void CompareDirectories(IConfiguration config) {
     string? file1 = config["StructFile1"], file2 = config["StructFile2"];
-    if (!SharedHelper.ValidateFileArgument(file1, "StructFile1")) {
+    if (!ArgumentUtils.ValidateFileArgument(file1, "StructFile1")) {
         return;
     }
-    if (!SharedHelper.ValidateFileArgument(file2, "StructFile2")) {
+    if (!ArgumentUtils.ValidateFileArgument(file2, "StructFile2")) {
         return;
     }
 
@@ -45,7 +45,7 @@ void CompareDirectories(IConfiguration config) {
 
 void SaveStructure(IConfiguration config) {
     string? dir = config["Directory"], file = config["SavePath"];
-    if (!SharedHelper.ValidateDirectoryArgument(dir, "Directory")) {
+    if (!ArgumentUtils.ValidateDirectoryArgument(dir, "Directory")) {
         return;
     }
     if (string.IsNullOrEmpty(file)) {

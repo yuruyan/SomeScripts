@@ -1,20 +1,20 @@
-﻿using CommonTools;
+﻿using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
 using OfficeFormatConverter;
 using Shared;
 
 // 输入参数验证
-if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
     return;
 }
 
 var Logger = SharedLogging.Logger;
-var Config = SharedHelper.GetConfiguration(args);
+var Config = ArgumentUtils.GetConfiguration(args);
 var sourcePath = Config["sourcePath"];
 var savePath = Config["savePath"];
 
 try {
-    if (SharedHelper.ValidateFileArgument(sourcePath, "sourcePath") || SharedHelper.ValidateFileArgument(Path.GetDirectoryName(savePath), "savePath")) {
+    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath") || ArgumentUtils.ValidateFileArgument(Path.GetDirectoryName(savePath), "savePath")) {
         return;
     }
     Service.Convert(sourcePath!, savePath!);

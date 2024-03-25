@@ -1,11 +1,11 @@
 ﻿using BackUpBrowserData;
-using CommonTools;
+using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
 using Shared;
 
 var Logger = SharedLogging.Logger;
 // 输入参数验证
-if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
     return;
 }
 
@@ -16,6 +16,6 @@ try {
 } finally {
     SharedLogging.Dispose();
     if (args.ContainsWaitArgument()) {
-        SharedHelper.WaitUserInputToExit();
+        ArgumentUtils.WaitUserInputToExit();
     }
 }

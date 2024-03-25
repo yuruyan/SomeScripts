@@ -1,4 +1,5 @@
-﻿using CommonTools;
+﻿using CommonTools.Utils;
+using CommonTools.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared.Model;
@@ -29,46 +30,6 @@ public static partial class SharedHelper {
 
     private static Regex GetRatioNumberArgRegex() => new(@"^-?(?<number>\d+(?:\.\d+)?)\*?$");
 #endif
-
-    /// <summary>
-    /// 检查参数是否有参数
-    /// </summary>
-    /// <param name="args"></param>
-    /// <param name="helpMessage">参数为 0 时的提示消息</param>
-    /// <returns></returns>
-    public static bool CheckArgs(string[] args, string helpMessage) {
-        if (args.Length == 0) {
-            Console.WriteLine(helpMessage);
-            return false;
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// 获取 Configuration
-    /// </summary>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    public static IConfiguration GetConfiguration(this string[] args) => new ConfigurationBuilder().AddCommandLine(args).Build();
-
-    /// <summary>
-    /// 是否启用调试模式
-    /// </summary>
-    /// <param name="configuration"></param>
-    /// <returns></returns>
-    public static bool IsDebugMode(this IConfiguration configuration) {
-        return configuration.GetSection("debug").Value?.ToLowerInvariant() == "true";
-    }
-
-    /// <summary>
-    /// 是否包含 wait 参数
-    /// </summary>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    public static bool ContainsWaitArgument(this string[] args) {
-        args = args.Select(arg => arg.ToLowerInvariant()).ToArray();
-        return args.Contains("--wait") || args.Contains("/wait");
-    }
 
     /// <summary>
     /// 解析比例参数
@@ -108,51 +69,5 @@ public static partial class SharedHelper {
             .FirstOrDefault(info => info.Name.ToLowerInvariant() == targetMethodNameLowerCase)
             ?? throw new ArgumentException($"Invalid argument '{args[0]}'");
         targetMethod.Invoke(null, new[] { args.GetConfiguration() });
-    }
-
-    /// <summary>
-    /// 检查文件是否存在
-    /// </summary>
-    /// <param name="filePath">文件路径</param>
-    /// <param name="argumentName">命令行参数名称</param>
-    /// <returns>存在返回 true</returns>
-    public static bool ValidateFileArgument(string? filePath, string argumentName) {
-        if (string.IsNullOrEmpty(filePath)) {
-            SharedLogging.Logger.LogError("Argument '{argumentName}' cannot be empty", argumentName);
-            return false;
-        }
-        if (!File.Exists(filePath)) {
-            SharedLogging.Logger.LogError("File \"{path}\" doesn't exist", filePath);
-            return false;
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// 检查文件夹是否存在
-    /// </summary>
-    /// <param name="directory">文件夹路径</param>
-    /// <param name="argumentName">命令行参数名称</param>
-    /// <returns></returns>
-    public static bool ValidateDirectoryArgument(string? directory, string argumentName) {
-        if (string.IsNullOrEmpty(directory)) {
-            SharedLogging.Logger.LogError("Argument '{argumentName}' cannot be empty", argumentName);
-            return false;
-        }
-        if (!Directory.Exists(directory)) {
-            SharedLogging.Logger.LogError("Directory \"{path}\" doesn't exist", directory);
-            return false;
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// 等待用户按键退出
-    /// </summary>
-    public static void WaitUserInputToExit() {
-        Process.Start(Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
-            "/c pause"
-        ).WaitForExit();
     }
 }

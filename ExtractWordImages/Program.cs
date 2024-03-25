@@ -1,4 +1,4 @@
-﻿using CommonTools;
+﻿using CommonTools.Utils;
 using ExtractWordImages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Word;
@@ -6,20 +6,20 @@ using Shared;
 using System.IO.Compression;
 
 // 输入参数验证
-if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
     return;
 }
 
 var Logger = SharedLogging.Logger;
 const string DocxExtension = ".docx";
 const string DocExtension = ".doc";
-var Config = SharedHelper.GetConfiguration(args);
+var Config = ArgumentUtils.GetConfiguration(args);
 var sourcePath = Config["sourcePath"];
 var saveDir = Config["saveDir"];
 
 // 开始提取
 try {
-    if (SharedHelper.ValidateFileArgument(sourcePath, "sourcePath") || SharedHelper.ValidateDirectoryArgument(saveDir, "saveDir")) {
+    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath") || ArgumentUtils.ValidateDirectoryArgument(saveDir, "saveDir")) {
         return;
     }
 

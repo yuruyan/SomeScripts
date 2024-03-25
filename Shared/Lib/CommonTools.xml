@@ -1153,6 +1153,11 @@
             <param name="character">汉字</param>
             <returns>找不到返回空</returns>
         </member>
+        <member name="M:CommonTools.Utils.SharedLogging.Dispose">
+            <summary>
+            Dispose
+            </summary>
+        </member>
         <member name="M:CommonTools.Utils.TaskUtils.Try(System.Action)">
             <summary>
             简化 try 代码块
@@ -1308,11 +1313,6 @@
             <param name="interval">间隔多长时间才允许再次调用</param>
             <param name="fallbackValue">未调用返回值</param>
             <returns></returns>
-        </member>
-        <member name="M:CommonTools.SharedLogging.Dispose">
-            <summary>
-            Dispose
-            </summary>
         </member>
         <member name="T:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0">
             <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the GetPathSpliterRegex method.</summary>

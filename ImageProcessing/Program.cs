@@ -1,11 +1,11 @@
-﻿using CommonTools;
+﻿using CommonTools.Utils;
 using ImageProcessing;
 using Microsoft.Extensions.Logging;
 using Shared;
 using System.Reflection;
 
 // 输入参数验证
-if (!SharedHelper.CheckArgs(args, Resource.Help)) {
+if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
     return;
 }
 
