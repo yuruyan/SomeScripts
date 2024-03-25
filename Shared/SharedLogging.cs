@@ -25,4 +25,12 @@ public static class SharedLogging {
         Logger = LoggerFactory.CreateLogger("Program");
         FileLogger = FileLoggerFactory.CreateLogger("Program");
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public static void Dispose() {
+        LoggerFactory.Dispose();
+        FileLoggerFactory.Dispose();
+    }
 }
