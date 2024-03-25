@@ -13,7 +13,8 @@ try {
 } catch (Exception error) {
     Logger.LogError(error, "Program terminated");
 } finally {
-    SharedLogging.LoggerFactory.Dispose();
-    SharedLogging.FileLoggerFactory.Dispose();
-    SharedHelper.WaitUserInputToExit();
+    SharedLogging.Dispose();
+    if (args.ContainsWaitArgument()) {
+        SharedHelper.WaitUserInputToExit();
+    }
 }

@@ -1,9 +1,10 @@
 ﻿备份浏览器数据
 
 参数列表：
-    browser : 浏览器名称
-        选项：[Edge, Chrome]
-    savePath: 压缩文件保存路径
+    browser     : 浏览器名称
+        选项    : [Edge, Chrome]
+    savePath    : 压缩文件保存路径
+    --wait[可选]: 不自动退出
 
 示例：
     browser=Edge savePath='D:/backup.zip'
