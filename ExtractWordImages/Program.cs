@@ -1,4 +1,5 @@
-﻿using ExtractWordImages;
+﻿using CommonTools;
+using ExtractWordImages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Word;
 using Shared;

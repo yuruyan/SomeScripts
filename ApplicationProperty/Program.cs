@@ -1,4 +1,5 @@
 ﻿using ApplicationProperty;
+using CommonTools;
 using Microsoft.Extensions.Logging;
 using Shared;
 using System.Diagnostics;

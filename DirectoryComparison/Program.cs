@@ -1,4 +1,5 @@
-﻿using DirectoryComparison;
+﻿using CommonTools;
+using DirectoryComparison;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;

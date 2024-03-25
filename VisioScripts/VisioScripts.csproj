@@ -49,7 +49,7 @@
 
   <ItemGroup>
     <Reference Include="CommonTools">
-      <HintPath>..\Shared\Lib\net8\CommonTools.dll</HintPath>
+      <HintPath>..\Shared\Lib\CommonTools.dll</HintPath>
     </Reference>
   </ItemGroup>
 

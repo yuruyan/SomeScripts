@@ -4,6 +4,11 @@
         <name>CommonTools</name>
     </assembly>
     <members>
+        <member name="T:CommonTools.Converter.MapperUtils">
+            <summary>
+            AutoMapper Type Converter
+            </summary>
+        </member>
         <member name="M:CommonTools.Converter.MapperUtils.AddCommonConverters(AutoMapper.IMapperConfigurationExpression)">
             <summary>
             添加常见类型转换器
@@ -53,7 +58,6 @@
             根据 result 创建 DataTransferResults
             </summary>
             <typeparam name="Source"></typeparam>
-            <typeparam name="Destination"></typeparam>
             <param name="result"></param>
             <returns></returns>
         </member>
@@ -131,7 +135,13 @@
             <param name="sorter"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:CommonTools.Model.ISortable`2.AscendBy(`0)" -->
+        <member name="M:CommonTools.Model.ISortable`2.AscendBy(`0)">
+            <summary>
+            升序
+            </summary>
+            <param name="sorter"></param>
+            <returns></returns>
+        </member>
         <member name="M:CommonTools.Model.ISortable`2.DescendBy(`0)">
             <summary>
             降序
@@ -174,6 +184,55 @@
             设置时触发
             </summary>
         </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.Char">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.DictionaryCharString">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.DictionaryInt32String">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.DictionaryStringString">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.Int32">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.String">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.Default">
+            <summary>
+            The default <see cref="T:System.Text.Json.Serialization.JsonSerializerContext"/> associated with a default <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance.
+            </summary>
+        </member>
+        <member name="P:CommonTools.Model.SourceGenerationContext.GeneratedSerializerOptions">
+            <summary>
+            The source-generated options associated with this context.
+            </summary>
+        </member>
+        <member name="M:CommonTools.Model.SourceGenerationContext.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:CommonTools.Model.SourceGenerationContext.#ctor(System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CommonTools.Model.SourceGenerationContext.GetTypeInfo(System.Type)">
+            <inheritdoc/>
+        </member>
         <member name="T:CommonTools.Resources.Resource">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
@@ -195,6 +254,49 @@
               Looks up a localized resource of type System.Byte[].
             </summary>
         </member>
+        <member name="M:CommonTools.Utils.ArgumentUtils.CheckArgs(System.String[],System.String)">
+            <summary>
+            检查参数是否有参数，没有则输出帮助信息并返回 false
+            </summary>
+            <param name="args"></param>
+            <param name="helpMessage">参数为 0 时的提示消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ArgumentUtils.GetConfiguration(System.String[])">
+            <summary>
+            获取 Configuration
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ArgumentUtils.ContainsWaitArgument(System.String[])">
+            <summary>
+            是否包含 wait 参数
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ArgumentUtils.ValidateFileArgument(System.String,System.String)">
+            <summary>
+            检查文件是否存在
+            </summary>
+            <param name="filePath">文件路径</param>
+            <param name="argumentName">命令行参数名称</param>
+            <returns>存在返回 true</returns>
+        </member>
+        <member name="M:CommonTools.Utils.ArgumentUtils.ValidateDirectoryArgument(System.String,System.String)">
+            <summary>
+            检查文件夹是否存在
+            </summary>
+            <param name="directory">文件夹路径</param>
+            <param name="argumentName">命令行参数名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.ArgumentUtils.WaitUserInputToExit">
+            <summary>
+            等待用户按键退出
+            </summary>
+        </member>
         <member name="F:CommonTools.Utils.CommonUtils.PathSpliterRegex">
             <summary>
             路径分隔符正则
@@ -210,13 +312,15 @@
             Current process directory
             </summary>
         </member>
-        <member name="M:CommonTools.Utils.CommonUtils.Copy``1(``0)">
-            <summary>
-            拷贝对象
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="obj"></param>
-            <returns></returns>
+        <member name="M:CommonTools.Utils.CommonUtils.GetPathSpliterRegex">
+            <remarks>
+            Pattern:<br/>
+            <code>[/\\\\]</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Match a character in the set [/\\].<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:CommonTools.Utils.CommonUtils.SingletonDict">
             <summary>
@@ -492,69 +596,110 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="F:CommonTools.Utils.DigestUtils.ReadBufferSize">
+        <member name="M:CommonTools.Utils.DigestUtils.Md5Digest(System.IO.Stream)">
             <summary>
-            默认读取缓冲区大小
+            Md5
             </summary>
-        </member>
-        <member name="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.String,Org.BouncyCastle.Crypto.IDigest)">
-            <summary>
-            摘要算法
-            </summary>
-            <param name="text"></param>
-            <param name="digest"></param>
+            <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)">
+        <member name="M:CommonTools.Utils.DigestUtils.Sha1Digest(System.IO.Stream)">
             <summary>
-            摘要算法
+            Sha1
             </summary>
-            <param name="stream"></param>
-            <param name="digest"></param>
-            <returns>digest</returns>
-            <remarks>不会自动关闭 stream</remarks>
-        </member>
-        <member name="M:CommonTools.Utils.DigestUtils.MD5Digest(System.String)">
-            <summary>
-            md5 摘要
-            </summary>
-            <param name="text"></param>
-            <returns></returns>
-        </member>
-        <member name="M:CommonTools.Utils.DigestUtils.MD5Digest(System.IO.Stream)">
-            <summary>
-            md5 摘要
-            </summary>
-            <param name="stream"></param>
-            <inheritdoc cref="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)"/>
-        </member>
-        <member name="M:CommonTools.Utils.DigestUtils.Sha256Digest(System.String)">
-            <summary>
-            Sha256Digest 摘要
-            </summary>
-            <param name="text"></param>
+            <param name="data"></param>
             <returns></returns>
         </member>
         <member name="M:CommonTools.Utils.DigestUtils.Sha256Digest(System.IO.Stream)">
             <summary>
-            Sha256Digest 摘要
+            Sha256
             </summary>
-            <param name="stream"></param>
-            <inheritdoc cref="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)"/>
+            <param name="data"></param>
+            <returns></returns>
         </member>
-        <member name="M:CommonTools.Utils.DigestUtils.Sha512Digest(System.String)">
+        <member name="M:CommonTools.Utils.DigestUtils.Sha384Digest(System.IO.Stream)">
             <summary>
-            Sha512Digest 摘要
+            Sha384
             </summary>
-            <param name="text"></param>
+            <param name="data"></param>
             <returns></returns>
         </member>
         <member name="M:CommonTools.Utils.DigestUtils.Sha512Digest(System.IO.Stream)">
             <summary>
-            Sha512Digest 摘要
+            Sha512
             </summary>
-            <param name="stream"></param>
-            <inheritdoc cref="M:CommonTools.Utils.DigestUtils.GeneralDigest(System.IO.Stream,Org.BouncyCastle.Crypto.IDigest)"/>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Md5Digest(System.Byte[])">
+            <summary>
+            Md5
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha1Digest(System.Byte[])">
+            <summary>
+            Sha1
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha256Digest(System.Byte[])">
+            <summary>
+            Sha256
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha384Digest(System.Byte[])">
+            <summary>
+            Sha384
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha512Digest(System.Byte[])">
+            <summary>
+            Sha512
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Md5Digest(System.String)">
+            <summary>
+            Md5
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha1Digest(System.String)">
+            <summary>
+            Sha1
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha256Digest(System.String)">
+            <summary>
+            Sha256
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha384Digest(System.String)">
+            <summary>
+            Sha384
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CommonTools.Utils.DigestUtils.Sha512Digest(System.String)">
+            <summary>
+            Sha512
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
         </member>
         <member name="T:CommonTools.Utils.ExtensionUtils">
             <summary>
@@ -1163,6 +1308,47 @@
             <param name="interval">间隔多长时间才允许再次调用</param>
             <param name="fallbackValue">未调用返回值</param>
             <returns></returns>
+        </member>
+        <member name="M:CommonTools.SharedLogging.Dispose">
+            <summary>
+            Dispose
+            </summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the GetPathSpliterRegex method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.GetPathSpliterRegex_0.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.Utilities">
+            <summary>Helper methods used by generated <see cref="T:System.Text.RegularExpressions.Regex"/>-derived implementations.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout">
+            <summary>Default timeout value set in <see cref="T:System.AppContext"/>, or <see cref="F:System.Text.RegularExpressions.Regex.InfiniteMatchTimeout"/> if none was set.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_hasTimeout">
+            <summary>Whether <see cref="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout"/> is non-infinite.</summary>
         </member>
     </members>
 </doc>
