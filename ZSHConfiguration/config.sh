@@ -33,9 +33,6 @@ unzip -q -d $ZSH_PLUGINS/zsh-completions Resources/zsh-completions.zip
 echo "unzipped zsh-completions.zip to '$ZSH_PLUGINS/zsh-completions'"
 
 # 配置默认 shell 为 zsh
-changeshell="exec $(which zsh) -l"
-if ! grep -q $changeshell ~/.bash_profile; then
-    echo $changeshell >>~/.bash_profile
-fi
+sudo usermod -s /bin/zsh username
 
 echo -e "${green}done.${reset}"
