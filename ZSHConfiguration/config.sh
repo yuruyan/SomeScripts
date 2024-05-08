@@ -22,19 +22,20 @@ if [ -z "$(sudo -l)" ]; then
     exit 1
 fi
 
-unzip -q -d ~/.oh-my-zsh Resources/ohmyzsh.zip
+# 解压文件并覆盖
+unzip -qo -d ~/.oh-my-zsh Resources/ohmyzsh.zip
 echo "unzipped ohmyzsh.zip to '~/.oh-my-zsh'"
 
 cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 ZSH_PLUGINS=~/.oh-my-zsh/custom/plugins
 
-unzip -q -d $ZSH_PLUGINS/zsh-syntax-highlighting Resources/zsh-syntax-highlighting.zip
+unzip -qo -d $ZSH_PLUGINS/zsh-syntax-highlighting Resources/zsh-syntax-highlighting.zip
 echo "unzipped zsh-syntax-highlighting.zip to '$ZSH_PLUGINS/zsh-syntax-highlighting'"
 
-unzip -q -d $ZSH_PLUGINS/zsh-autosuggestions Resources/zsh-autosuggestions.zip
+unzip -qo -d $ZSH_PLUGINS/zsh-autosuggestions Resources/zsh-autosuggestions.zip
 echo "unzipped zsh-autosuggestions.zip to '$ZSH_PLUGINS/zsh-autosuggestions'"
 
-unzip -q -d $ZSH_PLUGINS/zsh-completions Resources/zsh-completions.zip
+unzip -qo -d $ZSH_PLUGINS/zsh-completions Resources/zsh-completions.zip
 echo "unzipped zsh-completions.zip to '$ZSH_PLUGINS/zsh-completions'"
 
 # 配置默认 shell 为 zsh
