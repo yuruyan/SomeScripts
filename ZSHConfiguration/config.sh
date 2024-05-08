@@ -16,6 +16,11 @@ if [ ! -x "$(command -v unzip)" ]; then
     echo -e "${red}unzip 命令不存在，请先安装 unzip${reset}"
     exit 1
 fi
+# 判断用户是否能执行 sudo
+if [ -z "$(sudo -l)" ]; then
+    echo -e "${red}当前用户没有 sudo 权限，请先配置 sudo 权限${reset}"
+    exit 1
+fi
 
 unzip -q -d ~/.oh-my-zsh Resources/ohmyzsh.zip
 echo "unzipped ohmyzsh.zip to '~/.oh-my-zsh'"
@@ -33,6 +38,6 @@ unzip -q -d $ZSH_PLUGINS/zsh-completions Resources/zsh-completions.zip
 echo "unzipped zsh-completions.zip to '$ZSH_PLUGINS/zsh-completions'"
 
 # 配置默认 shell 为 zsh
-sudo usermod -s /bin/zsh username
+sudo usermod -s /bin/zsh $USER
 
 echo -e "${green}done.${reset}"
