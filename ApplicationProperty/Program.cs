@@ -10,7 +10,7 @@ if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
 
 var Logger = SharedLogging.Logger;
 var Config = ArgumentUtils.GetConfiguration(args);
-var filepath = Config["filepath"];
+var filepath = Config["filepath"] ?? args[0];
 
 // 获取文件属性
 try {

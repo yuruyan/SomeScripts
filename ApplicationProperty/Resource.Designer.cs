@@ -64,7 +64,7 @@ namespace ApplicationProperty {
         ///   Looks up a localized string similar to 获取可执行文件属性
         ///
         ///参数列表：
-        ///    filepath: 可执行文件路径
+        ///    filepath: 可执行文件路径，参数名称可省略
         ///示例：
         ///    filepath=&apos;D:/temp/app.exe&apos;.
         /// </summary>
