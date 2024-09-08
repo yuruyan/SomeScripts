@@ -1,8 +1,6 @@
 ﻿using CommonTools.Utils;
-using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Visio;
-using Shared;
 using System.Runtime.InteropServices;
 
 namespace VisioScripts;

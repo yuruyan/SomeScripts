@@ -1,6 +1,5 @@
 ﻿using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
-using Shared;
 using System.Runtime.InteropServices;
 using PpMediaTaskStatus = Microsoft.Office.Interop.PowerPoint.PpMediaTaskStatus;
 using PpSaveAsFileType = Microsoft.Office.Interop.PowerPoint.PpSaveAsFileType;

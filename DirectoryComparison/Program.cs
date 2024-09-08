@@ -2,7 +2,6 @@
 using DirectoryComparison;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Shared;
 
 // 输入参数验证
 if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {

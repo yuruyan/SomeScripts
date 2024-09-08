@@ -1,6 +1,5 @@
 ﻿using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
-using Shared;
 using System.Text.RegularExpressions;
 
 namespace SimpleScripts;

@@ -2,7 +2,6 @@
 using MergeBilibiliMedia;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.RegularExpressions;

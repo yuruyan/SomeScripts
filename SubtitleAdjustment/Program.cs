@@ -1,6 +1,5 @@
 ﻿using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
-using Shared;
 using SubtitleAdjustment;
 
 // 输入参数验证

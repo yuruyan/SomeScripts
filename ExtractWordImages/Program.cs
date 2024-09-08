@@ -2,7 +2,6 @@
 using ExtractWordImages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Word;
-using Shared;
 using System.IO.Compression;
 
 // 输入参数验证

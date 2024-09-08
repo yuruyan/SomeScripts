@@ -1,9 +1,6 @@
 ﻿using CommonTools.Utils;
-using CommonTools.Utils;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Shared.Model;
-using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 

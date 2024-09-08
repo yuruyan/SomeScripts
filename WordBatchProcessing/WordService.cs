@@ -1,10 +1,8 @@
-﻿using CommonTools.Utils;
-using CommonTools.Model;
+﻿using CommonTools.Model;
 using CommonTools.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
-using Shared;
 using System.Drawing;
 using System.Runtime.InteropServices;
 

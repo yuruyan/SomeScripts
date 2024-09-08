@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
-using Shared;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace ImageProcessing;

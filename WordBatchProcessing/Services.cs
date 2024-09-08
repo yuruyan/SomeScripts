@@ -3,7 +3,6 @@ using Csv;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
-using System.Reflection;
 
 namespace WordBatchProcessing;
 
