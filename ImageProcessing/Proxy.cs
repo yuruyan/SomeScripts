@@ -17,15 +17,9 @@ internal static class Proxy {
     /// <exception cref="FileNotFoundException"></exception>
     /// <exception cref="DirectoryNotFoundException"></exception>
     private static void CheckSourcePathAndSavePath(string? sourcePath, string? savePath) {
-        var savePathDirectory = Path.GetDirectoryName(savePath);
-
         // 验证 sourcePath
         if (!File.Exists(sourcePath)) {
             throw new FileNotFoundException($"文件 '{sourcePath}' 找不到");
-        }
-        // 验证 savePath
-        if (!Directory.Exists(savePathDirectory)) {
-            throw new DirectoryNotFoundException($"目录 '{savePathDirectory}' 不存在");
         }
     }
 
