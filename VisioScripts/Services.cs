@@ -23,32 +23,17 @@ public static class Services {
         #endregion
 
         #region Check arguments
-        // Path is empty
-        if (string.IsNullOrEmpty(pathArg)) {
-            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
+        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
-        // TextPath is empty
-        if (string.IsNullOrEmpty(textPathArg)) {
-            Logger.LogError($"Argument '{TextPathArgName}' cannot be empty");
-            return;
-        }
-        // Path not found
-        if (!File.Exists(pathArg)) {
-            Logger.LogError($"File '{pathArg}' doesn't exist");
-            return;
-        }
-        // Path not found
-        if (!File.Exists(textPathArg)) {
-            Logger.LogError($"File '{textPathArg}' doesn't exist");
+        if (ArgumentUtils.ValidateFileArgument(textPathArg, TextPathArgName)) {
             return;
         }
         #endregion
 
         VisioServices.BatchCreatingTextShapes(
-            pathArg,
-            File
-                .ReadAllText(textPathArg)
+            pathArg!,
+            File.ReadAllText(textPathArg!)
                 .ReplaceLineFeedWithLinuxStyle()
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries)
         );
