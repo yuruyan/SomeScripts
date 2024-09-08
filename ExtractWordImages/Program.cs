@@ -16,9 +16,22 @@ var Config = ArgumentUtils.GetConfiguration(args);
 var sourcePath = Config["sourcePath"];
 var saveDir = Config["saveDir"];
 
+#region Create save directory if not exists
+try {
+    if (string.IsNullOrEmpty(saveDir)) {
+        Logger.LogError("saveDir 参数不能为空");
+        return;
+    }
+    Directory.CreateDirectory(saveDir);
+} catch {
+    Logger.LogError("创建保存目录'{savedir}'失败", saveDir);
+    return;
+}
+#endregion
+
 // 开始提取
 try {
-    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath") || ArgumentUtils.ValidateDirectoryArgument(saveDir, "saveDir")) {
+    if (!ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath")) {
         return;
     }
 
