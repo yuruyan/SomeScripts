@@ -20,8 +20,8 @@ public static partial class Services {
         #endregion
 
         #region Argument string value
-        var pathArg = configuration[PathArgName];
-        var savePathArg = configuration[SavePathArgName];
+        var pathArg = configuration[PathArgName]!;
+        var savePathArg = configuration[SavePathArgName]!;
         var searchArg = configuration[SearchArgName];
         var matchCaseArg = configuration[MatchCaseArgName];
         var matchWholeWordArg = configuration[MatchWholeWordArgName];
@@ -29,29 +29,15 @@ public static partial class Services {
         #endregion
 
         #region Check arguments
-        // Path is empty
-        if (string.IsNullOrEmpty(pathArg)) {
-            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
+        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
-        // Replacement is empty
-        if (string.IsNullOrEmpty(savePathArg)) {
-            Logger.LogError($"Argument '{SavePathArgName}' cannot be empty");
+        if (ArgumentUtils.ValidateFileArgument(savePathArg, SavePathArgName)) {
             return;
         }
         // Search is empty
         if (string.IsNullOrEmpty(searchArg)) {
             Logger.LogError($"Argument '{SearchArgName}' cannot be empty");
-            return;
-        }
-        // Path not found
-        if (!File.Exists(pathArg)) {
-            Logger.LogError($"File '{pathArg}' doesn't exist");
-            return;
-        }
-        // Path not found
-        if (!File.Exists(savePathArg)) {
-            Logger.LogError($"File '{savePathArg}' doesn't exist");
             return;
         }
         #endregion
@@ -90,32 +76,18 @@ public static partial class Services {
         const string MatchWildcardsArgName = "useWildcards";
         const string ReplaceAllArgName = "replaceAll";
 
-        var pathArg = configuration[PathArgName];
-        var replacementPathArg = configuration[ReplacementPathArgName];
+        var pathArg = configuration[PathArgName]!;
+        var replacementPathArg = configuration[ReplacementPathArgName]!;
         var matchCaseArg = configuration[MatchCaseArgName];
         var matchWholeWordArg = configuration[MatchWholeWordArgName];
         var matchWildcardsArg = configuration[MatchWildcardsArgName];
         var replaceAllArg = configuration[ReplaceAllArgName];
 
         #region Check arguments
-        // Path is empty
-        if (string.IsNullOrEmpty(pathArg)) {
-            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
+        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
-        // ReplacementPath is empty
-        if (string.IsNullOrEmpty(replacementPathArg)) {
-            Logger.LogError($"Argument '{ReplacementPathArgName}' cannot be empty");
-            return;
-        }
-        // Path not found
-        if (!File.Exists(pathArg)) {
-            Logger.LogError($"File '{pathArg}' doesn't exist");
-            return;
-        }
-        // ReplacementPath not found
-        if (!File.Exists(replacementPathArg)) {
-            Logger.LogError($"File '{replacementPathArg}' doesn't exist");
+        if (ArgumentUtils.ValidateFileArgument(replacementPathArg, ReplaceAllArgName)) {
             return;
         }
         #endregion
@@ -171,24 +143,17 @@ public static partial class Services {
         const string widthArgName = "width";
         const string heightArgName = "height";
 
-        var pathArg = configuration[PathArgName];
+        var pathArg = configuration[PathArgName]!;
         var widthArg = configuration[widthArgName];
         var heightArg = configuration[heightArgName];
 
         #region Check arguments
-        // Path is empty
-        if (string.IsNullOrEmpty(pathArg)) {
-            Logger.LogError($"Argument '{PathArgName}' cannot be empty");
+        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
         // Not specify any size
         if (string.IsNullOrEmpty(widthArg) && string.IsNullOrEmpty(heightArg)) {
             Logger.LogError($"Size not specified");
-            return;
-        }
-        // Path not found
-        if (!File.Exists(pathArg)) {
-            Logger.LogError($"File '{pathArg}' doesn't exist");
             return;
         }
         #endregion
