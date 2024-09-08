@@ -6,11 +6,16 @@ namespace BackUpBrowserData;
 
 public static class BrowserService {
     private static readonly ILogger Logger = SharedLogging.Logger;
-    private static readonly string EdgeDefaultFolder = $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default";
-    private static readonly string ChromeDefaultFolder = $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Google\\Chrome\\User Data\\Default";
+    private static readonly string EdgeDefaultFolder = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "Microsoft\\Edge\\User Data\\Default"
+    );
+    private static readonly string ChromeDefaultFolder = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "Google\\Chrome\\User Data\\Default"
+    );
 
     public static void BackUpHistory(BrowserType browser, string savePath) {
-        string DefaultFolder = EdgeDefaultFolder;
         // default 目录
         string defaultFolder = browser switch {
             BrowserType.Edge => EdgeDefaultFolder,

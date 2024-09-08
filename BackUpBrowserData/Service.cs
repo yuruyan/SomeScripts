@@ -18,10 +18,11 @@ public static class Service {
             Logger.LogError("Argument {SavePathArgName} cannot be empty", SavePathArgName);
             return;
         }
-        if (!Enum.TryParse(browserArg, out BrowserType browserType)) {
+        if (!Enum.TryParse(browserArg, true, out BrowserType browserType)) {
             Logger.LogError("Invalid argument {BrowserArgName}", BrowserArgName);
             return;
         }
+        savePathArg = Path.GetFullPath(savePathArg);
         // 检查路径
         string saveDirectory = Path.GetDirectoryName(savePathArg)!;
         if (!Directory.Exists(saveDirectory)) {
