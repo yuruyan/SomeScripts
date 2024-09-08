@@ -13,7 +13,11 @@ var sourcePath = Config["sourcePath"];
 var savePath = Config["savePath"];
 
 try {
-    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath") || ArgumentUtils.ValidateFileArgument(Path.GetDirectoryName(savePath), "savePath")) {
+    if (string.IsNullOrEmpty(savePath)) {
+        Logger.LogError("Save path cannot be empty");
+        return;
+    }
+    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath")) {
         return;
     }
     Service.Convert(sourcePath!, savePath!);
