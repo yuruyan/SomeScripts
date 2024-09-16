@@ -16,21 +16,36 @@ if (!ArgumentUtils.CheckArgs(args, Resources.Help)) {
 var Config = ArgumentUtils.GetConfiguration(args);
 
 var target = Config["target"] ?? args[0];
+var portArg = Config["port"];
+var port = -1;
 if (string.IsNullOrEmpty(target)) {
-    Console.WriteLine("target is empty");
+    Console.Error.WriteLine("target is empty");
     return;
 }
+// 端口参数验证
+if (portArg is not null) {
+    if (!int.TryParse(portArg, out port)) {
+        Console.Error.WriteLine("port is not a number");
+        return;
+    } else if (port < 1 || port > 65535) {
+        Console.Error.WriteLine("port is out of range");
+        return;
+    }
+}
+
 int successCount = 0, failedCount = 0;
 
 while (true) {
+    Thread.Sleep(1000);
+    var arg = port == -1 ? $"Test-Connection {target} -Quiet" : $"(Test-NetConnection {target} -Port {port}).TcpTestSucceeded";
+    var command = $"-Command \"& {{{arg}}}\"";
     var proc = TaskUtils.Try(() => Process.Start(new ProcessStartInfo {
         FileName = "PowerShell.exe",
-        Arguments = $"-Command \"& {{Test-Connection {target} -Quiet}}\"",
+        Arguments = command,
         RedirectStandardOutput = true,
     }));
     if (proc is null) {
         Console.WriteLine("Start process PowerShell failed");
-        Thread.Sleep(1000);
         continue;
     }
     proc.WaitForExit();
@@ -52,5 +67,4 @@ while (true) {
     if (successCount >= 3) {
         return;
     }
-    Thread.Sleep(4000);
 }

@@ -1,7 +1,8 @@
-测试连接
+测试连接，连续成功ping通3次才退出，并且发送桌面通知
 
 参数列表：
-    target: 目标主机
+    target[可省略]: 目标主机
+    port[可选]: 端口号
 示例：
-    target=pc1234    
-    target=192.168.1.1
+    target=pc1234
+    target=192.168.1.1 port=8080
