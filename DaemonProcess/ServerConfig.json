@@ -1,0 +1,8 @@
+[
+  {
+    "Path": "C:\\demo\\server.exe",
+    "Port": 7787,
+    "Args": "url=127.0.0.1:7787",
+    "ShowWindow": true
+  }
+]
