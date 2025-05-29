@@ -8,14 +8,15 @@ try {
         MyGenerationContext.Default.ListServerInfo
     )!;
     while (true) {
+        var processNames = Tools.GetProcessNames();
         foreach (var info in infoList) {
-            if (PortChecker.IsPortInUse(info.Port)) {
+            if (processNames.Contains(info.Path)) {
                 continue;
             }
             try {
                 Process.Start(new ProcessStartInfo {
                     FileName = info.Path,
-                    WorkingDirectory = Path.GetDirectoryName(info.Path),
+                    WorkingDirectory = string.IsNullOrEmpty(info.WorkingDirectory) ? Path.GetDirectoryName(info.Path) : info.WorkingDirectory,
                     Arguments = info.Args,
                     CreateNoWindow = !info.ShowWindow,
                     UseShellExecute = info.ShowWindow,
