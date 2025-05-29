@@ -1,8 +1,12 @@
 [
   {
-    "Path": "C:\\demo\\server.exe",
-    "WorkingDirectory": "C:\\demo",
-    "Args": "url=127.0.0.1:7787",
-    "ShowWindow": true
+    "Path": "C:\\Users\\18804\\Downloads\\minio.exe",
+    "WorkingDirectory": "C:\\Users\\18804\\Downloads",
+    "Args": "server D:\\MinioData --console-address \":9001\"",
+    "ShowWindow": true,
+    "EnvironmentVariables": {
+      "MINIO_ROOT_USER": "admin",
+      "MINIO_ROOT_PASSWORD": "password"
+    }
   }
 ]

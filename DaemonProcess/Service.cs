@@ -31,6 +31,7 @@ public record ServerInfo {
     public string WorkingDirectory { get; set; } = string.Empty;
     public string Args { get; set; } = string.Empty;
     public bool ShowWindow { get; set; }
+    public Dictionary<string, string> EnvironmentVariables { get; set; } = [];
 }
 
 [JsonSerializable(typeof(List<ServerInfo>))]
