@@ -3,14 +3,15 @@ using System.Text.Json;
 using DaemonProcess;
 
 try {
+    const int CheckInterval = 3000;
     var infoList = JsonSerializer.Deserialize(
         File.ReadAllText("ServerConfig.json"),
         MyGenerationContext.Default.ListServerInfo
     )!;
     while (true) {
-        var processNames = Tools.GetProcessNames();
+        var processNames = Tools.GetProcessNames().Select(p => p.ToLowerInvariant()).ToHashSet();
         foreach (var info in infoList) {
-            if (processNames.Contains(info.Path)) {
+            if (processNames.Contains(info.Path.ToLowerInvariant())) {
                 continue;
             }
             try {
@@ -32,15 +33,22 @@ try {
                     cmdContent += $"start \"{info.Path}\" \"{info.Path}\" {info.Args}";
                     File.WriteAllText(tmpFile, cmdContent);
                     startInfo.FileName = "cmd.exe";
-                    startInfo.Arguments = $"/c {tmpFile}";
+                    startInfo.Arguments = $"/c \"{tmpFile}\"";
                 }
                 Process.Start(startInfo);
                 Console.WriteLine($"{DateTime.Now} Started {info.Path} with args {info.Args}");
+                _ = Task.Factory.StartNew((file) => {
+                    var tmpFile = (string)file!;
+                    Thread.Sleep(CheckInterval);
+                    if (File.Exists(tmpFile)) {
+                        File.Delete(tmpFile);
+                    }
+                }, tmpFile);
             } catch (Exception e) {
                 Console.Error.WriteLine($"{DateTime.Now} Failed to start {info.Path} with args {info.Args}: {e.Message}");
             }
         }
-        Thread.Sleep(3000);
+        Thread.Sleep(CheckInterval);
     }
 } catch (Exception e) {
     Console.Error.WriteLine(e);
