@@ -30,7 +30,8 @@ try {
                     foreach (var env in info.EnvironmentVariables) {
                         cmdContent += $"set {env.Key}={env.Value}\n";
                     }
-                    cmdContent += $"start \"{info.Path}\" \"{info.Path}\" {info.Args}";
+                    var hideWindow = info.ShowWindow ? "" : " /B";
+                    cmdContent += $"start {hideWindow} \"{info.Path}\" \"{info.Path}\" {info.Args}";
                     File.WriteAllText(tmpFile, cmdContent);
                     startInfo.FileName = "cmd.exe";
                     startInfo.Arguments = $"/c \"{tmpFile}\"";
