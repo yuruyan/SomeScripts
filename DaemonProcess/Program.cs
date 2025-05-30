@@ -28,7 +28,7 @@ try {
                     startInfo.UseShellExecute = false;
                     var cmdContent = "@echo off\n";
                     foreach (var env in info.EnvironmentVariables) {
-                        cmdContent += $"set {env.Key}=\"{env.Value}\"\n";
+                        cmdContent += $"set {env.Key}={env.Value}\n";
                     }
                     cmdContent += $"start \"{info.Path}\" \"{info.Path}\" {info.Args}";
                     File.WriteAllText(tmpFile, cmdContent);
