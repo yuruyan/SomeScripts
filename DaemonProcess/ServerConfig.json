@@ -2,6 +2,7 @@
   {
     "Path": "C:\\Users\\18804\\Downloads\\minio.exe",
     "WorkingDirectory": "C:\\Users\\18804\\Downloads",
+    "Port": 9001,
     "Args": "server D:\\MinioData --console-address \":9001\"",
     "ShowWindow": true,
     "EnvironmentVariables": {

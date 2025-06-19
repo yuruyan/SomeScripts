@@ -27,6 +27,7 @@ public static class Tools {
 }
 
 public record ServerInfo {
+    public int Port { get; set; }
     public string Path { get; set; } = string.Empty;
     public string WorkingDirectory { get; set; } = string.Empty;
     public string Args { get; set; } = string.Empty;

@@ -14,8 +14,8 @@ try {
 }
 
 static void Start() {
+    var CheckInterval = TimeSpan.FromMilliseconds(3000);
     try {
-        const int CheckInterval = 3000;
         var infoList = JsonSerializer.Deserialize(
             File.ReadAllText("ServerConfig.json"),
             MyGenerationContext.Default.ListServerInfo
@@ -23,8 +23,15 @@ static void Start() {
         while (true) {
             var processNames = Tools.GetProcessNames().Select(p => p.ToLowerInvariant()).ToHashSet();
             foreach (var info in infoList) {
-                if (processNames.Contains(info.Path.ToLowerInvariant())) {
-                    continue;
+                // 如果设置了端口
+                if (info.Port > 0) {
+                    if (Tools.IsPortInUse(info.Port)) {
+                        continue;
+                    }
+                } else {
+                    if (processNames.Contains(info.Path.ToLowerInvariant())) {
+                        continue;
+                    }
                 }
                 try {
                     var startInfo = new ProcessStartInfo {
