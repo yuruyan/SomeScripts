@@ -3,6 +3,7 @@ using System.Text.Json;
 using DaemonProcess;
 
 const string LockFilePath = "LockFile.lock";
+const string ConfigFilePath = "ServerConfig.json";
 
 try {
     var file = File.Open(LockFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -13,16 +14,33 @@ try {
     Environment.Exit(1);
 }
 
+static List<ServerInfo> GetServerInfo() {
+    return JsonSerializer.Deserialize(
+        File.ReadAllText(ConfigFilePath),
+        MyGenerationContext.Default.ListServerInfo
+    )!;
+}
+
 static void Start() {
+    var InfoList = new List<ServerInfo>();
     var CheckInterval = TimeSpan.FromMilliseconds(3000);
+    var CheckConfigInterval = TimeSpan.FromMilliseconds(10000);
+
+    // 定时检查配置文件，如果有更新则重新读取
+    Task.Run(() => {
+        while (true) {
+            Thread.Sleep(CheckConfigInterval);
+            try {
+                InfoList = GetServerInfo();
+            } catch { }
+        }
+    });
+
     try {
-        var infoList = JsonSerializer.Deserialize(
-            File.ReadAllText("ServerConfig.json"),
-            MyGenerationContext.Default.ListServerInfo
-        )!;
+        InfoList = GetServerInfo();
         while (true) {
             var processNames = Tools.GetProcessNames().Select(p => p.ToLowerInvariant()).ToHashSet();
-            foreach (var info in infoList) {
+            foreach (var info in InfoList) {
                 // 如果设置了端口
                 if (info.Port > 0) {
                     if (Tools.IsPortInUse(info.Port)) {
