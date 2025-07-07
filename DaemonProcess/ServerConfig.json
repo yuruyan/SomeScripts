@@ -1,13 +1,17 @@
-[
-  {
-    "Path": "C:\\Users\\18804\\Downloads\\minio.exe",
-    "WorkingDirectory": "C:\\Users\\18804\\Downloads",
-    "Port": 9001,
-    "Args": "server D:\\MinioData --console-address \":9001\"",
-    "ShowWindow": true,
-    "EnvironmentVariables": {
-      "MINIO_ROOT_USER": "admin",
-      "MINIO_ROOT_PASSWORD": "password"
+{
+  "CheckingInterval": 3000,
+  "Apps": [
+    {
+      "Path": "C:\\Users\\18804\\Downloads\\minio.exe",
+      "WorkingDirectory": "C:\\Users\\18804\\Downloads",
+      "Port": 9001,
+      "CheckingInterval": 5000,
+      "Args": "server D:\\MinioData --console-address \":9001\"",
+      "ShowWindow": true,
+      "EnvironmentVariables": {
+        "MINIO_ROOT_USER": "admin",
+        "MINIO_ROOT_PASSWORD": "password"
+      }
     }
-  }
-]
+  ]
+}
