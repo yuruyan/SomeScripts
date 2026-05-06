@@ -15,15 +15,9 @@ public static class BrowserService {
         "Google\\Chrome\\User Data\\Default"
     );
 
-    public static void BackUpHistory(BrowserType browser, string savePath) {
-        // default 目录
-        string defaultFolder = browser switch {
-            BrowserType.Edge => EdgeDefaultFolder,
-            BrowserType.Chrome => ChromeDefaultFolder,
-            _ => throw new ArgumentException($"Error {nameof(browser)} argument"),
-        };
+    public static void BackUpHistory(string browserDataPath, string savePath) {
         // Collections Directory
-        var collectionsFile = Path.Combine(defaultFolder, "Collections/collectionsSQLite");
+        var collectionsFile = Path.Combine(browserDataPath, "Collections/collectionsSQLite");
         var saveDirectory = Path.GetDirectoryName(savePath)!;
         // 复制文件到临时目录
         var tempDir = CommonUtils.GetUniqueRandomFileName(saveDirectory);
@@ -34,7 +28,7 @@ public static class BrowserService {
         tempDir = Path.Combine(saveDirectory, tempDir);
         Directory.CreateDirectory(tempDir);
         // Copy files to temp directory
-        foreach (var path in Directory.GetFiles(defaultFolder)) {
+        foreach (var path in Directory.GetFiles(browserDataPath)) {
             var filename = Path.GetFileName(path);
             try {
                 File.Copy(path, Path.Combine(tempDir, filename));
@@ -56,5 +50,15 @@ public static class BrowserService {
         // 删除临时文件夹
         Directory.Delete(tempDir, true);
         Logger.LogInformation("压缩完毕");
+    }
+
+    public static void BackUpHistory(BrowserType browser, string savePath) {
+        // default 目录
+        string defaultFolder = browser switch {
+            BrowserType.Edge => EdgeDefaultFolder,
+            BrowserType.Chrome => ChromeDefaultFolder,
+            _ => throw new ArgumentException($"Error {nameof(browser)} argument"),
+        };
+        BackUpHistory(defaultFolder, savePath);
     }
 }

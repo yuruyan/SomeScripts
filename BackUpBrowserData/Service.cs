@@ -10,25 +10,37 @@ public static class Service {
     public static void BackUpHistory(IConfiguration configuration) {
         const string BrowserArgName = "browser";
         const string SavePathArgName = "savePath";
+        const string BrowserDataPathArgName = "browserDataPath";
 
-        var savePathArg = configuration[SavePathArgName];
+        var savePathArg = configuration[SavePathArgName]!;
         var browserArg = configuration[BrowserArgName];
-        // 验证参数
-        if (string.IsNullOrEmpty(savePathArg)) {
-            Logger.LogError("Argument {SavePathArgName} cannot be empty", SavePathArgName);
-            return;
-        }
-        if (!Enum.TryParse(browserArg, true, out BrowserType browserType)) {
-            Logger.LogError("Invalid argument {BrowserArgName}", BrowserArgName);
-            return;
-        }
-        savePathArg = Path.GetFullPath(savePathArg);
+        var browserDataPathArg = configuration[BrowserDataPathArgName];
+
         // 检查路径
+        savePathArg = Path.GetFullPath(savePathArg);
         string saveDirectory = Path.GetDirectoryName(savePathArg)!;
         if (!Directory.Exists(saveDirectory)) {
             Logger.LogError("Directory '{saveDirectory}' doesn't exist", saveDirectory);
             return;
         }
-        BrowserService.BackUpHistory(browserType, savePathArg!);
+        // 验证参数
+        if (string.IsNullOrEmpty(browserArg) && string.IsNullOrEmpty(browserDataPathArg)) {
+            Logger.LogError("Argument {browserArg} or {BrowserDataPathArgName} cannot be empty at the same time", BrowserArgName, BrowserDataPathArgName);
+            return;
+        }
+        // Use browserDataPathArg
+        if (!string.IsNullOrEmpty(browserDataPathArg)) {
+            if (!ArgumentUtils.ValidateDirectoryArgument(browserDataPathArg, BrowserDataPathArgName)) {
+                return;
+            }
+            BrowserService.BackUpHistory(browserDataPathArg, savePathArg);
+            return;
+        }
+        // Use browserArg
+        if (!Enum.TryParse(browserArg, true, out BrowserType browserType)) {
+            Logger.LogError("Invalid argument {BrowserArgName}", BrowserArgName);
+            return;
+        }
+        BrowserService.BackUpHistory(browserType, savePathArg);
     }
 }
