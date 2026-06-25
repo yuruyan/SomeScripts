@@ -14,12 +14,12 @@ internal class Program {
         }
 
         if (string.IsNullOrWhiteSpace(rootPath)) {
-            Console.Error.WriteLine("错误: 未提供目录路径。");
+            WriteErrorLine("错误: 未提供目录路径。");
             return 2;
         }
 
         if (!Directory.Exists(rootPath)) {
-            Console.Error.WriteLine($"错误: 目录不存在 - {rootPath}");
+            WriteErrorLine($"错误: 目录不存在 - {rootPath}");
             return 2;
         }
 
@@ -68,37 +68,36 @@ internal class Program {
                     differentCount++;
                     differentDirs.Add((dir, parentDir, dirSddl, parentSddl));
 
+                    string relativePath = Path.GetRelativePath(rootPath, dir);
+                    string parentRelativePath = Path.GetRelativePath(rootPath, parentDir);
+
                     if (showDetails) {
-                        string relativePath = Path.GetRelativePath(rootPath, dir);
                         Console.WriteLine($"不一致: {relativePath}");
                         Console.WriteLine($"  子目录  SDDL: {ResolveSidsToNames(dirSddl)}");
                         Console.WriteLine($"  父目录  SDDL: {ResolveSidsToNames(parentSddl)}");
                         Console.WriteLine();
+                    } else {
+                        Console.WriteLine($"  {relativePath}  (父目录: {parentRelativePath})");
                     }
                 }
             } catch (UnauthorizedAccessException) {
                 // 跳过无权限访问的目录
                 string relativePath = Path.GetRelativePath(rootPath, dir);
-                Console.Error.WriteLine($"警告: 无权限访问 - {relativePath}");
+                WriteWarningLine($"警告: 无权限访问 - {relativePath}");
             } catch (Exception ex) {
                 string relativePath = Path.GetRelativePath(rootPath, dir);
-                Console.Error.WriteLine($"警告: 读取 {relativePath} 的 ACL 时出错 - {ex.Message}");
+                WriteWarningLine($"警告: 读取 {relativePath} 的 ACL 时出错 - {ex.Message}");
             }
         }
 
         // 输出汇总结果
-        Console.WriteLine($"扫描完成: 共扫描 {totalCount} 个子目录，{differentCount} 个权限不一致，{skippedCount} 个跳过（完全继承父目录权限）。");
+        Console.WriteLine();
+        WriteSuccessLine($"扫描完成: 共扫描 {totalCount} 个子目录，{differentCount} 个权限不一致，{skippedCount} 个跳过（完全继承父目录权限）。");
         Console.WriteLine();
 
-        if (differentCount > 0 && !showDetails) {
-            Console.WriteLine("以下目录权限与其父目录不一致:");
-            foreach (var (dir, parentDir, _, _) in differentDirs) {
-                string relativePath = Path.GetRelativePath(rootPath, dir);
-                string parentRelativePath = Path.GetRelativePath(rootPath, parentDir);
-                Console.WriteLine($"  {relativePath}  (父目录: {parentRelativePath})");
-            }
+        if (differentCount > 0) {
             Console.WriteLine();
-            Console.WriteLine("提示: 使用 --details 或 -d 参数可查看详细的 SDDL 差异。");
+            WriteHintLine("提示: 使用 --details 或 -d 参数可查看详细的 SDDL 差异。");
 
             return 1;
         }
@@ -122,5 +121,41 @@ internal class Program {
                 return match.Value;
             }
         });
+    }
+
+    /// <summary>
+    /// 以绿色输出成功信息。
+    /// </summary>
+    private static void WriteSuccessLine(string message) {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(message);
+        Console.ResetColor();
+    }
+
+    /// <summary>
+    /// 以黄色输出警告信息。
+    /// </summary>
+    private static void WriteWarningLine(string message) {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Error.WriteLine(message);
+        Console.ResetColor();
+    }
+
+    /// <summary>
+    /// 以红色输出错误信息。
+    /// </summary>
+    private static void WriteErrorLine(string message) {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Error.WriteLine(message);
+        Console.ResetColor();
+    }
+
+    /// <summary>
+    /// 以深灰色输出提示信息。
+    /// </summary>
+    private static void WriteHintLine(string message) {
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine(message);
+        Console.ResetColor();
     }
 }
