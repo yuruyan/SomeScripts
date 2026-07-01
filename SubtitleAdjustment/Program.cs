@@ -14,7 +14,7 @@ var savePath = Config["savePath"];
 var offsetArg = Config["offset"];
 
 try {
-    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath")) {
+    if (!ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath")) {
         return;
     }
     if (string.IsNullOrEmpty(savePath)) {

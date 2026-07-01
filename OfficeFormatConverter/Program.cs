@@ -17,7 +17,7 @@ try {
         Logger.LogError("Save path cannot be empty");
         return;
     }
-    if (ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath")) {
+    if (!ArgumentUtils.ValidateFileArgument(sourcePath, "sourcePath")) {
         return;
     }
     Service.Convert(sourcePath!, savePath!);

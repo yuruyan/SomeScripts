@@ -23,10 +23,10 @@ public static class Services {
         #endregion
 
         #region Check arguments
-        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
+        if (!ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
-        if (ArgumentUtils.ValidateFileArgument(textPathArg, TextPathArgName)) {
+        if (!ArgumentUtils.ValidateFileArgument(textPathArg, TextPathArgName)) {
             return;
         }
         #endregion

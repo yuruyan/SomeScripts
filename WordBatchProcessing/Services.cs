@@ -29,10 +29,10 @@ public static partial class Services {
         #endregion
 
         #region Check arguments
-        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
+        if (!ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
-        if (ArgumentUtils.ValidateFileArgument(savePathArg, SavePathArgName)) {
+        if (!ArgumentUtils.ValidateFileArgument(savePathArg, SavePathArgName)) {
             return;
         }
         // Search is empty
@@ -84,10 +84,10 @@ public static partial class Services {
         var replaceAllArg = configuration[ReplaceAllArgName];
 
         #region Check arguments
-        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
+        if (!ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
-        if (ArgumentUtils.ValidateFileArgument(replacementPathArg, ReplaceAllArgName)) {
+        if (!ArgumentUtils.ValidateFileArgument(replacementPathArg, ReplaceAllArgName)) {
             return;
         }
         #endregion
@@ -148,7 +148,7 @@ public static partial class Services {
         var heightArg = configuration[heightArgName];
 
         #region Check arguments
-        if (ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
+        if (!ArgumentUtils.ValidateFileArgument(pathArg, PathArgName)) {
             return;
         }
         // Not specify any size
