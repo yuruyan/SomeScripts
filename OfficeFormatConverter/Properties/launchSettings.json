@@ -1,8 +1,7 @@
 {
   "profiles": {
     "OfficeFormatConverter": {
-      "commandName": "Project",
-      "commandLineArgs": "sourcePath=\"G:\\Temp\\三阶文件\\CST-WI-HR-001 岗位说明书\\人力资源部岗位说明\\05岗位说明书-IT专员.doc\" savePath=\"G:\\Temp\\三阶文件\\CST-WI-HR-001 岗位说明书\\人力资源部岗位说明\\05岗位说明书-IT专员.docx\""
+      "commandName": "Project"
     }
   }
 }
