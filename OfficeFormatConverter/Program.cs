@@ -9,8 +9,8 @@ if (!ArgumentUtils.CheckArgs(args, Resource.Help)) {
 
 var Logger = SharedLogging.Logger;
 var Config = ArgumentUtils.GetConfiguration(args);
-var sourcePath = Config["sourcePath"];
-var savePath = Config["savePath"];
+var sourcePath = Path.GetFullPath(Config["sourcePath"]!);
+var savePath = Path.GetFullPath(Config["savePath"]!);
 
 try {
     if (string.IsNullOrEmpty(savePath)) {
