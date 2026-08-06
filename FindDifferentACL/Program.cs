@@ -1,4 +1,4 @@
-﻿using System.Security.AccessControl;
+using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 
@@ -35,9 +35,25 @@ internal class Program {
         var differentDirs = new List<(string Dir, string Parent, string DirSddl, string ParentSddl)>();
 
         // 递归遍历所有子目录
-        var directories = Directory.EnumerateDirectories(rootPath, "*", SearchOption.AllDirectories);
+        var options = new EnumerationOptions {
+            RecurseSubdirectories = true,
+            IgnoreInaccessible = true,
+        };
+        using var enumerator = Directory.EnumerateDirectories(rootPath, "*", options).GetEnumerator();
 
-        foreach (var dir in directories) {
+        while (true) {
+            string dir;
+
+            // MoveNext 期间的异常发生在逐目录 try/catch 之外（如损坏的目录），单独捕获
+            try {
+                if (!enumerator.MoveNext())
+                    break;
+                dir = enumerator.Current;
+            } catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                WriteWarningLine($"警告: 无法枚举某个子目录，已跳过该分支 - {ex.Message}");
+                continue;
+            }
+
             totalCount++;
             string? parentDir = Path.GetDirectoryName(dir);
 
