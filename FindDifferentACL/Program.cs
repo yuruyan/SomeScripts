@@ -1,9 +1,48 @@
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Text.RegularExpressions;
+using static ConsoleHelper;
 
 internal class Program {
     private static int Main(string[] args) {
+        try {
+            string? rootPath = ResolveRootPath(args);
+            if (rootPath == null)
+                return 2;
+
+            bool showDetails = args.Contains("--details") || args.Contains("-d");
+
+            rootPath = Path.GetFullPath(rootPath);
+            Console.WriteLine($"正在扫描: {rootPath}");
+            Console.WriteLine();
+
+            var (differentCount, totalCount, skippedCount) = ScanDirectories(rootPath, showDetails);
+
+            // 输出汇总结果
+            Console.WriteLine();
+            WriteSuccessLine($"扫描完成: 共扫描 {totalCount} 个子目录，{differentCount} 个权限不一致，{skippedCount} 个跳过（完全继承父目录权限）。");
+            Console.WriteLine();
+
+            if (differentCount > 0) {
+                Console.WriteLine();
+                WriteHintLine("提示: 使用 --details 或 -d 参数可查看详细的 SDDL 差异。");
+
+                return 1;
+            }
+
+            return 0;
+        } catch (Exception ex) {
+            // 全局兜底：任何未捕获的异常在此转为错误信息，避免程序崩溃退出
+            WriteErrorLine($"错误: 发生未处理的异常 - {ex.Message}");
+            WriteErrorLine(ex.StackTrace ?? "无堆栈信息");
+            return 2;
+        }
+    }
+
+    /// <summary>
+    /// 从命令行参数或交互输入获取并校验根目录路径。
+    /// 返回 null 表示校验失败（错误信息已输出），调用方应直接返回错误码。
+    /// </summary>
+    private static string? ResolveRootPath(string[] args) {
         string rootPath;
 
         if (args.Length > 0) {
@@ -15,20 +54,21 @@ internal class Program {
 
         if (string.IsNullOrWhiteSpace(rootPath)) {
             WriteErrorLine("错误: 未提供目录路径。");
-            return 2;
+            return null;
         }
 
         if (!Directory.Exists(rootPath)) {
             WriteErrorLine($"错误: 目录不存在 - {rootPath}");
-            return 2;
+            return null;
         }
 
-        bool showDetails = args.Contains("--details") || args.Contains("-d");
+        return rootPath;
+    }
 
-        rootPath = Path.GetFullPath(rootPath);
-        Console.WriteLine($"正在扫描: {rootPath}");
-        Console.WriteLine();
-
+    /// <summary>
+    /// 递归扫描 rootPath 下所有子目录，输出不一致的目录，并返回统计结果。
+    /// </summary>
+    private static (int DifferentCount, int TotalCount, int SkippedCount) ScanDirectories(string rootPath, bool showDetails) {
         int differentCount = 0;
         int totalCount = 0;
         int skippedCount = 0;
@@ -106,72 +146,6 @@ internal class Program {
             }
         }
 
-        // 输出汇总结果
-        Console.WriteLine();
-        WriteSuccessLine($"扫描完成: 共扫描 {totalCount} 个子目录，{differentCount} 个权限不一致，{skippedCount} 个跳过（完全继承父目录权限）。");
-        Console.WriteLine();
-
-        if (differentCount > 0) {
-            Console.WriteLine();
-            WriteHintLine("提示: 使用 --details 或 -d 参数可查看详细的 SDDL 差异。");
-
-            return 1;
-        }
-
-        return 0;
-    }
-
-    /// <summary>
-    /// 将 SDDL 字符串中的 SID 替换为对应的用户名或组名。
-    /// </summary>
-    private static string ResolveSidsToNames(string sddl) {
-        // SID 格式: S-1-5-... 或 S-1-0-0 等
-        return Regex.Replace(sddl, @"S-\d+-\d+(?:-\d+)+", match => {
-            try {
-                var sid = new SecurityIdentifier(match.Value);
-                var account = (NTAccount)sid.Translate(typeof(NTAccount));
-                // 将原始 SID 替换为 "用户名(SID)" 格式，方便对照
-                return $"{account.Value}({match.Value})";
-            } catch {
-                // 如果无法解析（如未知 SID），保留原始值
-                return match.Value;
-            }
-        });
-    }
-
-    /// <summary>
-    /// 以绿色输出成功信息。
-    /// </summary>
-    private static void WriteSuccessLine(string message) {
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine(message);
-        Console.ResetColor();
-    }
-
-    /// <summary>
-    /// 以黄色输出警告信息。
-    /// </summary>
-    private static void WriteWarningLine(string message) {
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Error.WriteLine(message);
-        Console.ResetColor();
-    }
-
-    /// <summary>
-    /// 以红色输出错误信息。
-    /// </summary>
-    private static void WriteErrorLine(string message) {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.Error.WriteLine(message);
-        Console.ResetColor();
-    }
-
-    /// <summary>
-    /// 以深灰色输出提示信息。
-    /// </summary>
-    private static void WriteHintLine(string message) {
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine(message);
-        Console.ResetColor();
+        return (differentCount, totalCount, skippedCount);
     }
 }
