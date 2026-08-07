@@ -72,7 +72,6 @@ internal class Program {
         int differentCount = 0;
         int totalCount = 0;
         int skippedCount = 0;
-        var differentDirs = new List<(string Dir, string Parent, string DirSddl, string ParentSddl)>();
 
         // 递归遍历所有子目录
         var options = new EnumerationOptions {
@@ -122,7 +121,6 @@ internal class Program {
 
                 if (!string.Equals(dirSddl, parentSddl, StringComparison.OrdinalIgnoreCase)) {
                     differentCount++;
-                    differentDirs.Add((dir, parentDir, dirSddl, parentSddl));
 
                     string relativePath = Path.GetRelativePath(rootPath, dir);
                     string parentRelativePath = Path.GetRelativePath(rootPath, parentDir);
