@@ -2,7 +2,7 @@
 
 命令行小工具：更改指定网卡的 IPv4 配置（静态地址 / 网关 / 掩码 / DNS / 切回 DHCP），重点面向 **Windows Server 2008 R2** 等老系统。
 
-- 单文件、自包含发布（约 31 MB），目标机无需安装 .NET 运行时
+- 单文件、自包含发布（约 8.6 MB），目标机无需安装 .NET 运行时
 - 目标框架 `net6.0-windows`，`win-x64`
 - 已嵌入 `requireAdministrator` 清单，双击/启动即请求提权
 - 不依赖 WMI、PowerShell 模块，全部通过 `netsh interface ipv4` + `IP Helper` 数据回读完成
@@ -28,6 +28,16 @@ dotnet publish -c Release -v q
 产物：`bin\Release\net6.0-windows\win-x64\publish\SetIPAddress.exe`
 
 `RuntimeIdentifier`、`SelfContained`、`PublishSingleFile`、压缩与清单均已写入 `SetIPAddress.csproj`。
+
+体积优化主要靠 `PublishTrimmed=true` + `TrimMode=link`：本程序不用反射、不用动态代码、无序列化，全量裁剪安全（构建无 IL2xxx 裁剪告警）。实测体积：
+
+| 配置                       | 体积       |
+| -------------------------- | ---------- |
+| 仅自包含单文件 + 压缩      | 31.4 MB    |
+| + `TrimMode=link`          | **8.6 MB** |
+| + 关闭单文件压缩（对比用） | 9.95 MB    |
+
+进一步压缩的空间：`UseSystemResourceKeys` 实测无收益（8.65 MB 持平）；减少 BCL 面（把 `NetworkInterface` 换成自写 `GetAdaptersAddresses` P/Invoke）最多再省 1 MB 左右，不值得。若目标机已安装 .NET 6 运行时，可改框架依赖发布，产物约几百 KB，但那就不再是"免安装"。
 
 > 说明：**net6 无法做 NativeAOT**——NuGet 上 `Microsoft.DotNet.ILCompiler` 最早版本为 `7.0.0-preview.2`，`Microsoft.NETCore.App.Runtime.NativeAOT.*` 从 `9.0.0-preview.1` 才有，SDK 也以 `NETSDK1207` 拒绝 net6 AOT。因此本项目采用自包含单文件，并移除了原本仅为 AOT 服务的 YY-Thunks 依赖。
 

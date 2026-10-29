@@ -21,6 +21,9 @@
 		<PublishSingleFile>true</PublishSingleFile>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<!-- 无反射/无动态代码，full 裁剪安全；31.4 MB -> 8.6 MB -->
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<DebugType>none</DebugType>
 	</PropertyGroup>
