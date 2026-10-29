@@ -2,44 +2,61 @@
 
 命令行小工具：更改指定网卡的 IPv4 配置（静态地址 / 网关 / 掩码 / DNS / 切回 DHCP），重点面向 **Windows Server 2008 R2** 等老系统。
 
-- 单文件、自包含发布（约 8.6 MB），目标机无需安装 .NET 运行时
-- 目标框架 `net6.0-windows`，`win-x64`
+- **推荐产物：net8 NativeAOT 单文件，2.02 MB，已在 Windows Server 2008 R2 实测通过**，目标机无需安装 .NET 运行时
+- 备用产物：net6 自包含单文件 8.64 MB（官方支持基线）
+- 目标框架 `net8.0-windows` / `net6.0-windows`（多目标），`win-x64`
 - 已嵌入 `requireAdministrator` 清单，双击/启动即请求提权
 - 不依赖 WMI、PowerShell 模块，全部通过 `netsh interface ipv4` + `IP Helper` 数据回读完成
 
 ## 兼容性
 
-| 项            | 要求                                                                                                       |
-| ------------- | ---------------------------------------------------------------------------------------------------------- |
-| 系统          | Windows Server 2008 R2 **SP1**（x64）；Vista 及以上同代码路径                                              |
-| Universal CRT | KB2999226 / KB3118401，或安装 VC++ 2015-2022 x64 运行库；缺失时报 `api-ms-win-crt-runtime-l1-1-0.dll` 缺失 |
-| KB2533623     | .NET Core 3.0+ 在 Win7 内核上的加载前提，通常已随累积更新存在                                              |
-| 权限          | 管理员（清单已声明，UAC 关闭时需用管理员账户运行）                                                         |
-| 临时目录      | 单文件首次启动会解压到 `%TEMP%`，需可写；受限环境可用 `DOTNET_BUNDLE_EXTRACT_BASE_DIR` 指定目录            |
+| 项            | 要求                                                                                                                       |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 系统          | Windows Server 2008 R2 **SP1**（x64），net6 与 net8 AOT 两种产物均已验证；Vista 及以上同代码路径                           |
+| Universal CRT | KB2999226 / KB3118401，或安装 VC++ 2015-2022 x64 运行库；缺失时报 `api-ms-win-crt-runtime-l1-1-0.dll` 缺失                 |
+| KB2533623     | .NET Core 3.0+ 在 Win7 内核上的加载前提，通常已随累积更新存在（net8 AOT 产物为纯原生 exe，不受该条约束）                   |
+| 权限          | 管理员（清单已声明，UAC 关闭时需用管理员账户运行）                                                                         |
+| 临时目录      | 仅 net6/框架依赖产物需要：单文件会解压到 `%TEMP%`；受限环境可用 `DOTNET_BUNDLE_EXTRACT_BASE_DIR` 指定目录。net8 AOT 不解包 |
 
-发布产物 PE 头 `Subsystem 6.0`，导入仅 `KERNEL32 / ADVAPI32 / OLE32 / OLEAUT32 / USER32 / SHELL32 + api-ms-win-crt-*`。
+net8 AOT 产物 PE 头 `Subsystem 6.0`，导入 `KERNEL32 / ADVAPI32 / bcrypt / ole32 / PSAPI / IPHLPAPI / WS2_32 + api-ms-win-crt-*`，无 Win8+ 静态导入（Win8+ API 由 YY-Thunks 降到 Vista）。net6 自包含产物另含 `OLEAUT32 / USER32 / SHELL32`。
 
 ## 构建
 
+项目多目标：`net8.0-windows`（NativeAOT，推荐交付）与 `net6.0-windows`（备用基线）。
+
 ```powershell
-dotnet publish -c Release -v q
+# 推荐：net8 NativeAOT 单文件，输出到 dist\
+dotnet publish -c Release -f net8.0-windows -p:UseAot=true -o dist -v q
+
+# 备用：net6 自包含单文件（官方支持基线）
+dotnet publish -c Release -f net6.0-windows -v q
+
+# 可选：net8 框架依赖（需目标机已安装 .NET 8 运行时）
+dotnet publish -c Release -f net8.0-windows -p:SelfContained=false -v q
 ```
 
-产物：`bin\Release\net6.0-windows\win-x64\publish\SetIPAddress.exe`
+| 产物                       | 体积        | 目标机依赖           | 实测状态             |
+| -------------------------- | ----------- | -------------------- | -------------------- |
+| **net8 NativeAOT**（推荐） | **2.02 MB** | 无运行时；仍需 UCRT  | **2008 R2 SP1 通过** |
+| net6 自包含单文件          | 8.64 MB     | UCRT + `%TEMP%` 可写 | 2008 R2 通过         |
+| net8 框架依赖              | 0.187 MB    | .NET 8 运行时        | 本机通过             |
 
-`RuntimeIdentifier`、`SelfContained`、`PublishSingleFile`、压缩与清单均已写入 `SetIPAddress.csproj`。
+`RuntimeIdentifier`、`SelfContained`、`PublishSingleFile`、压缩、裁剪与清单均已写入 `SetIPAddress.csproj`；AOT 通过 `-p:UseAot=true` 启用（该开关只在 net8 目标生效）。
 
 体积优化主要靠 `PublishTrimmed=true` + `TrimMode=link`：本程序不用反射、不用动态代码、无序列化，全量裁剪安全（构建无 IL2xxx 裁剪告警）。实测体积：
 
-| 配置                       | 体积       |
-| -------------------------- | ---------- |
-| 仅自包含单文件 + 压缩      | 31.4 MB    |
-| + `TrimMode=link`          | **8.6 MB** |
-| + 关闭单文件压缩（对比用） | 9.95 MB    |
+| 配置                  | 体积     |
+| --------------------- | -------- |
+| 仅自包含单文件 + 压缩 | 31.4 MB  |
+| + `TrimMode=link`     | 8.64 MB  |
+| net8 NativeAOT        | 2.02 MB  |
+| net8 框架依赖单文件   | 0.187 MB |
 
-进一步压缩的空间：`UseSystemResourceKeys` 实测无收益（8.65 MB 持平）；减少 BCL 面（把 `NetworkInterface` 换成自写 `GetAdaptersAddresses` P/Invoke）最多再省 1 MB 左右，不值得。若目标机已安装 .NET 6 运行时，可改框架依赖发布，产物约几百 KB，但那就不再是"免安装"。
-
-> 说明：**net6 无法做 NativeAOT**——NuGet 上 `Microsoft.DotNet.ILCompiler` 最早版本为 `7.0.0-preview.2`，`Microsoft.NETCore.App.Runtime.NativeAOT.*` 从 `9.0.0-preview.1` 才有，SDK 也以 `NETSDK1207` 拒绝 net6 AOT。因此本项目采用自包含单文件，并移除了原本仅为 AOT 服务的 YY-Thunks 依赖。
+> 说明：**net6 无法做 NativeAOT**——NuGet 上 `Microsoft.DotNet.ILCompiler` 最早版本为 `7.0.0-preview.2`，`Microsoft.NETCore.App.Runtime.NativeAOT.*` 从 `9.0.0-preview.1` 才有，SDK 也以 `NETSDK1207` 拒绝 net6 AOT；AOT 仅 net8 目标可用，并用 YY-Thunks 把 Win8+ API 降到 Vista。
+>
+> .NET 8 的 NativeAOT 会把 `app.manifest` **自动嵌入为 RT_MANIFEST 资源**（实测），不需要链接期 `/MANIFESTINPUT`、也不依赖 Windows SDK 的 `mt.exe`。
+>
+> .NET 8 官方支持 Windows Server 2012 及以上，**2008 R2 属官方未支持组合**；但本项目的 net8 AOT 产物已在 2008 R2 SP1 实测通过（依赖目标机已有的 UCRT）。补丁级别变化后建议复测。
 
 ## 用法
 

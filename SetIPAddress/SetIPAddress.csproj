@@ -2,7 +2,8 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<!-- net6：兼容性基线（2008 R2 官方支持）；net8：可用 -p:PublishAot=true 出 AOT 小体积产物 -->
+		<TargetFrameworks>net6.0-windows;net8.0-windows</TargetFrameworks>
 		<LangVersion>10.0</LangVersion>
 		<AssemblyName>SetIPAddress</AssemblyName>
 		<RootNamespace>SetIPAddress</RootNamespace>
@@ -15,17 +16,29 @@
 		<SupportedOSPlatformVersion>6.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-windows' and '$(UseAot)' == 'true'">
+		<PublishAot>true</PublishAot>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<SelfContained>true</SelfContained>
-		<PublishSingleFile>true</PublishSingleFile>
-		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-		<!-- 无反射/无动态代码，full 裁剪安全；31.4 MB -> 8.6 MB -->
-		<PublishTrimmed>true</PublishTrimmed>
-		<TrimMode>link</TrimMode>
+		<PublishSingleFile Condition="'$(PublishAot)' != 'true'">true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfExtract Condition="'$(PublishAot)' != 'true' and '$(SelfContained)' == 'true'">true</IncludeNativeLibrariesForSelfExtract>
+		<EnableCompressionInSingleFile Condition="'$(PublishAot)' != 'true' and '$(SelfContained)' == 'true'">true</EnableCompressionInSingleFile>
+		<!-- 无反射/无动态代码，full 裁剪安全；自包含单文件 31.4 MB -> 8.6 MB -->
+		<PublishTrimmed Condition="'$(SelfContained)' == 'true' or '$(PublishAot)' == 'true'">true</PublishTrimmed>
+		<TrimMode Condition="'$(PublishTrimmed)' == 'true'">link</TrimMode>
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<DebugType>none</DebugType>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<!-- 仅 AOT 产物需要：把 Win8+ API 降到 Vista，才能在 2008 R2 上加载 -->
+		<PackageReference Include="YY-Thunks" Version="1.2.3" />
+	</ItemGroup>
+
+	<!-- 注：.NET 8 的 NativeAOT 会自动把 ApplicationManifest 嵌入为 RT_MANIFEST 资源（已实测），
+	     无需链接期 /MANIFESTINPUT，也不依赖 Windows SDK 的 mt.exe。 -->
 
 </Project>
