@@ -26,7 +26,11 @@ internal static class Program {
     private const int ExitNetsh = 4;
     private const int ExitVerify = 5;
     private const int ExitRefused = 6;
+    private const int ExitGatewayUnreachable = 7;
     private const int ExitUnexpected = 9;
+
+    /// <summary>网关连通性检查默认观测窗口（秒）。</summary>
+    private const int DefaultGatewayCheckSeconds = 15;
 
     private static int Main(string[] args) {
         try {
@@ -102,7 +106,7 @@ internal static class Program {
     private static int SetCommand(string[] args) {
         Options options = Options.Parse(
             args,
-            SelectorKeys.Concat(new[] { "--ip", "--mask", "--gw", "--dns", "--gw-metric" }).ToArray(),
+            SelectorKeys.Concat(new[] { "--ip", "--mask", "--gw", "--dns", "--gw-metric", "--gw-check" }).ToArray(),
             new[] { "--force" });
 
         Selector selector = BuildSelector(options);
@@ -116,6 +120,7 @@ internal static class Program {
             : ParseIpv4(gatewayText);
         int? gatewayMetric = ParseOptionalMetric(options.Get("--gw-metric"));
         List<IPAddress>? dns = ParseOptionalDns(options.Get("--dns"));
+        int gatewayCheckSeconds = ParseGatewayCheckSeconds(options.Get("--gw-check"));
         bool force = options.Has("--force");
 
         EnsureElevated();
@@ -195,6 +200,13 @@ internal static class Program {
             return ExitVerify;
         }
 
+        bool? gatewayReachable = ProbeGateway(target.Id, gateway, gatewayCheckSeconds);
+        if (gatewayReachable == false) {
+            ConsoleIo.ErrorLine($"网关 {gateway} 持续不可达，回滚到更改前的配置。");
+            Rollback(target);
+            return ExitGatewayUnreachable;
+        }
+
         ConsoleIo.WriteLine("更改成功，回读结果:");
         AdapterSnapshot? updated = Adapters.Enumerate(false).FirstOrDefault(a => a.Id == target.Id);
         if (updated is not null) {
@@ -209,8 +221,9 @@ internal static class Program {
     }
 
     private static int DhcpCommand(string[] args) {
-        Options options = Options.Parse(args, SelectorKeys, new[] { "--force" });
+        Options options = Options.Parse(args, SelectorKeys.Concat(new[] { "--gw-check" }).ToArray(), new[] { "--force" });
         Selector selector = BuildSelector(options);
+        int gatewayCheckSeconds = ParseGatewayCheckSeconds(options.Get("--gw-check"));
         bool force = options.Has("--force");
 
         EnsureElevated();
@@ -249,6 +262,15 @@ internal static class Program {
 
         if (dhcpVerified is null) {
             return ExitVerify;
+        }
+
+        AdapterSnapshot? afterDhcp = Adapters.Enumerate(false).FirstOrDefault(a => a.Id == target.Id);
+        IPAddress? dhcpGateway = afterDhcp is not null && afterDhcp.Gateways.Count > 0 ? afterDhcp.Gateways[0] : null;
+        bool? gatewayReachable = ProbeGateway(target.Id, dhcpGateway, gatewayCheckSeconds);
+        if (gatewayReachable == false) {
+            ConsoleIo.ErrorLine($"网关 {dhcpGateway} 持续不可达，回滚到更改前的配置。");
+            Rollback(target);
+            return ExitGatewayUnreachable;
         }
 
         ConsoleIo.WriteLine("已切换为 DHCP，回读结果:");
@@ -630,6 +652,56 @@ internal static class Program {
         return servers;
     }
 
+    private static int ParseGatewayCheckSeconds(string? text) {
+        const int maxSeconds = 600;
+        if (text is null) {
+            return DefaultGatewayCheckSeconds;
+        }
+
+        if (text.Equals("off", StringComparison.OrdinalIgnoreCase)) {
+            return 0;
+        }
+
+        if (!int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int seconds) || seconds < 0 || seconds > maxSeconds) {
+            throw new UsageException($"--gw-check 需要 0-{maxSeconds} 的整数秒，或 off: {text}");
+        }
+
+        return seconds;
+    }
+
+    /// <summary>返回 null 表示跳过检查（无网关 / 已关闭 / 网卡未连接）；否则表示网关是否可达。</summary>
+    private static bool? ProbeGateway(string adapterId, IPAddress? gateway, int seconds) {
+        if (gateway is null || seconds <= 0) {
+            return null;
+        }
+
+        AdapterSnapshot? live = Adapters.Enumerate(false).FirstOrDefault(a => a.Id == adapterId);
+        if (live is null || !live.Up) {
+            ConsoleIo.WriteLine("网卡当前未连接，跳过网关连通性检查。");
+            return null;
+        }
+
+        ConsoleIo.WriteLine($"检查网关 {gateway} 连通性：最长 {seconds} 秒（ICMP 或 ARP 任一可达即通过）…");
+        bool reachable = WaitForGateway(gateway, TimeSpan.FromSeconds(seconds));
+        ConsoleIo.WriteLine(reachable ? "网关可达。" : $"网关 {gateway} 连续 {seconds} 秒不可达。");
+        return reachable;
+    }
+
+    private static bool WaitForGateway(IPAddress gateway, TimeSpan timeout) {
+        long deadline = Environment.TickCount64 + (long)timeout.TotalMilliseconds;
+        while (true) {
+            if (GatewayProbe.IsReachable(gateway)) {
+                return true;
+            }
+
+            if (Environment.TickCount64 >= deadline) {
+                return false;
+            }
+
+            Thread.Sleep(1000);
+        }
+    }
+
     private static void PrintUsage() {
         string[] lines =
         {
@@ -639,8 +711,9 @@ internal static class Program {
             "  SetIPAddress list [--all]",
             "  SetIPAddress show  <选择器>",
             "  SetIPAddress set   <选择器> --ip <IPv4[/前缀]> [--mask <掩码|前缀>] [--gw <IPv4|none>]",
-            "                            [--dns <IPv4[,IPv4...]|none>] [--gw-metric <0-9999>] [--force]",
-            "  SetIPAddress dhcp  <选择器> [--force]",
+            "                            [--dns <IPv4[,IPv4...]|none>] [--gw-metric <0-9999>]",
+            "                            [--gw-check <秒|off>] [--force]",
+            "  SetIPAddress dhcp  <选择器> [--gw-check <秒|off>] [--force]",
             string.Empty,
             "选择器（可组合，多个条件为“与”）：",
             "  --name  <连接名>   例如 \"本地连接\"",
@@ -656,10 +729,13 @@ internal static class Program {
             "  * 未提供 --dns 表示不修改 DNS；--dns none 表示清空。",
             "  * 目标网卡持有网关时必须加 --force，避免误断远程连接。",
             "  * 更改后按网卡回读校验；校验失败会按快照回滚。",
+            "  * 更改后探测网关：默认观测 15 秒，期间 ICMP 或 ARP 任一次可达即通过；",
+            "    持续不可达则回滚（退出码 7）。--gw-check off 关闭，--gw-check <秒> 调整窗口。",
             "  * 媒体断开的网卡会以“备用配置”保存静态地址，此时 DHCP 标志可能仍显示“是”。",
             string.Empty,
             "退出码: 0 成功 / 1 参数错误 / 2 网卡定位失败 / 3 权限不足 /",
-            "        4 netsh 执行失败 / 5 校验失败（已回滚）/ 6 风险拒绝执行 / 9 未预期错误",
+            "        4 netsh 执行失败 / 5 校验失败（已回滚）/ 6 风险拒绝执行 /",
+            "        7 网关不可达（已回滚）/ 9 未预期错误",
         };
 
         foreach (string line in lines) {

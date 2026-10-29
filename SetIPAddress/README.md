@@ -47,8 +47,9 @@ dotnet publish -c Release -v q
 SetIPAddress list [--all]
 SetIPAddress show  <选择器>
 SetIPAddress set   <选择器> --ip <IPv4[/前缀]> [--mask <掩码|前缀>] [--gw <IPv4|none>]
-                            [--dns <IPv4[,IPv4...]|none>] [--gw-metric <0-9999>] [--force]
-SetIPAddress dhcp  <选择器> [--force]
+                            [--dns <IPv4[,IPv4...]|none>] [--gw-metric <0-9999>]
+                            [--gw-check <秒|off>] [--force]
+SetIPAddress dhcp  <选择器> [--gw-check <秒|off>] [--force]
 ```
 
 ### 选择器（可组合，多条件为“与”）
@@ -71,6 +72,7 @@ SetIPAddress dhcp  <选择器> [--force]
 | `--gw`        | 省略 = **保持原网关不变**；填 IPv4 = 改为该网关；`none` = 删除网关               |
 | `--dns`       | 省略 = 不修改；逗号分隔最多 4 个 = 覆盖设置（`register=primary`）；`none` = 清空 |
 | `--gw-metric` | 网关跃点数 0-9999，仅与网关一起下发                                              |
+| `--gw-check`  | 网关连通性观测窗口，默认 `15`；`0` / `off` 关闭。持续不可达则回滚                |
 | `--force`     | 目标网卡当前持有网关时必需，避免误断远程连接                                     |
 
 ### 示例
@@ -105,8 +107,10 @@ flowchart LR
   E --> F["删除残留旧地址"]
   F --> G["DNS 下发"]
   G --> H["回读校验"]
-  H -- "一致" --> Z
   H -- "不一致" --> I["按快照回滚, 退出 5"]
+  H -- "一致" --> J{"网关探测 默认 15 秒"}
+  J -- "可达 / 跳过" --> Z
+  J -- "持续不可达" --> K["按快照回滚, 退出 7"]
 ```
 
 ## 退出码
@@ -120,10 +124,12 @@ flowchart LR
 | 4   | netsh 执行失败（已尝试回滚）     |
 | 5   | 回读校验失败（已回滚）           |
 | 6   | 风险闸口拒绝执行（需 `--force`） |
+| 7   | 网关持续不可达（已回滚）         |
 | 9   | 未预期错误（打印完整异常链）     |
 
 ## 行为与限制
 
+- **网关探活与回退**：`set` / `dhcp` 校验通过后探测生效网关，**ICMP 回显或 ARP 解析任一成功即视为可达**（避免网关屏蔽 ICMP 导致正确配置被误回退）；默认观测 15 秒，期间持续不可达则按快照回滚并退出 7。网卡未连接、未配置网关或 `--gw-check off` 时跳过。
 - **成功判定只认回读**：netsh 退出码 0 不作为成功依据；重新枚举网卡比对地址/前缀/网关/DNS（DNS 按集合比对）。
 - **旧地址会被清理**：`netsh set address` 只替换主地址、不删除附加地址，工具会显式 `delete address`，保证网卡最终只有目标地址。
 - **回滚**：校验不匹配时按改动前快照恢复（含多地址、网关、DNS 或 DHCP）；若校验过程本身抛异常，则保留已提交配置不盲目回滚，提示人工核对。
@@ -134,10 +140,11 @@ flowchart LR
 
 ## 源码结构
 
-| 文件           | 职责                                                                |
-| -------------- | ------------------------------------------------------------------- |
-| `Program.cs`   | CLI 解析、命令分派、回读校验、回滚、表格输出                        |
-| `Adapters.cs`  | 网卡枚举/快照/选择器匹配（`System.Net.NetworkInformation`）         |
-| `Netsh.cs`     | `netsh interface ipv4` 调用封装（不重定向子进程输出，避免解码问题） |
-| `ConsoleIo.cs` | 控制台写出（`WriteConsoleW`）、管理员检测（`TokenElevation`）       |
-| `app.manifest` | `requireAdministrator` + 支持的 OS 列表                             |
+| 文件              | 职责                                                                |
+| ----------------- | ------------------------------------------------------------------- |
+| `Program.cs`      | CLI 解析、命令分派、回读校验、回滚、表格输出                        |
+| `Adapters.cs`     | 网卡枚举/快照/选择器匹配（`System.Net.NetworkInformation`）         |
+| `GatewayProbe.cs` | 网关探活：`Ping` + `SendARP`，任一可达即通过                        |
+| `Netsh.cs`        | `netsh interface ipv4` 调用封装（不重定向子进程输出，避免解码问题） |
+| `ConsoleIo.cs`    | 控制台写出（`WriteConsoleW`）、管理员检测（`TokenElevation`）       |
+| `app.manifest`    | `requireAdministrator` + 支持的 OS 列表                             |
